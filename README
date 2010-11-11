@@ -1,0 +1,3 @@
+This is a project for task1 in the course Distributed Computing with Spaced Based Middleware at UT Vienna.
+It will aim to produce a calendar coordination service similar to doodle (without any persistence) using
+java spaces as the undelying communication protocol.
