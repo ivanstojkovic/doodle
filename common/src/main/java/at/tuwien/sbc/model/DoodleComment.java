@@ -1,5 +1,7 @@
 package at.tuwien.sbc.model;
 
+import java.util.Date;
+
 public class DoodleComment {
 
 	private long id;
@@ -7,6 +9,8 @@ public class DoodleComment {
 	private Peer author;
 	
 	private String comment;
+	
+	private Date date;
 
 	public long getId() {
     	return id;
@@ -30,6 +34,14 @@ public class DoodleComment {
 
 	public void setComment(String comment) {
     	this.comment = comment;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public Date getDate() {
+        return date;
     }
 	
 	//do we need relationship back to the event?
