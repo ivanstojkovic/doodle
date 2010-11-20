@@ -9,6 +9,10 @@ public class Peer {
 	
 	private String name;
 	
+	private String password;
+	
+	private boolean loggedIn;
+	
 	private PeerType type;
 	
 	private List<DoodleEvent> organized;
@@ -53,5 +57,21 @@ public class Peer {
 
 	public void setEvents(List<DoodleEvent> events) {
     	this.events = events;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
+    }
+
+    public boolean isLoggedIn() {
+        return loggedIn;
     }
 }
