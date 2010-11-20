@@ -41,6 +41,7 @@
         The data processor bean
     -->
     <bean id="dataProcessor" class="at.tuwien.sbc.processor.Processor"/>
+    <bean id="regProcessor" class="at.tuwien.sbc.processor.RegistrationProcessor"/>
 
     <!--
         A polling event container that perfoms (by default) polling take operations against
@@ -58,6 +59,19 @@
         <os-events:listener>
             <os-events:annotation-adapter>
                 <os-events:delegate ref="dataProcessor"/>
+            </os-events:annotation-adapter>
+        </os-events:listener>
+    </os-events:polling-container>
+    <os-events:polling-container id="regProcessorPollingEventContainer" giga-space="gigaSpace">
+        <os-events:tx-support tx-manager="transactionManager"/>
+        <os-core:template>
+            <bean class="at.tuwien.sbc.model.Peer">
+                <property name="action" value="register"/>
+            </bean>
+        </os-core:template>
+        <os-events:listener>
+            <os-events:annotation-adapter>
+                <os-events:delegate ref="regProcessor"/>
             </os-events:annotation-adapter>
         </os-events:listener>
     </os-events:polling-container>
