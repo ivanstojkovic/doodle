@@ -69,6 +69,11 @@
                 <property name="action" value="register"/>
             </bean>
         </os-core:template>
+         <os-core:template>
+            <bean class="at.tuwien.sbc.model.Peer">
+                <property name="action" value="login"/>
+            </bean>
+        </os-core:template>
         <os-events:listener>
             <os-events:annotation-adapter>
                 <os-events:delegate ref="regProcessor"/>

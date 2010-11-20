@@ -7,17 +7,18 @@ import org.openspaces.core.context.GigaSpaceContext;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import at.tuwien.sbc.feeder.gui.DoodleGUI;
+import at.tuwien.sbc.feeder.gui.LoginFrame;
 
 public class Feeder implements InitializingBean, DisposableBean {
     
     @GigaSpaceContext
     private GigaSpace gigaSpace;
     
+    
     public Feeder() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                DoodleGUI inst = new DoodleGUI(gigaSpace);
+                LoginFrame inst = new LoginFrame();
                 inst.setLocationRelativeTo(null);
                 inst.setVisible(true);
             }
@@ -26,6 +27,7 @@ public class Feeder implements InitializingBean, DisposableBean {
     
     public void afterPropertiesSet() throws Exception {
         System.out.println("afterPropertiesSet");
+        GigaSpaceReference.getInstance().setGigaSpace(this.gigaSpace);
     }
     
     public void destroy() throws Exception {
