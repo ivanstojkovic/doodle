@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -68,9 +69,17 @@ public class DoodleGUI extends javax.swing.JFrame implements ActionListener {
         this.gigaSpace = gigaSpace;
     }
     
+    protected void processWindowEvent(WindowEvent evt) {
+        if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
+            this.dispose();
+            System.exit(0);
+        }
+    }
+    
     private void initGUI() {
         try {
             {
+                this.setDefaultCloseOperation(EXIT_ON_CLOSE);
                 jPanel1 = new JPanel();
                 GridLayout jPanel1Layout = new GridLayout(2, 2);
                 jPanel1Layout.setColumns(1);
