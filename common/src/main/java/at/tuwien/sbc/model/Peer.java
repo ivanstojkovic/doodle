@@ -19,6 +19,16 @@ public class Peer {
 	
 	private List<DoodleEvent> events;
 
+	public Peer() {
+		super();
+	}
+
+	public Peer(String name, String password) {
+		super();
+		this.name = name;
+		this.password = password;
+	}
+
 	public long getId() {
     	return id;
     }
