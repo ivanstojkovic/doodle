@@ -18,15 +18,18 @@ public class Peer {
 	private List<DoodleEvent> organized;
 	
 	private List<DoodleEvent> events;
+	
+	private String action;
 
 	public Peer() {
 		super();
 	}
 
-	public Peer(String name, String password) {
+	public Peer(String name, String password, String action) {
 		super();
 		this.name = name;
 		this.password = password;
+		this.action = action;
 	}
 
 	public long getId() {
@@ -84,4 +87,13 @@ public class Peer {
     public boolean isLoggedIn() {
         return loggedIn;
     }
+
+		public String getAction() {
+			return action;
+		}
+
+		public void setAction(String action) {
+			this.action = action;
+		}
+    
 }

@@ -195,10 +195,14 @@ public class DoodleGUI extends javax.swing.JFrame implements ActionListener {
 
 	public void actionPerformed(ActionEvent arg0) {
 		if(arg0.getActionCommand().equals("register")) {
-			Peer p = gigaSpace.takeIfExists(new Peer(jTextField1.getText(), jTextField2.getText()));
+			Peer p = gigaSpace.takeIfExists(new Peer(jTextField1.getText(), jTextField2.getText(), "register"));
 		}
 		if(arg0.getActionCommand().equals("login")) {
-			gigaSpace.write(new Peer(jTextField1.getText(), jTextField2.getText()));
+			Peer p = gigaSpace.readIfExists(new Peer(jTextField1.getText(), jTextField2.getText(), "login"));
+			if(p == null) {
+				//	NICHT EINGELOGGT => nicht registriert
+				JOptionPane.showMessageDialog(this, "You are not registered!");
+			}
 		}
 		
 	}
