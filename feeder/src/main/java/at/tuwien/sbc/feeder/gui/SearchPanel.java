@@ -1,12 +1,16 @@
 package at.tuwien.sbc.feeder.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -16,24 +20,8 @@ import javax.swing.WindowConstants;
 import at.tuwien.sbc.feeder.ControllerReference;
 import at.tuwien.sbc.model.Peer;
 
-/**
-* This code was edited or generated using CloudGarden's Jigloo
-* SWT/Swing GUI Builder, which is free for non-commercial
-* use. If Jigloo is being used commercially (ie, by a corporation,
-* company or business for any purpose whatever) then you
-* should purchase a license for each developer using Jigloo.
-* Please visit www.cloudgarden.com for details.
-* Use of Jigloo implies acceptance of these licensing terms.
-* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
-* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
-* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
-*/
-public class SearchPanel extends javax.swing.JPanel implements ActionListener {
-    private JPanel resultPnl;
-    private JScrollPane scroller;
-    private JTextArea resultTA;
+public class SearchPanel extends javax.swing.JPanel implements ActionListener, FocusListener {
     private JButton searchBtn;
-    private JPanel searchPnl;
     private JTextField txtSearch;
 
     /**
@@ -55,41 +43,22 @@ public class SearchPanel extends javax.swing.JPanel implements ActionListener {
     
     private void initGUI() {
         try {
-            BorderLayout thisLayout = new BorderLayout();
+        	FlowLayout thisLayout = new FlowLayout();
             this.setLayout(thisLayout);
-            setPreferredSize(new Dimension(400, 300));
+            this.setPreferredSize(new java.awt.Dimension(288, 34));
             {
-                searchPnl = new JPanel();
-                this.add(searchPnl, BorderLayout.NORTH);
-                {
-                    txtSearch = new JTextField();
-                    searchPnl.add(getTxtSearch());
-                    txtSearch.setPreferredSize(new java.awt.Dimension(186, 22));
-                    txtSearch.setText("name");
-                }
-                {
-                    searchBtn = new JButton();
-                    searchPnl.add(searchBtn);
-                    searchBtn.setText("Search");
-                    searchBtn.addActionListener(this);
-                    searchBtn.setActionCommand("search");
-                }
+            	txtSearch = new JTextField();
+            	this.add(txtSearch);
+            	txtSearch.setPreferredSize(new java.awt.Dimension(186, 22));
+            	txtSearch.setText("name");
+            	txtSearch.addFocusListener(this);
             }
             {
-                resultPnl = new JPanel();
-                this.add(resultPnl, BorderLayout.CENTER);
-                resultPnl.setPreferredSize(new java.awt.Dimension(400, 244));
-                resultPnl.setSize(400, 300);
-                {
-                    
-                    {
-                        resultTA = new JTextArea();
-                        resultTA.setPreferredSize(new java.awt.Dimension(381, 253));
-                        resultTA.setEditable(false);
-                        scroller = new JScrollPane(resultTA, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                    }
-                    resultPnl.add(scroller);
-                }
+            	searchBtn = new JButton();
+            	this.add(searchBtn);
+            	searchBtn.setText("Search");
+            	searchBtn.addActionListener(this);
+            	searchBtn.setActionCommand("search");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,29 +69,37 @@ public class SearchPanel extends javax.swing.JPanel implements ActionListener {
         return txtSearch;
     }
     
-    public JTextArea getResultTA() {
-        return resultTA;
-    }
 
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("search")) {
-            Peer template = new Peer();
-            template.setName(txtSearch.getName());
-            Peer[] peers = ControllerReference.getInstance().getGigaSpace().readMultiple(template, 100); // search for 100;
-            
-            System.out.println(Arrays.deepToString(peers));
-            if (peers == null || peers.length == 0) {
-                resultTA.setText("No Peers Found... \n");
+        	String regex = this.txtSearch.getText();
+            List<Peer> peers = ControllerReference.getInstance().searchByName(regex);
+            String msg;
+            if (peers.size() == 0) {
+                msg = "No peers found!...";
             } else {
                 final StringBuffer buf = new StringBuffer(42);
+                buf.append("Peers matching: " + regex);
                 for (Peer p : peers) {
-                    buf.append(p.toString());
-                    buf.append("\n");
+                	buf.append("\n");
+                	buf.append(p.toString());
                 }
                 
-                resultTA.setText(buf.toString());
+                msg = buf.toString();
             }
+            
+            JOptionPane.showMessageDialog(this, msg);
         }
+    }
+
+	public void focusGained(FocusEvent evt) {
+		this.txtSearch.selectAll();
+	    
+    }
+
+	public void focusLost(FocusEvent evt) {
+		this.txtSearch.select(0, 0);
+	    
     }
 
 }

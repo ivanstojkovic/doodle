@@ -8,14 +8,9 @@ import com.gigaspaces.annotation.pojo.SpaceId;
 @SpaceClass
 public class Peer {
     
-    // how do we generate this?
-    private long id;
-    
     private String name;
     
     private String password;
-    
-    private boolean loggedIn;
     
     private PeerType type;
     
@@ -34,14 +29,6 @@ public class Peer {
         this.name = name;
         this.password = password;
         this.action = action;
-    }
-    
-    public long getId() {
-        return id;
-    }
-    
-    public void setId(long id) {
-        this.id = id;
     }
     
     @SpaceId(autoGenerate=false)
@@ -85,14 +72,6 @@ public class Peer {
         return password;
     }
     
-    public void setLoggedIn(boolean loggedIn) {
-        this.loggedIn = loggedIn;
-    }
-    
-    public boolean isLoggedIn() {
-        return loggedIn;
-    }
-    
     public String getAction() {
         return action;
     }
@@ -102,7 +81,7 @@ public class Peer {
     }
     
     public String toString() {
-        return "[Peer: " + this.getName() + " " + this.getPassword() + " " + this.loggedIn + "]";
+        return "[Peer: " + this.getName() + "]";
     }
 
     @Override

@@ -115,7 +115,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected void processWindowEvent(WindowEvent evt) {
 		if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
 			this.call.callback(false);
@@ -129,9 +129,10 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener {
 			if (txtUser.getText().equals("") || String.valueOf(txtPass.getPassword()).equals("")) {
 				JOptionPane.showMessageDialog(this, "Username and/or password are empty");
 			} else {
-				
+
 				try {
-					Peer reg = ControllerReference.getInstance().register(txtUser.getText(), String.valueOf(txtPass.getPassword()));
+					Peer reg = ControllerReference.getInstance().register(txtUser.getText(),
+					        String.valueOf(txtPass.getPassword()));
 					// success
 					if (reg == null) {
 						JOptionPane.showMessageDialog(this, "Congrats! You are successfully registered");
@@ -144,7 +145,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener {
 
 		if (evt.getActionCommand().equals(Constants.CMD_BTN_LOGIN)) {
 			Peer p = ControllerReference.getInstance().login(txtUser.getText(), String.valueOf(txtPass.getPassword()));
-			
+
 			if (p == null) {
 				// NICHT EINGELOGGT => nicht registriert
 				JOptionPane.showMessageDialog(this, "You are not registered! Please register");
@@ -159,7 +160,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener {
 				this.dispose();
 			}
 		}
-		
+
 		if (evt.getActionCommand().equals(Constants.CMD_BTN_CANCEL)) {
 			this.call.callback(false);
 			this.setVisible(false);

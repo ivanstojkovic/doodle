@@ -1,9 +1,13 @@
 package at.tuwien.sbc.feeder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspaces.core.GigaSpace;
 
 import at.tuwien.sbc.model.Peer;
 
+import com.gigaspaces.internal.backport.java.util.Arrays;
 import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.UpdateModifiers;
 
@@ -50,7 +54,7 @@ public class ControllerReference {
 	
 	public Peer register(String user, String pass) {
 		Peer newPeer = new Peer(user, pass, "register");
-		LeaseContext<Peer> ctx = ControllerReference.getInstance().getGigaSpace().write(newPeer,
+		LeaseContext<Peer> ctx = this.getGigaSpace().write(newPeer,
 		        1000 * 60 * 60, 5000, UpdateModifiers.WRITE_ONLY);
 		
 		return ctx.getObject();
@@ -59,7 +63,31 @@ public class ControllerReference {
 	
 	public Peer login(String user, String pass) {
 		Peer log = new Peer(user, pass, null);
-		this.setUser(log);
-		return ControllerReference.getInstance().getGigaSpace().readIfExists(log);
+		Peer peer = this.getGigaSpace().readIfExists(log);
+		if (peer != null) {
+			this.getGigaSpace().write(peer);
+		} else {
+			System.out.println("Peer is null");
+		}
+		
+		this.setUser(peer);
+		return peer;
+		
+	}
+	
+	public List<Peer> searchByName(String regex) {
+		Peer template = new Peer();
+		Peer[] peers = this.getGigaSpace().readMultiple(template, 100); //get 100
+		
+		List<Peer> result = new ArrayList<Peer>();
+		
+		for (Peer p : peers) {
+			if (p.getName().contains(regex)) {
+				result.add(p);
+			}
+		}
+		
+		return result;        
+         
 	}
 }

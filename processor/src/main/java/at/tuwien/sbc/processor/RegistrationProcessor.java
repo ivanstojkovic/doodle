@@ -23,15 +23,10 @@ public class RegistrationProcessor {
             return this.register(peer);
         }
         
-        return this.login(peer);
+        return null;
         
     }
     
-    private Peer login(Peer peer) {
-        System.out.println("LOGGING: " + peer.toString());
-        return null;
-    }
-
     private Peer register(Peer peer) {
         if (this.registered.contains(peer)) {
             System.out.println("Peer found");

@@ -35,6 +35,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
 
     private JTabbedPane tbPnl;
     private JPanel pnlOverview;
+    private SearchPanel pnlSearch;
     private JLabel lblGreet;
     private JPanel pnlGreet;
     private JMenuItem itmLogout;
@@ -74,12 +75,18 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
             	pnlGreet = new JPanel();
             	getContentPane().add(pnlGreet, BorderLayout.NORTH);
             	pnlGreet.setLayout(null);
-            	pnlGreet.setPreferredSize(new java.awt.Dimension(725, 32));
+            	pnlGreet.setPreferredSize(new java.awt.Dimension(725, 40));
             	{
             		lblGreet = new JLabel();
             		pnlGreet.add(lblGreet);
             		lblGreet.setText("You are currently not logged in");
-            		lblGreet.setBounds(463, 12, 244, 13);
+            		lblGreet.setBounds(4, 6, 223, 15);
+            	}
+            	{
+            		pnlSearch = new SearchPanel();
+            		pnlGreet.add(pnlSearch);
+            		pnlSearch.setBounds(427, 1, 298, 33);
+            		pnlSearch.getTxtSearch().setText("peer name");
             	}
             }
             {
@@ -134,7 +141,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
             }
             {
             	this.tabs = new TabbedPanel();
-            	this.tabs.enableTab(0, false);
+            	this.tabs.enableTab(-1, false);
                 getContentPane().add(this.tabs, BorderLayout.CENTER);
                 tabs.setPreferredSize(new java.awt.Dimension(725, 357));
             }
@@ -193,7 +200,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
 	    } else {
 	    	this.itmLogout.setEnabled(false);
 	    	this.itmLogReg.setEnabled(true);
-	    	this.tabs.enableTab(0, false);
+	    	this.tabs.enableTab(-1, false);
 	    	this.lblGreet.setText("You are currently not logged in!");
 	    }
 	    

@@ -40,7 +40,6 @@
     <!--
         The data processor bean
     -->
-    <bean id="dataProcessor" class="at.tuwien.sbc.processor.Processor"/>
     <bean id="regProcessor" class="at.tuwien.sbc.processor.RegistrationProcessor"/>
 
     <!--
