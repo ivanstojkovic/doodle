@@ -8,6 +8,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
 import at.tuwien.sbc.feeder.gui.LoginFrame;
+import at.tuwien.sbc.feeder.gui.MainFrame;
 
 public class Feeder implements InitializingBean, DisposableBean {
     
@@ -18,16 +19,16 @@ public class Feeder implements InitializingBean, DisposableBean {
     public Feeder() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                LoginFrame inst = new LoginFrame();
-                inst.setLocationRelativeTo(null);
-                inst.setVisible(true);
+                MainFrame frame = new MainFrame();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
             }
         });
     }
     
     public void afterPropertiesSet() throws Exception {
         System.out.println("afterPropertiesSet");
-        GigaSpaceReference.getInstance().setGigaSpace(this.gigaSpace);
+        ControllerReference.getInstance().setGigaSpace(this.gigaSpace);
     }
     
     public void destroy() throws Exception {

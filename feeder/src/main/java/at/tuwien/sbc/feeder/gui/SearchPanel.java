@@ -13,7 +13,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-import at.tuwien.sbc.feeder.GigaSpaceReference;
+import at.tuwien.sbc.feeder.ControllerReference;
 import at.tuwien.sbc.model.Peer;
 
 /**
@@ -108,7 +108,7 @@ public class SearchPanel extends javax.swing.JPanel implements ActionListener {
         if (e.getActionCommand().equals("search")) {
             Peer template = new Peer();
             template.setName(txtSearch.getName());
-            Peer[] peers = GigaSpaceReference.getInstance().getGigaSpace().readMultiple(template, 100); // search for 100;
+            Peer[] peers = ControllerReference.getInstance().getGigaSpace().readMultiple(template, 100); // search for 100;
             
             System.out.println(Arrays.deepToString(peers));
             if (peers == null || peers.length == 0) {

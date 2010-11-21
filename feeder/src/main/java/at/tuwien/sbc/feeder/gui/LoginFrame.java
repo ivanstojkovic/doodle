@@ -5,24 +5,19 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import org.openspaces.core.EntryAlreadyInSpaceException;
-import org.openspaces.core.GigaSpace;
 
-import at.tuwien.sbc.feeder.Feeder;
-import at.tuwien.sbc.feeder.GigaSpaceReference;
+import at.tuwien.sbc.feeder.ControllerReference;
+import at.tuwien.sbc.feeder.common.Constants;
+import at.tuwien.sbc.feeder.interfaces.LoginCallback;
 import at.tuwien.sbc.model.Peer;
 
 import com.j_spaces.core.LeaseContext;
@@ -39,209 +34,146 @@ import com.j_spaces.core.client.UpdateModifiers;
  * ANY CORPORATE OR COMMERCIAL PURPOSE.
  */
 public class LoginFrame extends javax.swing.JFrame implements ActionListener {
-    
-    private JMenuItem helpMenuItem;
-    private JMenu jMenu5;
-    private JButton registerButton;
-    private JButton LoginButton;
-    private JTextField jTextField2;
-    private JLabel jLabel2;
-    private JTextField jTextField1;
-    private JLabel jLabel1;
-    private JPanel jPanel1;
-    private JMenuItem deleteMenuItem;
-    private JSeparator jSeparator1;
-    private JMenuItem pasteMenuItem;
-    private JMenuItem copyMenuItem;
-    private JMenuItem cutMenuItem;
-    private JMenu jMenu4;
-    private JMenuItem exitMenuItem;
-    private JSeparator jSeparator2;
-    private JMenuItem closeFileMenuItem;
-    private JMenuItem saveAsMenuItem;
-    private JMenuItem saveMenuItem;
-    private JMenuItem openFileMenuItem;
-    private JMenuItem newFileMenuItem;
-    private JMenu jMenu3;
-    private JMenuBar jMenuBar1;
-    
-    
-    public LoginFrame() {
-        super();
-        initGUI();
-    }
-    
-    protected void processWindowEvent(WindowEvent evt) {
-        if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
-            this.dispose();
-            System.exit(0);
-        }
-    }
-    
-    private void initGUI() {
-        try {
-            {
-                this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-                jPanel1 = new JPanel();
-                GridLayout jPanel1Layout = new GridLayout(2, 2);
-                jPanel1Layout.setColumns(1);
-                jPanel1Layout.setHgap(5);
-                jPanel1Layout.setVgap(5);
-                jPanel1.setLayout(jPanel1Layout);
-                getContentPane().add(jPanel1, BorderLayout.NORTH);
-                jPanel1.setPreferredSize(new java.awt.Dimension(400, 83));
-                {
-                    jLabel1 = new JLabel();
-                    jPanel1.add(jLabel1);
-                    jLabel1.setText("username: ");
-                }
-                {
-                    jTextField1 = new JTextField();
-                    jPanel1.add(jTextField1);
-                }
-                {
-                    jLabel2 = new JLabel();
-                    jPanel1.add(jLabel2);
-                    jLabel2.setText("password: ");
-                }
-                {
-                    jTextField2 = new JTextField();
-                    jPanel1.add(jTextField2);
-                }
-            }
-            {
-                LoginButton = new JButton();
-                getContentPane().add(LoginButton, BorderLayout.CENTER);
-                LoginButton.setText("Login");
-                LoginButton.setActionCommand("login");
-                LoginButton.addActionListener(this);
-            }
-            {
-                registerButton = new JButton();
-                getContentPane().add(registerButton, BorderLayout.WEST);
-                registerButton.setText("register");
-                registerButton.setPreferredSize(new java.awt.Dimension(199, 49));
-                registerButton.addActionListener(this);
-                registerButton.setActionCommand("register");
-            }
-            this.setSize(400, 217);
-            {
-                jMenuBar1 = new JMenuBar();
-                setJMenuBar(jMenuBar1);
-                {
-                    jMenu3 = new JMenu();
-                    jMenuBar1.add(jMenu3);
-                    jMenu3.setText("File");
-                    {
-                        newFileMenuItem = new JMenuItem();
-                        jMenu3.add(newFileMenuItem);
-                        newFileMenuItem.setText("New");
-                    }
-                    {
-                        openFileMenuItem = new JMenuItem();
-                        jMenu3.add(openFileMenuItem);
-                        openFileMenuItem.setText("Open");
-                    }
-                    {
-                        saveMenuItem = new JMenuItem();
-                        jMenu3.add(saveMenuItem);
-                        saveMenuItem.setText("Save");
-                    }
-                    {
-                        saveAsMenuItem = new JMenuItem();
-                        jMenu3.add(saveAsMenuItem);
-                        saveAsMenuItem.setText("Save As ...");
-                    }
-                    {
-                        closeFileMenuItem = new JMenuItem();
-                        jMenu3.add(closeFileMenuItem);
-                        closeFileMenuItem.setText("Close");
-                    }
-                    {
-                        jSeparator2 = new JSeparator();
-                        jMenu3.add(jSeparator2);
-                    }
-                    {
-                        exitMenuItem = new JMenuItem();
-                        jMenu3.add(exitMenuItem);
-                        exitMenuItem.setText("Exit");
-                    }
-                }
-                {
-                    jMenu4 = new JMenu();
-                    jMenuBar1.add(jMenu4);
-                    jMenu4.setText("Edit");
-                    {
-                        cutMenuItem = new JMenuItem();
-                        jMenu4.add(cutMenuItem);
-                        cutMenuItem.setText("Cut");
-                    }
-                    {
-                        copyMenuItem = new JMenuItem();
-                        jMenu4.add(copyMenuItem);
-                        copyMenuItem.setText("Copy");
-                    }
-                    {
-                        pasteMenuItem = new JMenuItem();
-                        jMenu4.add(pasteMenuItem);
-                        pasteMenuItem.setText("Paste");
-                    }
-                    {
-                        jSeparator1 = new JSeparator();
-                        jMenu4.add(jSeparator1);
-                    }
-                    {
-                        deleteMenuItem = new JMenuItem();
-                        jMenu4.add(deleteMenuItem);
-                        deleteMenuItem.setText("Delete");
-                    }
-                }
-                {
-                    jMenu5 = new JMenu();
-                    jMenuBar1.add(jMenu5);
-                    jMenu5.setText("Help");
-                    {
-                        helpMenuItem = new JMenuItem();
-                        jMenu5.add(helpMenuItem);
-                        helpMenuItem.setText("Help");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public void actionPerformed(ActionEvent arg0) {
-        if (arg0.getActionCommand().equals("register")) {
 
-            
-            Peer newPeer = new Peer(jTextField1.getText(), jTextField2.getText(), "register");
-            try {
-                LeaseContext<Peer> ctx = GigaSpaceReference.getInstance().getGigaSpace().write(newPeer, 1000 * 60 * 60, 5000, UpdateModifiers.WRITE_ONLY);
-                Peer reg = ctx.getObject();
-                // success
-                if (reg == null) {
-                    JOptionPane.showMessageDialog(this, "Congrats! You are successfully registered");
-                    // TODO switch panel, show...
-                }
-            } catch (EntryAlreadyInSpaceException e) {
-                JOptionPane.showMessageDialog(this, "This username is already taken!");
-            }
-        }
-        
-        if (arg0.getActionCommand().equals("login")) {
-            Peer log = new Peer(jTextField1.getText(), jTextField2.getText(), null);
-            Peer p = GigaSpaceReference.getInstance().getGigaSpace().readIfExists(log);
-            if (p == null) {
-                // NICHT EINGELOGGT => nicht registriert
-                JOptionPane.showMessageDialog(this, "You are not registered!");
-            } else {
-                this.setVisible(false);
-                MainFrame frame = new MainFrame();
-                frame.setVisible(true);
-            }
-        }
-        
-    }
+	private JButton registerButton;
+	private JButton LoginButton;
+	private JPasswordField txtPass;
+	private JLabel jLabel2;
+	private JButton jButton1;
+	private JPanel pnlButtons;
+	private JTextField txtUser;
+	private JLabel jLabel1;
+	private JPanel jPanel1;
+
+	private LoginCallback call;
+
+	public LoginFrame() {
+		super();
+		initGUI();
+	}
+
+	private void initGUI() {
+		try {
+			{
+				jPanel1 = new JPanel();
+				GridLayout jPanel1Layout = new GridLayout(2, 2);
+				jPanel1Layout.setColumns(1);
+				jPanel1Layout.setHgap(5);
+				jPanel1Layout.setVgap(5);
+				jPanel1.setLayout(jPanel1Layout);
+				getContentPane().add(jPanel1, BorderLayout.NORTH);
+				jPanel1.setPreferredSize(new java.awt.Dimension(384, 53));
+				{
+					jLabel1 = new JLabel();
+					jPanel1.add(jLabel1);
+					jLabel1.setText("username: ");
+				}
+				{
+					txtUser = new JTextField();
+					jPanel1.add(txtUser);
+					txtUser.setToolTipText("Type in your username");
+				}
+				{
+					jLabel2 = new JLabel();
+					jPanel1.add(jLabel2);
+					jLabel2.setText("password: ");
+				}
+				{
+					txtPass = new JPasswordField();
+					jPanel1.add(txtPass);
+					txtPass.setToolTipText("Type in your password");
+				}
+			}
+			{
+				pnlButtons = new JPanel();
+				getContentPane().add(pnlButtons, BorderLayout.SOUTH);
+				{
+					LoginButton = new JButton();
+					pnlButtons.add(LoginButton);
+					LoginButton.setText("Login");
+					LoginButton.setActionCommand(Constants.CMD_BTN_LOGIN);
+					LoginButton.addActionListener(this);
+				}
+				{
+					registerButton = new JButton();
+					pnlButtons.add(registerButton);
+					registerButton.setText("Register");
+					registerButton.setPreferredSize(new java.awt.Dimension(102, 25));
+					registerButton.addActionListener(this);
+					registerButton.setActionCommand(Constants.CMD_BTN_REGISTER);
+				}
+				{
+					jButton1 = new JButton();
+					pnlButtons.add(jButton1);
+					jButton1.setText("Cancel");
+					jButton1.setActionCommand(Constants.CMD_BTN_CANCEL);
+					jButton1.addActionListener(this);
+				}
+			}
+			this.setSize(300, 130);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	protected void processWindowEvent(WindowEvent evt) {
+		if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
+			this.call.callback(false);
+			this.dispose();
+		}
+	}
+
+	public void actionPerformed(ActionEvent evt) {
+		if (evt.getActionCommand().equals(Constants.CMD_BTN_REGISTER)) {
+
+			if (txtUser.getText().equals("") || String.valueOf(txtPass.getPassword()).equals("")) {
+				JOptionPane.showMessageDialog(this, "Username and/or password are empty");
+			} else {
+				
+				try {
+					Peer reg = ControllerReference.getInstance().register(txtUser.getText(), String.valueOf(txtPass.getPassword()));
+					// success
+					if (reg == null) {
+						JOptionPane.showMessageDialog(this, "Congrats! You are successfully registered");
+					}
+				} catch (EntryAlreadyInSpaceException e) {
+					JOptionPane.showMessageDialog(this, "This username is already taken!");
+				}
+			}
+		}
+
+		if (evt.getActionCommand().equals(Constants.CMD_BTN_LOGIN)) {
+			Peer p = ControllerReference.getInstance().login(txtUser.getText(), String.valueOf(txtPass.getPassword()));
+			
+			if (p == null) {
+				// NICHT EINGELOGGT => nicht registriert
+				JOptionPane.showMessageDialog(this, "You are not registered! Please register");
+			} else {
+				if (this.call != null) {
+					this.call.callback(true);
+				} else {
+					System.err.println("An error occurred, no callback defined");
+				}
+
+				this.setVisible(false);
+				this.dispose();
+			}
+		}
+		
+		if (evt.getActionCommand().equals(Constants.CMD_BTN_CANCEL)) {
+			this.call.callback(false);
+			this.setVisible(false);
+			this.setTitle("Doodle - Login/Register");
+			this.dispose();
+		}
+
+	}
+
+	public void setCall(LoginCallback call) {
+		this.call = call;
+	}
+
+	public LoginCallback getCall() {
+		return call;
+	}
 }

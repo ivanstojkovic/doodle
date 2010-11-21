@@ -1,13 +1,22 @@
 package at.tuwien.sbc.feeder.gui;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-
 import javax.swing.WindowConstants;
-import javax.swing.SwingUtilities;
+
+import at.tuwien.sbc.feeder.ControllerReference;
+import at.tuwien.sbc.feeder.common.Constants;
+import at.tuwien.sbc.feeder.interfaces.LoginCallback;
+import at.tuwien.sbc.model.Peer;
+
 
 
 /**
@@ -22,28 +31,114 @@ import javax.swing.SwingUtilities;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
-public class MainFrame extends javax.swing.JFrame {
+public class MainFrame extends javax.swing.JFrame implements ActionListener, LoginCallback {
+
     private JTabbedPane tbPnl;
     private JPanel pnlOverview;
+    private JLabel lblGreet;
+    private JPanel pnlGreet;
+    private JMenuItem itmLogout;
+    private JMenuItem itmHelp;
+    private JMenuItem itmAbout;
+    private JMenuItem itmQuit;
+    private JMenuItem itmLogReg;
+    private JMenu jMenu2;
+    private JMenu jMenu1;
+    private JMenuBar menuBar;
     private JPanel pnlMain;
     private JLabel lbl2;
     private JLabel lbl;
     private JPanel pnlOrg;
-
+    
+    private TabbedPanel tabs;
+    
     public MainFrame() {
         super();
         initGUI();
     }
     
+    protected void processWindowEvent(WindowEvent evt) {
+        if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
+            this.dispose();
+            System.exit(0);
+        }
+    }
+    
     private void initGUI() {
         try {
             BorderLayout thisLayout = new BorderLayout();
-            setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+//            this.setDefaultCloseOperation(EXIT_ON_CLOSE);
             getContentPane().setLayout(thisLayout);
+            this.setTitle("Doodle");
             {
-                getContentPane().add(new TabbedPanel(), BorderLayout.CENTER);
+            	pnlGreet = new JPanel();
+            	getContentPane().add(pnlGreet, BorderLayout.NORTH);
+            	pnlGreet.setLayout(null);
+            	pnlGreet.setPreferredSize(new java.awt.Dimension(725, 32));
+            	{
+            		lblGreet = new JLabel();
+            		pnlGreet.add(lblGreet);
+            		lblGreet.setText("You are currently not logged in");
+            		lblGreet.setBounds(463, 12, 244, 13);
+            	}
             }
- 
+            {
+            	menuBar = new JMenuBar();
+            	setJMenuBar(menuBar);
+            	{
+            		jMenu1 = new JMenu();
+            		menuBar.add(jMenu1);
+            		jMenu1.setText("Doodle");
+            		{
+            			itmLogReg = new JMenuItem();
+            			jMenu1.add(itmLogReg);
+            			itmLogReg.setText("Login/Register");
+            			itmLogReg.setActionCommand(Constants.CMD_BTN_LOGIN);
+            			itmLogReg.addActionListener(this);
+            		}
+            		{
+            			itmLogout = new JMenuItem();
+            			jMenu1.add(itmLogout);
+            			itmLogout.setText("Logout");
+            			itmLogout.setEnabled(false);
+            			itmLogout.setActionCommand(Constants.CMD_MENU_LOGOUT);
+            			itmLogout.addActionListener(this);
+            		}
+            		{
+            			itmQuit = new JMenuItem();
+            			jMenu1.add(itmQuit);
+            			itmQuit.setText("Quit");
+            			itmQuit.setActionCommand(Constants.CMD_MENU_QUIT);
+            			itmQuit.addActionListener(this);
+            		}
+            	}
+            	{
+            		jMenu2 = new JMenu();
+            		menuBar.add(jMenu2);
+            		jMenu2.setText("Help");
+            		{
+            			itmAbout = new JMenuItem();
+            			jMenu2.add(itmAbout);
+            			itmAbout.setText("About");
+            			itmAbout.setActionCommand(Constants.CMD_MENU_ABOUT);
+            			itmAbout.addActionListener(this);
+            		}
+            		{
+            			itmHelp = new JMenuItem();
+            			jMenu2.add(itmHelp);
+            			itmHelp.setText("Help");
+            			itmHelp.setActionCommand(Constants.CMD_MENU_HELP);
+            			itmHelp.addActionListener(this);
+            		}
+            	}
+            }
+            {
+            	this.tabs = new TabbedPanel();
+            	this.tabs.enableTab(0, false);
+                getContentPane().add(this.tabs, BorderLayout.CENTER);
+                tabs.setPreferredSize(new java.awt.Dimension(725, 357));
+            }
+
             pack();
             this.setSize(735, 432);
         } catch (Exception e) {
@@ -51,5 +146,59 @@ public class MainFrame extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
+
+	public void actionPerformed(ActionEvent evt) {
+		String cmd = evt.getActionCommand();
+		
+		if (cmd.equals(Constants.CMD_BTN_LOGIN)) {
+			this.itmLogReg.setEnabled(false);
+			LoginFrame frame = new LoginFrame();
+			frame.setVisible(true);
+			frame.setLocationRelativeTo(this);
+			frame.setCall(this);
+		}
+		
+		if (cmd.equals(Constants.CMD_MENU_LOGOUT)) {
+			this.callback(false);
+		}
+		
+		if (cmd.equals(Constants.CMD_MENU_QUIT)) {
+			this.dispose();
+			System.exit(0);
+		}
+		
+		if (cmd.equals(Constants.CMD_MENU_ABOUT)) {
+			
+		}
+		
+		if (cmd.equals(Constants.CMD_MENU_HELP)) {
+			
+		}
+    }
+
+	public void callback(boolean loggedIn) {
+	    if (loggedIn) {
+	    	this.itmLogout.setEnabled(true);
+	    	this.itmLogReg.setEnabled(false);
+	    	this.tabs.enableTab(0, true);
+	    	
+	    	Peer user = ControllerReference.getInstance().getUser();
+	    	if (user == null) {
+	    		System.err.println("An error must have occurred");
+	    		this.lblGreet.setText("Welcome");
+	    	} else {
+	    		this.lblGreet.setText("Welcome " + user.getName());
+	    	}
+	    	
+	    } else {
+	    	this.itmLogout.setEnabled(false);
+	    	this.itmLogReg.setEnabled(true);
+	    	this.tabs.enableTab(0, false);
+	    	this.lblGreet.setText("You are currently not logged in!");
+	    }
+	    
+    }
+	
+	
 
 }
