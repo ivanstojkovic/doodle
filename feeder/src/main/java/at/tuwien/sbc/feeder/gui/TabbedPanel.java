@@ -18,12 +18,13 @@ public class TabbedPanel extends JPanel {
 		super(new GridLayout(1, 1));
 
 		tabs = new JTabbedPane();
-		ImageIcon icon = createImageIcon("images/middle.gif");
+		ImageIcon icon = createImageIcon("images/organize.jpg");
 
 		JComponent panel1 = makeTextPanel("Panel #1");
 		this.tabs.addTab("Organization", icon, panel1, "Does nothing");
 		this.tabs.setMnemonicAt(0, KeyEvent.VK_1);
 
+		icon = createImageIcon("images/overview.jpg");
 		JComponent panel2 = makeTextPanel("Panel #2");
 		this.tabs.addTab("Overview", icon, panel2, "Does twice as much nothing");
 		this.tabs.setMnemonicAt(1, KeyEvent.VK_2);
@@ -55,13 +56,7 @@ public class TabbedPanel extends JPanel {
 
 	/** Returns an ImageIcon, or null if the path was invalid. */
 	protected static ImageIcon createImageIcon(String path) {
-		java.net.URL imgURL = TabbedPanel.class.getResource(path);
-		if (imgURL != null) {
-			return new ImageIcon(imgURL);
-		} else {
-			System.err.println("Couldn't find file: " + path);
-			return null;
-		}
+			return new ImageIcon(ClassLoader.getSystemResource(path));
 	}
 
 }

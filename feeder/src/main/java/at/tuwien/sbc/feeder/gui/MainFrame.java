@@ -4,13 +4,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
 
 import at.tuwien.sbc.feeder.ControllerReference;
 import at.tuwien.sbc.feeder.common.Constants;
@@ -71,6 +73,8 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
 //            this.setDefaultCloseOperation(EXIT_ON_CLOSE);
             getContentPane().setLayout(thisLayout);
             this.setTitle("Doodle");
+            ImageIcon cal = new ImageIcon(ClassLoader.getSystemResource("images/cal.png"));
+            this.setIconImage(cal.getImage());
             {
             	pnlGreet = new JPanel();
             	getContentPane().add(pnlGreet, BorderLayout.NORTH);
@@ -175,11 +179,11 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
 		}
 		
 		if (cmd.equals(Constants.CMD_MENU_ABOUT)) {
-			
+			JOptionPane.showMessageDialog(this, "Doodle - by Ivan Stojkovic and Petar Petrov");
 		}
 		
 		if (cmd.equals(Constants.CMD_MENU_HELP)) {
-			
+			JOptionPane.showMessageDialog(this, "No help! Abandon ship...");
 		}
     }
 
