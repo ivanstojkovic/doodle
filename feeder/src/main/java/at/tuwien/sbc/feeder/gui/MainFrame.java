@@ -191,7 +191,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
 	    if (loggedIn) {
 	    	this.itmLogout.setEnabled(true);
 	    	this.itmLogReg.setEnabled(false);
-	    	this.tabs.enableTab(0, true);
+	    	this.tabs.enableTab(-1, true);
 	    	
 	    	Peer user = ControllerReference.getInstance().getUser();
 	    	if (user == null) {

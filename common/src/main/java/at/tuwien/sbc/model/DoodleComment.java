@@ -45,6 +45,10 @@ public class DoodleComment {
     }
 	
 	//do we need relationship back to the event?
+    
+    public String toString() {
+        return "[Comment: " + this.comment + " author: " + this.author.getName() + "]";
+    }
 	
 	
 }
