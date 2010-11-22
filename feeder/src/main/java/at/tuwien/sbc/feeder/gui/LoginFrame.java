@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import javax.swing.BorderFactory;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -62,7 +63,8 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener {
                 jPanel1Layout.setVgap(5);
                 jPanel1.setLayout(jPanel1Layout);
                 getContentPane().add(jPanel1, BorderLayout.NORTH);
-                jPanel1.setPreferredSize(new java.awt.Dimension(384, 53));
+                jPanel1.setPreferredSize(new java.awt.Dimension(288, 68));
+                jPanel1.setBorder(BorderFactory.createTitledBorder("Credentials"));
                 {
                     jLabel1 = new JLabel();
                     jPanel1.add(jLabel1);
@@ -110,7 +112,7 @@ public class LoginFrame extends javax.swing.JFrame implements ActionListener {
                     jButton1.addActionListener(this);
                 }
             }
-            this.setSize(300, 130);
+            this.setSize(281, 140);
         } catch (Exception e) {
             e.printStackTrace();
         }
