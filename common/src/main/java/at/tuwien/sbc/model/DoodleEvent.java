@@ -2,6 +2,10 @@ package at.tuwien.sbc.model;
 
 import java.util.List;
 
+import com.gigaspaces.annotation.pojo.SpaceClass;
+import com.gigaspaces.annotation.pojo.SpaceId;
+
+@SpaceClass
 public class DoodleEvent {
     
     private long id;
@@ -20,7 +24,8 @@ public class DoodleEvent {
     private List<Peer> participants;
     
     private List<DoodleComment> comments;
-    
+
+    @SpaceId(autoGenerate=true)
     public long getId() {
         return id;
     }
