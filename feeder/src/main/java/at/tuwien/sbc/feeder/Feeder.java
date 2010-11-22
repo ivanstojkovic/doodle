@@ -7,8 +7,8 @@ import org.openspaces.core.context.GigaSpaceContext;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import at.tuwien.sbc.feeder.gui.LoginFrame;
-import at.tuwien.sbc.feeder.gui.MainFrame;
+import at.tuwien.sbc.feeder.gui.frames.LoginFrame;
+import at.tuwien.sbc.feeder.gui.frames.MainFrame;
 
 public class Feeder implements InitializingBean, DisposableBean {
     
