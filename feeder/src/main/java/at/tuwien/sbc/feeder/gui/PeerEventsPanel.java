@@ -13,7 +13,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import at.tuwien.sbc.feeder.ControllerReference;
 import at.tuwien.sbc.feeder.common.Constants;
+import at.tuwien.sbc.model.DoodleEvent;
+import at.tuwien.sbc.model.Peer;
 
 public class PeerEventsPanel extends javax.swing.JPanel implements ActionListener {
     private JPanel pnlSelection;
@@ -75,14 +78,43 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
             }
         }
     }
-
+    
     private String retrieveParticipantEvents() {
+        StringBuffer buf = new StringBuffer(42);
+        //TODO be careful what happens if a new event comes in the space
+        // for this user.. the field in the controller has to be updated..
+        Peer you = ControllerReference.getInstance().getUser();
         
-        return "participatns";
+        if (you.getEvents().isEmpty()) {
+            buf.append("You are not participating in any event");
+        } else {
+            buf.append("Participation Events:");
+            for (DoodleEvent e : you.getEvents()) {
+                buf.append("\n");
+                buf.append(e.toString());
+            }
+        }
+        
+        return buf.toString();
     }
-
+    
     private String retrieveOrganizedEvents() {
-        return "organized";
+        StringBuffer buf = new StringBuffer(42);
+        //TODO be careful what happens if a new event comes in the space
+        // for this user.. the field in the controller has to be updated..
+        Peer you = ControllerReference.getInstance().getUser();
+        
+        if (you.getOrganized().isEmpty()) {
+            buf.append("You have not organized any event");
+        } else {
+            buf.append("Participation Events:");
+            for (DoodleEvent e : you.getOrganized()) {
+                buf.append("\n");
+                buf.append(e.toString());
+            }
+        }
+        
+        return buf.toString();
     }
     
 }

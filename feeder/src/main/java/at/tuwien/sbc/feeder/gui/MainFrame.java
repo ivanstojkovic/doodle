@@ -202,6 +202,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
 	    	}
 	    	
 	    } else {
+	        ControllerReference.getInstance().logout();
 	    	this.itmLogout.setEnabled(false);
 	    	this.itmLogReg.setEnabled(true);
 	    	this.tabs.enableTab(-1, false);

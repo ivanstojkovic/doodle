@@ -1,5 +1,6 @@
 package at.tuwien.sbc.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gigaspaces.annotation.pojo.SpaceClass;
@@ -29,6 +30,8 @@ public class Peer {
         this.name = name;
         this.password = password;
         this.action = action;
+        this.organized = new ArrayList<DoodleEvent>();
+        this.events = new ArrayList<DoodleEvent>();
     }
     
     @SpaceId(autoGenerate=false)

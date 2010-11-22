@@ -90,4 +90,10 @@ public class ControllerReference {
 		return result;        
          
 	}
+
+    public void logout() {
+        //is there anything els to do?
+        this.setUser(null);
+        
+    }
 }
