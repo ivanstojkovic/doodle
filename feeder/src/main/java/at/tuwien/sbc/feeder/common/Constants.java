@@ -23,6 +23,8 @@ public final class Constants {
     public static final String CMD_BTN_SEARCH = "application.search";
     
     public static final String CMD_BTN_SHOW = "overview.show";
+
+    public static final String CMD_BTN_CREATE = "organization.create";
     
     private Constants() {
         

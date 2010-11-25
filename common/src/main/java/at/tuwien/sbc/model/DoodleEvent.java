@@ -1,14 +1,18 @@
 package at.tuwien.sbc.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
+import com.gigaspaces.annotation.pojo.SpaceProperty;
 
 @SpaceClass
-public class DoodleEvent {
+public class DoodleEvent implements Serializable {
     
-    private long id;
+    private String id;
     
     private String name;
     
@@ -24,13 +28,17 @@ public class DoodleEvent {
     private List<Peer> participants;
     
     private List<DoodleComment> comments;
+    
+    public DoodleEvent() {
+        this.schedules = new ArrayList<DoodleSchedule>();
+    }
 
     @SpaceId(autoGenerate=true)
-    public long getId() {
+    public String getId() {
         return id;
     }
     
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
     
@@ -83,6 +91,6 @@ public class DoodleEvent {
     }
    
     public String toString() {
-        return "[Event: " + this.name + "]";
+        return "[Event: " + this.name + "]" + Arrays.deepToString(schedules.toArray());
     }
 }

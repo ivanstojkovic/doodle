@@ -1,38 +1,53 @@
 package at.tuwien.sbc.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
-public class DoodleSchedule {
+import com.gigaspaces.annotation.pojo.SpaceClass;
+import com.gigaspaces.annotation.pojo.SpaceId;
 
-	//do we need an id here?
-	private long id;
-	
-	private Date start;
-	
-	private Date end;
-
-	public long getId() {
-    	return id;
+@SpaceClass
+public class DoodleSchedule implements Serializable {
+    
+    private String id;
+    
+    private int day;
+    
+    private List<Integer> hours;
+    
+    public DoodleSchedule() {
+        this.hours = new ArrayList<Integer>();
     }
-
-	public void setId(long id) {
-    	this.id = id;
+    
+    @SpaceId(autoGenerate=true)
+    public String getId() {
+        return id;
     }
-
-	public Date getStart() {
-    	return start;
+    
+    public void setId(String id) {
+        this.id = id;
     }
-
-	public void setStart(Date start) {
-    	this.start = start;
+    
+    public void setHours(List<Integer> hours) {
+        this.hours = hours;
     }
-
-	public Date getEnd() {
-    	return end;
+    
+    public List<Integer> getHours() {
+        return hours;
     }
-
-	public void setEnd(Date end) {
-    	this.end = end;
+    
+    public void setDay(int day) {
+        this.day = day;
     }
-	
+    
+    public int getDay() {
+        return day;
+    }
+    
+    public String toString() {
+        return "D: " + day + " h: " + Arrays.deepToString(hours.toArray());
+    }
 }

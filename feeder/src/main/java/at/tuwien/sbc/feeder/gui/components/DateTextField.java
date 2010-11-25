@@ -6,6 +6,7 @@ import java.awt.event.FocusListener;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JTextField;
 
@@ -13,7 +14,7 @@ public class DateTextField extends JTextField implements FocusListener {
     
     private SimpleDateFormat df;
     
-    private String pattern = "HH:mm - dd.MM.yyyy";
+    private String pattern = "HH.dd";
     
     public DateTextField() {
         super();
@@ -65,7 +66,7 @@ public class DateTextField extends JTextField implements FocusListener {
         try {
             this.df.parse(input);
             this.setBackground(Color.WHITE);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             this.setBackground(Color.RED);
         }
     }
@@ -76,6 +77,10 @@ public class DateTextField extends JTextField implements FocusListener {
 
     public SimpleDateFormat getDateFormat() {
         return df;
+    }
+    
+    public Date getDate() throws ParseException {
+        return this.df.parse(this.getText());
     }
     
     

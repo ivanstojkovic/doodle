@@ -65,6 +65,7 @@ public class ControllerReference {
         Peer log = new Peer(user, pass, null);
         Peer peer = this.getGigaSpace().readIfExists(log);
         if (peer != null) {
+            peer.setAction("login");
             this.getGigaSpace().write(peer);
         } else {
             System.out.println("Peer is null");
@@ -96,6 +97,10 @@ public class ControllerReference {
         // is there anything els to do?
         this.setUser(null);
         
+    }
+    
+    public void updateObject(Object o) {
+        this.gigaSpace.write(o, 1000 * 60 * 60, 5000, UpdateModifiers.UPDATE_ONLY);
     }
     
     public void createEvent(DoodleEvent event) {

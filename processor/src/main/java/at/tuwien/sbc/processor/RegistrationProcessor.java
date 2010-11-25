@@ -11,7 +11,9 @@ import org.openspaces.events.polling.Polling;
 
 import at.tuwien.sbc.model.Peer;
 
-@EventDriven @Polling @TransactionalEvent
+@EventDriven
+@Polling
+@TransactionalEvent
 public class RegistrationProcessor {
     
     private List<Peer> registered;
@@ -31,12 +33,7 @@ public class RegistrationProcessor {
     @SpaceDataEvent
     public Peer processCredentialsEvent(Peer peer) {
         System.out.println(peer.toString());
-        
-        if (peer.getAction().equals("register")) {
-            return this.register(peer);
-        }
-        
-        return null;
+        return this.register(peer);
         
     }
     
@@ -45,10 +42,10 @@ public class RegistrationProcessor {
             System.out.println("Peer found");
             return null;
         } else {
-          System.out.println("Registering new peer");
-          peer.setAction(null);
-          this.registered.add(peer);
-          return peer;
+            System.out.println("Registering new peer");
+            peer.setAction(null);
+            this.registered.add(peer);
+            return peer;
         }
     }
- }
+}

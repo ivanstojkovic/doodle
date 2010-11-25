@@ -47,17 +47,33 @@ public class SingleSchedulePanel extends javax.swing.JPanel {
                 lblEnd.setText("End:");
             }
             {
-                txtStart = new DateTextField();
-                this.add(txtStart);
-                txtStart.setPreferredSize(new java.awt.Dimension(33, 36));
+                setTxtStart(new DateTextField());
+                this.add(getTxtStart());
+                getTxtStart().setPreferredSize(new java.awt.Dimension(33, 36));
             }
             {
-                txtEnd = new DateTextField();
-                this.add(txtEnd);
+                setTxtEnd(new DateTextField());
+                this.add(getTxtEnd());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setTxtEnd(DateTextField txtEnd) {
+        this.txtEnd = txtEnd;
+    }
+
+    public DateTextField getTxtEnd() {
+        return txtEnd;
+    }
+
+    public void setTxtStart(DateTextField txtStart) {
+        this.txtStart = txtStart;
+    }
+
+    public DateTextField getTxtStart() {
+        return txtStart;
     }
     
 }
