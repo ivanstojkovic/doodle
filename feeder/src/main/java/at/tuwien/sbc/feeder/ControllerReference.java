@@ -55,7 +55,8 @@ public class ControllerReference {
     
     public Peer register(String user, String pass) {
         Peer newPeer = new Peer(user, pass, "register");
-        LeaseContext<Peer> ctx = this.getGigaSpace().write(newPeer, 1000 * 60 * 60, 5000, UpdateModifiers.WRITE_ONLY);
+        LeaseContext<Peer> ctx = this.getGigaSpace().write(newPeer, 1000 * 60 * 60 * 24, 5000,
+            UpdateModifiers.WRITE_ONLY);
         
         return ctx.getObject();
         
@@ -63,6 +64,8 @@ public class ControllerReference {
     
     public Peer login(String user, String pass) {
         Peer log = new Peer(user, pass, null);
+        log.setOrganized(null);
+        log.setEvents(null);
         Peer peer = this.getGigaSpace().readIfExists(log);
         if (peer != null) {
             peer.setAction("login");
@@ -79,7 +82,7 @@ public class ControllerReference {
     public List<Peer> searchByName(String regex) {
         Peer template = new Peer();
         Peer[] peers = this.getGigaSpace().readMultiple(template, 100); // get
-                                                                        // 100
+        // 100
         
         List<Peer> result = new ArrayList<Peer>();
         
@@ -94,9 +97,18 @@ public class ControllerReference {
     }
     
     public void logout() {
-        // is there anything els to do?
-        this.setUser(null);
+        if (this.user != null) {
+            this.user.setAction("");
+            this.updateObject(this.user);
+            this.setUser(null);
+        }
         
+    }
+    
+    public Peer[] getAllPeers() {
+        Peer template = new Peer();
+        
+        return this.gigaSpace.readMultiple(template, Integer.MAX_VALUE);
     }
     
     public void updateObject(Object o) {
@@ -105,6 +117,6 @@ public class ControllerReference {
     
     public void createEvent(DoodleEvent event) {
         this.getGigaSpace().write(event, 1000 * 60 * 60, 5000, UpdateModifiers.WRITE_ONLY);
-        //will throw an exception if the event already exists
+        // will throw an exception if the event already exists
     }
 }

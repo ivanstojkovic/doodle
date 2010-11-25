@@ -1,5 +1,6 @@
 package at.tuwien.sbc.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,13 +8,13 @@ import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
 
 @SpaceClass
-public class Peer {
+public class Peer implements Serializable {
     
     private String name;
     
     private String password;
     
-    private PeerType type;
+   // private PeerType type;
     
     private List<DoodleEvent> organized;
     
@@ -43,13 +44,13 @@ public class Peer {
         this.name = name;
     }
     
-    public PeerType getType() {
-        return type;
-    }
-    
-    public void setType(PeerType type) {
-        this.type = type;
-    }
+//    public PeerType getType() {
+//        return type;
+//    }
+//    
+//    public void setType(PeerType type) {
+//        this.type = type;
+//    }
     
     public List<DoodleEvent> getOrganized() {
         return organized;

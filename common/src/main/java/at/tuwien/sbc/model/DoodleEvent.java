@@ -31,6 +31,9 @@ public class DoodleEvent implements Serializable {
     
     public DoodleEvent() {
         this.schedules = new ArrayList<DoodleSchedule>();
+        this.comments = new ArrayList<DoodleComment>();
+        this.invitations = new ArrayList<Peer>();
+        this.participants = new ArrayList<Peer>();
     }
 
     @SpaceId(autoGenerate=true)
@@ -91,6 +94,12 @@ public class DoodleEvent implements Serializable {
     }
    
     public String toString() {
-        return "[Event: " + this.name + "]" + Arrays.deepToString(schedules.toArray());
+        return "[Event: " + this.name + "\n" + "invites: " + Arrays.deepToString(this.invitations.toArray()) + "\nSchedules: " + Arrays.deepToString(schedules.toArray()) + "]";
+    }
+
+    public void addInvite(Peer peer) {
+        if (!this.invitations.contains(peer)) {
+            this.invitations.add(peer);
+        }
     }
 }

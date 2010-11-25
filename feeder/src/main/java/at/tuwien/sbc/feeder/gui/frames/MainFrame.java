@@ -1,6 +1,7 @@
 package at.tuwien.sbc.feeder.gui.frames;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -15,9 +16,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 
 import at.tuwien.sbc.feeder.ControllerReference;
 import at.tuwien.sbc.feeder.common.Constants;
+import at.tuwien.sbc.feeder.gui.panels.EventOrganizationPanel;
 import at.tuwien.sbc.feeder.gui.panels.SearchPanel;
 import at.tuwien.sbc.feeder.gui.panels.TabbedPanel;
 import at.tuwien.sbc.feeder.interfaces.LoginCallback;
@@ -62,6 +65,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
     
     protected void processWindowEvent(WindowEvent evt) {
         if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
+            this.callback(false);
             this.dispose();
             System.exit(0);
         }
@@ -203,6 +207,9 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
             } else {
                 this.lblGreet.setText("Welcome " + user.getName());
             }
+
+            EventOrganizationPanel tab = (EventOrganizationPanel) this.tabs.getTabs().getComponentAt(0);
+            tab.refresh();
             
         } else {
             ControllerReference.getInstance().logout();

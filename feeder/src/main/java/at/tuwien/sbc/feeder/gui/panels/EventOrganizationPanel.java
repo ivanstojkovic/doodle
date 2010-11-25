@@ -3,6 +3,8 @@ package at.tuwien.sbc.feeder.gui.panels;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -10,6 +12,7 @@ import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -29,22 +32,27 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
- * Builder, which is free for non-commercial use. If Jigloo is being used
- * commercially (ie, by a corporation, company or business for any purpose
- * whatever) then you should purchase a license for each developer using Jigloo.
- * Please visit www.cloudgarden.com for details. Use of Jigloo implies
- * acceptance of these licensing terms. A COMMERCIAL LICENSE HAS NOT BEEN
- * PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR
- * ANY CORPORATE OR COMMERCIAL PURPOSE.
+ * This code was edited or generated using CloudGarden's Jigloo
+ * SWT/Swing GUI Builder, which is free for non-commercial
+ * use. If Jigloo is being used commercially (ie, by a corporation,
+ * company or business for any purpose whatever) then you
+ * should purchase a license for each developer using Jigloo.
+ * Please visit www.cloudgarden.com for details.
+ * Use of Jigloo implies acceptance of these licensing terms.
+ * A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
+ * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
+ * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
  */
-public class EventOrganizationPanel extends javax.swing.JPanel implements ActionListener {
+/**
+ * TODO add refresh button for participants.
+ */
+public class EventOrganizationPanel extends javax.swing.JPanel implements ActionListener, MouseListener {
     private JPanel pnlNorth;
     private JScrollPane scrlInvites;
     private JPanel jPanel1;
     private SingleSchedulePanel pnlSchedule;
     private JList lstInvites;
-    private JList ListParicipants;
+    private JList lstParicipants;
     private JScrollPane scrlParticipants;
     private JLabel lblParticipants;
     private JLabel lblInvites;
@@ -76,21 +84,6 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 }
             }
             {
-                pnlNorth = new JPanel();
-                FormLayout pnlNorthLayout = new FormLayout("max(p;5dlu), max(p;5dlu), max(p;5dlu), max(p;5dlu)",
-                    "max(p;5dlu), max(p;5dlu), max(p;5dlu), max(p;5dlu)");
-                pnlNorth.setLayout(pnlNorthLayout);
-                this.add(pnlNorth, BorderLayout.NORTH);
-                pnlNorth.setPreferredSize(new java.awt.Dimension(400, 37));
-                {
-                    ComboBoxModel cmbEventModel = new DefaultComboBoxModel(new String[] {"Item One", "Item Two"});
-                    cmbEvent = new JComboBox();
-                    pnlNorth.add(cmbEvent, new CellConstraints("2, 2, 1, 1, default, default"));
-                    cmbEvent.setModel(cmbEventModel);
-                    cmbEvent.setPreferredSize(new java.awt.Dimension(102, 27));
-                }
-            }
-            {
                 pnlPeers = new JPanel();
                 pnlPeers.setLayout(null);
                 this.add(pnlPeers, BorderLayout.EAST);
@@ -100,15 +93,17 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     lblInvites = new JLabel();
                     pnlPeers.add(lblInvites);
                     lblInvites.setText("Invitations:");
-                    lblInvites.setPreferredSize(new java.awt.Dimension(100, 15));
-                    lblInvites.setBounds(5, 20, 68, 15);
+                    lblInvites.setIcon(new ImageIcon(ClassLoader.getSystemResource("images/refresh.png")));
+                    lblInvites.setBounds(5, 20, 134, 15);
+                    lblInvites.addMouseListener(this);
                 }
                 {
                     scrlInvites = new JScrollPane();
                     pnlPeers.add(scrlInvites);
                     scrlInvites.setBounds(5, 36, 134, 77);
                     {
-                        ListModel lstInvitesModel = new DefaultComboBoxModel(new String[] {"Item One", "Item Two"});
+                        ListModel lstInvitesModel = new DefaultComboBoxModel(ControllerReference.getInstance()
+                            .getAllPeers());
                         lstInvites = new JList();
                         scrlInvites.setViewportView(lstInvites);
                         lstInvites.setModel(lstInvitesModel);
@@ -125,10 +120,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     pnlPeers.add(scrlParticipants);
                     scrlParticipants.setBounds(5, 141, 134, 74);
                     {
-                        ListModel ListParicipantsModel = new DefaultComboBoxModel(new String[] {"Item One", "Item Two"});
-                        ListParicipants = new JList();
-                        scrlParticipants.setViewportView(ListParicipants);
-                        ListParicipants.setModel(ListParicipantsModel);
+                        lstParicipants = new JList();
+                        scrlParticipants.setViewportView(lstParicipants);
                     }
                 }
             }
@@ -152,6 +145,19 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     btnEdit.setBounds(405, 4, 65, 23);
                 }
             }
+            {
+                pnlNorth = new JPanel();
+                this.add(pnlNorth, BorderLayout.NORTH);
+                pnlNorth.setLayout(null);
+                pnlNorth.setPreferredSize(new java.awt.Dimension(400, 37));
+                {
+                    cmbEvent = new JComboBox();
+                    pnlNorth.add(cmbEvent, new CellConstraints("2, 2, 1, 1, default, default"));
+                    cmbEvent.setBounds(9, 6, 181, 27);
+                    cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
+                }
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -188,12 +194,21 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                             event.getSchedules().add(day);
                         }
                         
+                        Object[] peers = lstInvites.getSelectedValues();
+                        
+                        for (Object p : peers) {
+                            Peer peer = (Peer) p;
+                            event.addInvite(peer);
+                        }
+                        
                         System.out.println(event.toString());
                         ControllerReference.getInstance().createEvent(event);
                         Peer user = ControllerReference.getInstance().getUser();
                         user.getOrganized().add(event);
                         ControllerReference.getInstance().updateObject(user);
-                    } 
+                        
+                        cmbEvent.setModel(this.getEventsModel(user));
+                    }
                     
                 } else {
                     JOptionPane.showMessageDialog(this, "Idiot!");
@@ -204,6 +219,46 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             }
         }
         
+    }
+    
+    private DefaultComboBoxModel getEventsModel(Peer user) {
+        if (user == null) {
+            return new DefaultComboBoxModel();
+        } else {
+            return new DefaultComboBoxModel(user.getOrganized().toArray());
+        }
+    }
+    
+    public void mouseClicked(MouseEvent e) {
+        if (e.getSource() == lblInvites) {
+            lstInvites.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getAllPeers()));
+        }
+        
+    }
+    
+    public void mouseEntered(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    public void mouseExited(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    public void mousePressed(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    public void mouseReleased(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    public void refresh() {
+        lstInvites.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getAllPeers()));
+        cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
     }
     
 }
