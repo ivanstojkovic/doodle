@@ -3,16 +3,29 @@ package at.tuwien.sbc.processor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspaces.events.EventDriven;
+import org.openspaces.events.EventTemplate;
+import org.openspaces.events.TransactionalEvent;
 import org.openspaces.events.adapter.SpaceDataEvent;
+import org.openspaces.events.polling.Polling;
 
 import at.tuwien.sbc.model.Peer;
 
+@EventDriven @Polling @TransactionalEvent
 public class RegistrationProcessor {
     
     private List<Peer> registered;
     
     public RegistrationProcessor() {
         this.registered = new ArrayList<Peer>();
+    }
+    
+    @EventTemplate
+    public Peer registeringPeer() {
+        Peer peer = new Peer();
+        peer.setAction("register");
+        
+        return peer;
     }
     
     @SpaceDataEvent

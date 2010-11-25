@@ -37,14 +37,12 @@ public class EventOrganizationPanel extends javax.swing.JPanel {
     private JPanel pnlNorth;
     private JScrollPane scrlInvites;
     private JPanel jPanel1;
-    private SingleSchedulePanel pnlSchedule2;
     private SingleSchedulePanel pnlSchedule;
     private JList lstInvites;
     private JList ListParicipants;
     private JScrollPane scrlParticipants;
     private JLabel lblParticipants;
     private JLabel lblInvites;
-    private JScrollPane pnlSchedules;
     private JPanel pnlPeers;
     private JButton btnEdit;
     private JButton btnCreate;
@@ -61,6 +59,17 @@ public class EventOrganizationPanel extends javax.swing.JPanel {
             BorderLayout thisLayout = new BorderLayout();
             this.setLayout(thisLayout);
             this.setPreferredSize(new java.awt.Dimension(470, 320));
+            {
+                jPanel1 = new JPanel();
+                this.add(jPanel1, BorderLayout.CENTER);
+                BorderLayout jPanel1Layout = new BorderLayout();
+                jPanel1.setLayout(jPanel1Layout);
+                {
+                    pnlSchedule = new SingleSchedulePanel();
+                    jPanel1.add(pnlSchedule, BorderLayout.NORTH);
+                    pnlSchedule.setPreferredSize(new java.awt.Dimension(300, 61));
+                }
+            }
             {
                 pnlNorth = new JPanel();
                 FormLayout pnlNorthLayout = new FormLayout(
@@ -124,29 +133,6 @@ public class EventOrganizationPanel extends javax.swing.JPanel {
                         ListParicipants.setModel(ListParicipantsModel);
                     }
                 }
-            }
-            {
-                {
-                    jPanel1 = new JPanel();
-                    BoxLayout jPanel1Layout = new BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS);
-                    jPanel1.setLayout(jPanel1Layout);
-                    {
-                        pnlSchedule = new SingleSchedulePanel();
-                        jPanel1.add(pnlSchedule);
-                        pnlSchedule.setPreferredSize(new java.awt.Dimension(300, 61));
-                    }
-                    {
-                        pnlSchedule2 = new SingleSchedulePanel();
-                        jPanel1.add(pnlSchedule2);
-                        pnlSchedule2.setPreferredSize(new java.awt.Dimension(300, 115));
-                    }
-                }
-                
-                pnlSchedules = new JScrollPane();
-                pnlSchedules.setViewportView(jPanel1);
-                this.add(pnlSchedules, BorderLayout.CENTER);
-                pnlSchedules.setBorder(BorderFactory.createTitledBorder("Schedules"));
-                pnlSchedules.setPreferredSize(new java.awt.Dimension(262, 252));
             }
             {
                 pnlButtons = new JPanel();
