@@ -21,8 +21,8 @@
 
 	<!--
 		Enables the usage of @GigaSpaceContext annotation based injection.
-	-->
 	<os-core:giga-space-context />
+	-->
 	<os-events:annotation-support />
 
 

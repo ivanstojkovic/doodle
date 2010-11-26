@@ -3,6 +3,7 @@ package at.tuwien.sbc.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import com.gigaspaces.annotation.pojo.SpaceClass;
@@ -12,13 +13,17 @@ import com.gigaspaces.annotation.pojo.SpaceProperty;
 @SpaceClass
 public class DoodleEvent implements Serializable {
     
-    private String id;
+	private static final long serialVersionUID = 2447362010972373490L;
+
+	private String id;
     
     private String name;
     
     private DoodleSchedule fixSchedule;
     
     private List<DoodleSchedule> schedules;
+    
+    private Peer owner;
     
     // how do we manage these...
     // how do we prevent somebody inviting himself...
@@ -94,7 +99,7 @@ public class DoodleEvent implements Serializable {
     }
    
     public String toString() {
-        return "[Event: " + this.name + "\n" + "invites: " + Arrays.deepToString(this.invitations.toArray()) + "\nSchedules: " + Arrays.deepToString(schedules.toArray()) + "]";
+        return "[Event: " + this.name + "\nOwner: " + this.owner.toString() +  "\ninvites: " + Arrays.deepToString(this.invitations.toArray()) + "\nSchedules: " + Arrays.deepToString(schedules.toArray()) + "]";
     }
 
     public void addInvite(Peer peer) {
@@ -102,4 +107,64 @@ public class DoodleEvent implements Serializable {
             this.invitations.add(peer);
         }
     }
+
+	public void removeInvitation(Peer user) {
+		if(invitations.contains(user)) {
+			invitations.remove(user);
+			Iterator<DoodleSchedule> i = getSchedules().iterator();
+			while(i.hasNext()) {
+				DoodleSchedule ds = i.next();
+				if(ds.getParticipant().equals(user)) {
+					i.remove();
+				}
+			}
+		}	
+	}
+
+	public void addParticipant(Peer user) {
+		if(!participants.contains(user)) {
+			participants.add(user);
+		}
+	}
+
+	public void setOwner(Peer owner) {
+		this.owner = owner;
+	}
+
+	public Peer getOwner() {
+		return owner;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DoodleEvent other = (DoodleEvent) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+	}
+	
+	
 }

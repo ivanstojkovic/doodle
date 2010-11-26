@@ -9,8 +9,10 @@ import com.gigaspaces.annotation.pojo.SpaceId;
 
 @SpaceClass
 public class Peer implements Serializable {
-    
-    private String name;
+
+	private static final long serialVersionUID = 7311169968823829707L;
+
+	private String name;
     
     private String password;
     
@@ -117,5 +119,24 @@ public class Peer implements Serializable {
         }
         return true;
     }
+    
+    public void notifiyInvite(DoodleEvent evt) {
+    	System.out.println("You received an invite for evt " + evt);
+    }
+    
+    public void notifyInviteEdited(DoodleEvent evt) {
+    	System.out.println("Event edited: " + evt.toString());
+    }
+    
+    public void notifyInviteRemoved(DoodleEvent evt) {
+    	System.out.println("You are no longer invited for event: " + evt.toString());
+    }
+    
+    public void notifyInviteAccepted(boolean accepted) {
+    	System.out.println("Invite accepted");
+    	//refresh view... 
+    	
+    }
+    
     
 }

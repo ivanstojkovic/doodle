@@ -6,14 +6,16 @@ import org.openspaces.events.TransactionalEvent;
 import org.openspaces.events.adapter.SpaceDataEvent;
 import org.openspaces.events.notify.Notify;
 import org.openspaces.events.notify.NotifyType;
+import org.openspaces.events.polling.Polling;
 
 import at.tuwien.sbc.model.Peer;
 
-@EventDriven @Notify @NotifyType(update=true) @TransactionalEvent
+@EventDriven @Polling @NotifyType(update=true) @TransactionalEvent
 public class LoginProcessor {
     
     @EventTemplate
     public Peer logPeer() {
+    	System.out.println("Sending notifications");
         Peer template = new Peer();
         template.setAction("login");
         return template;
