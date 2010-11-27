@@ -4,15 +4,19 @@ package at.tuwien.sbc.processor;
 import org.apache.log4j.Logger;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.context.GigaSpaceContext;
+import org.openspaces.events.EventDriven;
 import org.openspaces.events.EventTemplate;
+import org.openspaces.events.TransactionalEvent;
 import org.openspaces.events.adapter.SpaceDataEvent;
+import org.openspaces.events.notify.Notify;
+import org.openspaces.events.notify.NotifyType;
 
 import at.tuwien.sbc.model.DoodleEvent;
 import at.tuwien.sbc.model.Peer;
 
 import com.j_spaces.core.client.UpdateModifiers;
 
-//@EventDriven @Notify @NotifyType(update=true, write=true) @TransactionalEvent
+@EventDriven @Notify @NotifyType(update=true, write=true) @TransactionalEvent
 public class EventProcessor {
 	
 	private static Logger logger = Logger.getLogger(EventProcessor.class);
@@ -36,12 +40,10 @@ public class EventProcessor {
         t.setEvents(null);
         t.setOrganized(null);
         Peer peer = this.space.readIfExists(t);
-        for (DoodleEvent e : peer.getOrganized()) {
-        	if (e.equals(event)) {
-        		e = event;
-        	}
-        }
         
+        logger.info("Organizer peer: " + peer.toString());
+        
+        peer.getOrganized().add(event);
         this.space.write(peer, 1000 * 60 * 60 * 24, 50000, UpdateModifiers.UPDATE_ONLY);
         
         return null;
