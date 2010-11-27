@@ -4,15 +4,19 @@ package at.tuwien.sbc.processor;
 import org.apache.log4j.Logger;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.context.GigaSpaceContext;
+import org.openspaces.events.EventDriven;
 import org.openspaces.events.EventTemplate;
+import org.openspaces.events.TransactionalEvent;
 import org.openspaces.events.adapter.SpaceDataEvent;
+import org.openspaces.events.notify.Notify;
+import org.openspaces.events.notify.NotifyType;
 
 import at.tuwien.sbc.model.DoodleEvent;
 import at.tuwien.sbc.model.Peer;
 
 import com.j_spaces.core.client.UpdateModifiers;
 
-//@EventDriven @Notify @NotifyType(update=true, write=true) @TransactionalEvent
+@EventDriven @Notify @NotifyType(update=true, write=true) @TransactionalEvent
 public class EventProcessor {
 	
 	private static Logger logger = Logger.getLogger(EventProcessor.class);
@@ -22,7 +26,7 @@ public class EventProcessor {
 	
     @EventTemplate
     public DoodleEvent logEvent() {
-    	System.out.println("Sending notifications");
+    	logger.info("logEvent");
         DoodleEvent template = new DoodleEvent();
         return template;
         

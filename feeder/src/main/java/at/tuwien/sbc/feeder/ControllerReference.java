@@ -121,11 +121,11 @@ public class ControllerReference {
 	}
 
 	public void updateObject(Object o) {
-		this.gigaSpace.write(o, 1000 * 60 * 60, 50000, UpdateModifiers.UPDATE_ONLY);
+		this.gigaSpace.write(o, 1000 * 60 * 60, 5000, UpdateModifiers.UPDATE_ONLY);
 	}
 
 	public void createEvent(DoodleEvent event) {
-		this.getGigaSpace().write(event, 1000 * 60 * 60, 50000, UpdateModifiers.WRITE_ONLY);
+		this.getGigaSpace().write(event, 1000 * 60 * 60, 5000, UpdateModifiers.WRITE_ONLY);
 		// will throw an exception if the event already exists
 	}
 
