@@ -20,17 +20,17 @@ import com.j_spaces.core.client.UpdateModifiers;
 public class EventProcessor {
 	
 	private static Logger logger = Logger.getLogger(EventProcessor.class);
-    
-	@GigaSpaceContext
-	private GigaSpace space;
 	
-    @EventTemplate
+	@EventTemplate
     public DoodleEvent logEvent() {
     	logger.info("logEvent");
         DoodleEvent template = new DoodleEvent();
         return template;
         
     }
+	
+	@GigaSpaceContext
+	private GigaSpace space;
     
     @SpaceDataEvent
     public DoodleEvent eventListener(DoodleEvent event) {
@@ -50,5 +50,5 @@ public class EventProcessor {
         
         return null;
     }
-    
+   
 }

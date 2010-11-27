@@ -24,6 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 
+import org.apache.log4j.Logger;
+
 import at.tuwien.sbc.feeder.ControllerReference;
 import at.tuwien.sbc.feeder.common.Constants;
 import at.tuwien.sbc.model.DoodleEvent;
@@ -48,6 +50,9 @@ import com.jgoodies.forms.layout.CellConstraints;
  * TODO add refresh button for participants.
  */
 public class EventOrganizationPanel extends javax.swing.JPanel implements ActionListener, MouseListener {
+	
+	private static Logger logger = Logger.getLogger(EventOrganizationPanel.class);
+	
 	private JPanel pnlNorth;
 	private JScrollPane scrlInvites;
 	private JButton removeParticipantBtn;
@@ -232,12 +237,15 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 						}
 
 						Peer user = ControllerReference.getInstance().getUser();
+						logger.info(user.toString());
 						event.setOwner(user);
 						user.getOrganized().add(event);
 
 						System.out.println(event.toString());
 						ControllerReference.getInstance().createEvent(event);
 						//ControllerReference.getInstance().updateObject(user);
+						//ControllerReference.getInstance().getGigaSpace().write(user);
+						
 
 						cmbEvent.setModel(this.getEventsModel(user));
 					}
