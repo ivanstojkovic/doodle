@@ -24,6 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 
+import org.apache.log4j.Logger;
+
 import at.tuwien.sbc.feeder.ControllerReference;
 import at.tuwien.sbc.feeder.common.Constants;
 import at.tuwien.sbc.model.DoodleEvent;
@@ -48,6 +50,7 @@ import com.jgoodies.forms.layout.CellConstraints;
  * TODO add refresh button for participants.
  */
 public class EventOrganizationPanel extends javax.swing.JPanel implements ActionListener, MouseListener {
+	private static final Logger logger = Logger.getLogger(EventOrganizationPanel.class);
 	private JPanel pnlNorth;
 	private JScrollPane scrlInvites;
 	private JButton removeParticipantBtn;
@@ -207,15 +210,16 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
 						DoodleEvent event = new DoodleEvent();
 						event.setName(name);
-
+						Peer current = ControllerReference.getInstance().getUser();
+						logger.info("Peer" + current.toString());
 						for (int d = startCal.get(Calendar.DAY_OF_YEAR); d <= endCal.get(Calendar.DAY_OF_YEAR); d++) {
 							for (int h = startCal.get(Calendar.HOUR_OF_DAY); h < endCal.get(Calendar.HOUR_OF_DAY); h++) {
-								DoodleSchedule day = new DoodleSchedule(ControllerReference.getInstance().getUser());
+								DoodleSchedule day = new DoodleSchedule(current);
 								day.setDay(d);
 								day.setHour(h);
 								event.getSchedules().add(day);
 								for(int i = 0; i<lstInvites.getSelectedValues().length; i++) {
-									if(lstInvites.getSelectedValues()[i].equals(ControllerReference.getInstance().getUser())) {
+									if(lstInvites.getSelectedValues()[i].equals(current)) {
 										continue;
 									}
 									Peer p = (Peer) lstInvites.getSelectedValues()[i];
@@ -231,15 +235,15 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 							event.addInvite(peer);
 						}
 
-						Peer user = ControllerReference.getInstance().getUser();
-						event.setOwner(user);
-						user.getOrganized().add(event);
+						//Peer user = ControllerReference.getInstance().getUser();
+						event.setOwner(current);
+						current.getOrganized().add(event);
 
 						System.out.println(event.toString());
 						ControllerReference.getInstance().createEvent(event);
-						ControllerReference.getInstance().updateObject(user);
+						ControllerReference.getInstance().updateObject(current);
 
-						cmbEvent.setModel(this.getEventsModel(user));
+						cmbEvent.setModel(this.getEventsModel(current));
 					}
 
 				} else {
