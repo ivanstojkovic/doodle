@@ -237,7 +237,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
 						System.out.println(event.toString());
 						ControllerReference.getInstance().createEvent(event);
-						ControllerReference.getInstance().updateObject(user);
+						//ControllerReference.getInstance().updateObject(user);
 
 						cmbEvent.setModel(this.getEventsModel(user));
 					}

@@ -107,7 +107,7 @@ public class ControllerReference {
 	public void logout() {
 		Peer u = this.getUser();
 		if (u != null) {
-			u.setAction(null);
+			u.setAction("");
 			this.updateObject(u);
 			this.setUser(null);
 		}
