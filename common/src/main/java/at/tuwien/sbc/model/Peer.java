@@ -33,8 +33,6 @@ public class Peer implements Serializable {
         this.name = name;
         this.password = password;
         this.action = action;
-        this.organized = new ArrayList<DoodleEvent>();
-        this.events = new ArrayList<DoodleEvent>();
     }
     
     @SpaceId(autoGenerate=false)
@@ -55,6 +53,9 @@ public class Peer implements Serializable {
 //    }
     
     public List<DoodleEvent> getOrganized() {
+    	if(organized==null) {
+    		organized = new ArrayList<DoodleEvent>();
+    	}
         return organized;
     }
     
@@ -63,6 +64,9 @@ public class Peer implements Serializable {
     }
     
     public List<DoodleEvent> getEvents() {
+    	if(events==null) {
+    		events = new ArrayList<DoodleEvent>();
+    	}
         return events;
     }
     

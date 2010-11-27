@@ -1,51 +1,30 @@
 package at.tuwien.sbc.processor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openspaces.events.EventDriven;
 import org.openspaces.events.EventTemplate;
 import org.openspaces.events.TransactionalEvent;
 import org.openspaces.events.adapter.SpaceDataEvent;
+import org.openspaces.events.notify.NotifyType;
 import org.openspaces.events.polling.Polling;
 
 import at.tuwien.sbc.model.Peer;
 
-@EventDriven
-@Polling
-@TransactionalEvent
+@EventDriven @Polling @NotifyType(update=true, write = true) @TransactionalEvent
 public class RegistrationProcessor {
     
-    private List<Peer> registered;
-    
-    public RegistrationProcessor() {
-        this.registered = new ArrayList<Peer>();
-    }
-    
     @EventTemplate
-    public Peer registeringPeer() {
-        Peer peer = new Peer();
-        peer.setAction("register");
+    public Peer templatePeer() {
+        Peer template = new Peer();
+        template.setAction("register");
+        return template;
         
-        return peer;
     }
     
     @SpaceDataEvent
-    public Peer processCredentialsEvent(Peer peer) {
-        System.out.println(peer.toString());
-        return this.register(peer);
-        
+    public Peer eventListener(Peer peer) {
+        System.out.println("Peer: " + peer.toString() + " is now registered!");
+        peer.setAction(null);
+        return peer;
     }
     
-    private Peer register(Peer peer) {
-        if (this.registered.contains(peer)) {
-            System.out.println("Peer found");
-            return null;
-        } else {
-            System.out.println("Registering new peer");
-            peer.setAction(null);
-            this.registered.add(peer);
-            return peer;
-        }
-    }
 }

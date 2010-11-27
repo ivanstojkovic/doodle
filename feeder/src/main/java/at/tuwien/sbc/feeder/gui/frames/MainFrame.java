@@ -202,7 +202,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
             
             Peer user = ControllerReference.getInstance().getUser();
             if (user == null) {
-                System.err.println("An error must have occurred");
+                System.err.println("MainFrame: An error must have occurred");
                 this.lblGreet.setText("Welcome");
             } else {
                 this.lblGreet.setText("Welcome " + user.getName());

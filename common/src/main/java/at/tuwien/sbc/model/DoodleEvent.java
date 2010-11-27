@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
-import com.gigaspaces.annotation.pojo.SpaceProperty;
 
 @SpaceClass
 public class DoodleEvent implements Serializable {
@@ -35,10 +34,7 @@ public class DoodleEvent implements Serializable {
     private List<DoodleComment> comments;
     
     public DoodleEvent() {
-        this.schedules = new ArrayList<DoodleSchedule>();
-        this.comments = new ArrayList<DoodleComment>();
-        this.invitations = new ArrayList<Peer>();
-        this.participants = new ArrayList<Peer>();
+     
     }
 
     @SpaceId(autoGenerate=true)
@@ -67,6 +63,9 @@ public class DoodleEvent implements Serializable {
     }
     
     public List<DoodleSchedule> getSchedules() {
+    	if(schedules==null) {
+    		schedules = new ArrayList<DoodleSchedule>();
+    	}
         return schedules;
     }
     
@@ -75,6 +74,9 @@ public class DoodleEvent implements Serializable {
     }
     
     public List<Peer> getInvitations() {
+    	if(invitations == null) {
+    		invitations = new ArrayList<Peer>();
+    	}
         return invitations;
     }
     
@@ -83,6 +85,9 @@ public class DoodleEvent implements Serializable {
     }
     
     public List<Peer> getParticipants() {
+    	if(participants==null) {
+    		participants = new ArrayList<Peer>();
+    	}
         return participants;
     }
     
@@ -91,6 +96,9 @@ public class DoodleEvent implements Serializable {
     }
     
     public List<DoodleComment> getComments() {
+    	if(comments == null) {
+    		comments = new ArrayList<DoodleComment>();
+    	}
         return comments;
     }
     
@@ -109,8 +117,8 @@ public class DoodleEvent implements Serializable {
     }
 
 	public void removeInvitation(Peer user) {
-		if(invitations.contains(user)) {
-			invitations.remove(user);
+		if(getInvitations() != null && getInvitations().contains(user)) {
+			getInvitations().remove(user);
 			Iterator<DoodleSchedule> i = getSchedules().iterator();
 			while(i.hasNext()) {
 				DoodleSchedule ds = i.next();
@@ -122,8 +130,8 @@ public class DoodleEvent implements Serializable {
 	}
 
 	public void addParticipant(Peer user) {
-		if(!participants.contains(user)) {
-			participants.add(user);
+		if(!getParticipants().contains(user)) {
+			getParticipants().add(user);
 		}
 	}
 

@@ -8,6 +8,8 @@ import com.gigaspaces.annotation.pojo.SpaceId;
 @SpaceClass
 public class DoodleSchedule implements Serializable {
 
+	private static final long serialVersionUID = -3743685964864677104L;
+
 	private String id;
 
 	private int day;
@@ -17,7 +19,7 @@ public class DoodleSchedule implements Serializable {
 	private Peer participant;
 
 	private boolean selected;
-	
+
 	public DoodleSchedule(DoodleEvent event, Peer participant) {
 		this.participant = participant;
 	}

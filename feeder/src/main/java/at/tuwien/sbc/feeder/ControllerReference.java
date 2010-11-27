@@ -36,7 +36,7 @@ public class ControllerReference {
 		this.gigaSpace = gigaSpace;
 	}
 
-	public GigaSpace getGigaSpace() {
+	private GigaSpace getGigaSpace() {
 		return gigaSpace;
 	}
 
@@ -61,8 +61,9 @@ public class ControllerReference {
 
 	public Peer register(String user, String pass) {
 		Peer newPeer = new Peer(user, pass, "register");
+		newPeer.setEvents(null);
+		newPeer.setOrganized(null);
 		LeaseContext<Peer> ctx = this.getGigaSpace().write(newPeer, 1000 * 60 * 60 * 24, 5000, UpdateModifiers.WRITE_ONLY);
-
 		return ctx.getObject();
 
 	}
@@ -104,7 +105,7 @@ public class ControllerReference {
 	public void logout() {
 		Peer u = this.getUser();
 		if (u != null) {
-			u.setAction("");
+			u.setAction(null);
 			this.updateObject(u);
 			this.setUser(null);
 		}

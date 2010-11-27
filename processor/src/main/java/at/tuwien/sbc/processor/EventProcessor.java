@@ -14,7 +14,7 @@ import com.j_spaces.core.client.UpdateModifiers;
 import at.tuwien.sbc.model.DoodleEvent;
 import at.tuwien.sbc.model.Peer;
 
-@EventDriven @Notify @NotifyType(update=true, write=true) @TransactionalEvent
+//@EventDriven @Notify @NotifyType(update=true, write=true) @TransactionalEvent
 public class EventProcessor {
     
 	@GigaSpaceContext
