@@ -26,7 +26,7 @@ public class EventProcessor {
 	
     @EventTemplate
     public DoodleEvent logEvent() {
-    	System.out.println("Sending notifications");
+    	logger.info("logEvent");
         DoodleEvent template = new DoodleEvent();
         return template;
         
