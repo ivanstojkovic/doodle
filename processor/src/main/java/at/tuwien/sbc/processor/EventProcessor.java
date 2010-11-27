@@ -1,5 +1,7 @@
 package at.tuwien.sbc.processor;
 
+import java.util.logging.Logger;
+
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.context.GigaSpaceContext;
 import org.openspaces.events.EventDriven;
@@ -16,6 +18,8 @@ import at.tuwien.sbc.model.Peer;
 
 //@EventDriven @Notify @NotifyType(update=true, write=true) @TransactionalEvent
 public class EventProcessor {
+	
+	private static Logger logger = Logger.getLogger(EventProcessor.class.toString());
     
 	@GigaSpaceContext
 	private GigaSpace space;
@@ -30,7 +34,7 @@ public class EventProcessor {
     
     @SpaceDataEvent
     public DoodleEvent eventListener(DoodleEvent event) {
-        System.out.println("Event: " + event.toString() + " changed!");
+    	logger.info("Event: " + event.toString() + " changed!");
         Peer p = event.getOwner();
         Peer t = new Peer(p.getName(), null, null);
         t.setEvents(null);

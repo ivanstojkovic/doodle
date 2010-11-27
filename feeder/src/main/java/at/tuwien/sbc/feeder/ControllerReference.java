@@ -2,7 +2,10 @@ package at.tuwien.sbc.feeder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openspaces.core.GigaSpace;
 
 import at.tuwien.sbc.model.DoodleEvent;
@@ -13,13 +16,15 @@ import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.UpdateModifiers;
 
 public class ControllerReference {
+	
+	private static Logger logger = Logger.getLogger(ControllerReference.class.toString());
 
 	private static ControllerReference uniqueInstance;
 
 	private GigaSpace gigaSpace;
 
 	private Peer user;
-
+		
 	public static synchronized ControllerReference getInstance() {
 		if (uniqueInstance == null) {
 			uniqueInstance = new ControllerReference();
@@ -77,7 +82,7 @@ public class ControllerReference {
 			peer.setAction("login");
 			this.getGigaSpace().write(peer);
 		} else {
-			System.out.println("Peer is null");
+			logger.info("Peer is null");
 		}
 
 		this.setUser(peer);
