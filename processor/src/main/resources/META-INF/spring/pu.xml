@@ -19,17 +19,6 @@
 	<bean id="propertiesConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
 		
-	<bean id="log4jInitialization"
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetClass" value="org.springframework.util.Log4jConfigurer" />
-		<property name="targetMethod" value="initLogging" />
-		<property name="arguments">
-			<list>
-				<value>../log4j.xml</value>
-			</list>
-		</property>
-	</bean>
-
 	<!--
 		Enables the usage of @GigaSpaceContext annotation based injection.
 	<os-core:giga-space-context />
