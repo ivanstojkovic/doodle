@@ -10,8 +10,6 @@ import com.gigaspaces.annotation.pojo.SpaceId;
 @SpaceClass
 public class Peer implements Serializable {
 
-	private static final long serialVersionUID = 7311169968823829707L;
-
 	private String name;
     
     private String password;

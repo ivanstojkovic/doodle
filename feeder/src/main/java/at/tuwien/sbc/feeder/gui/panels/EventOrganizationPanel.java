@@ -210,7 +210,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
 						for (int d = startCal.get(Calendar.DAY_OF_YEAR); d <= endCal.get(Calendar.DAY_OF_YEAR); d++) {
 							for (int h = startCal.get(Calendar.HOUR_OF_DAY); h < endCal.get(Calendar.HOUR_OF_DAY); h++) {
-								DoodleSchedule day = new DoodleSchedule(event, ControllerReference.getInstance().getUser());
+								DoodleSchedule day = new DoodleSchedule(ControllerReference.getInstance().getUser());
 								day.setDay(d);
 								day.setHour(h);
 								event.getSchedules().add(day);

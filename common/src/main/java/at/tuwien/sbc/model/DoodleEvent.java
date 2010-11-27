@@ -8,11 +8,10 @@ import java.util.List;
 
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
+import com.gigaspaces.annotation.pojo.SpaceProperty;
 
 @SpaceClass
 public class DoodleEvent implements Serializable {
-    
-	private static final long serialVersionUID = 2447362010972373490L;
 
 	private String id;
     
@@ -107,12 +106,12 @@ public class DoodleEvent implements Serializable {
     }
    
     public String toString() {
-        return "[Event: " + this.name + "\nOwner: " + this.owner.toString() +  "\ninvites: " + Arrays.deepToString(this.invitations.toArray()) + "\nSchedules: " + Arrays.deepToString(schedules.toArray()) + "]";
+        return "[Event: " + this.name + "\nOwner: " + this.owner.toString() +  "\ninvites: " + Arrays.deepToString(getInvitations().toArray()) + "\nSchedules: " + Arrays.deepToString(getSchedules().toArray()) + "]";
     }
 
     public void addInvite(Peer peer) {
-        if (!this.invitations.contains(peer)) {
-            this.invitations.add(peer);
+        if (!getInvitations().contains(peer)) {
+        	getInvitations().add(peer);
         }
     }
 

@@ -5,8 +5,6 @@ import java.util.Date;
 
 public class DoodleComment implements Serializable {
 
-	private static final long serialVersionUID = -1961793509176384415L;
-
 	private long id;
 
 	private Peer author;
