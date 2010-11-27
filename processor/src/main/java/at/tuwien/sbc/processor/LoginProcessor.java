@@ -6,12 +6,12 @@ import org.openspaces.events.EventDriven;
 import org.openspaces.events.EventTemplate;
 import org.openspaces.events.TransactionalEvent;
 import org.openspaces.events.adapter.SpaceDataEvent;
+import org.openspaces.events.notify.Notify;
 import org.openspaces.events.notify.NotifyType;
-import org.openspaces.events.polling.Polling;
 
 import at.tuwien.sbc.model.Peer;
 
-@EventDriven @Polling @NotifyType(update=true) @TransactionalEvent
+@EventDriven @Notify @NotifyType(update=true) @TransactionalEvent
 public class LoginProcessor {
 	
 	private static Logger logger = Logger.getLogger(LoginProcessor.class);
