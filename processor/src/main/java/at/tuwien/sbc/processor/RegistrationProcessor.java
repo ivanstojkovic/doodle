@@ -1,7 +1,7 @@
 package at.tuwien.sbc.processor;
 
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.openspaces.events.EventDriven;
 import org.openspaces.events.EventTemplate;
 import org.openspaces.events.TransactionalEvent;
@@ -14,7 +14,7 @@ import at.tuwien.sbc.model.Peer;
 @EventDriven @Polling @NotifyType(update=true, write = true) @TransactionalEvent
 public class RegistrationProcessor {
 	
-	private static Logger logger = Logger.getLogger(RegistrationProcessor.class.toString());
+	private static Logger logger = Logger.getLogger(RegistrationProcessor.class);
 	
     @EventTemplate
     public Peer templatePeer() {

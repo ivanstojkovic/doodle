@@ -2,22 +2,19 @@ package at.tuwien.sbc.feeder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.openspaces.core.GigaSpace;
 
 import at.tuwien.sbc.model.DoodleEvent;
 import at.tuwien.sbc.model.Peer;
 
-import com.gigaspaces.internal.backport.java.util.Arrays;
 import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.UpdateModifiers;
 
 public class ControllerReference {
 	
-	private static Logger logger = Logger.getLogger(ControllerReference.class.toString());
+	private static Logger logger = Logger.getLogger(ControllerReference.class);
 
 	private static ControllerReference uniqueInstance;
 
