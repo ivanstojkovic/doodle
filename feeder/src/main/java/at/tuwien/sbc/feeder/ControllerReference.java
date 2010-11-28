@@ -38,7 +38,7 @@ public class ControllerReference {
 		this.gigaSpace = gigaSpace;
 	}
 
-	private GigaSpace getGigaSpace() {
+	public GigaSpace getGigaSpace() {
 		return gigaSpace;
 	}
 
@@ -66,6 +66,9 @@ public class ControllerReference {
 		newPeer.setEvents(null);
 		newPeer.setOrganized(null);
 		LeaseContext<Peer> ctx = this.getGigaSpace().write(newPeer, 1000 * 60 * 60 * 24, 5000, UpdateModifiers.WRITE_ONLY);
+		DoodleEvent event = new DoodleEvent();
+		event.setName("Ivan");
+		LeaseContext<DoodleEvent> ctx1 = this.getGigaSpace().write(event, 1000 * 60 * 60 * 24, 5000, UpdateModifiers.WRITE_ONLY);
 		return ctx.getObject();
 
 	}
@@ -105,11 +108,13 @@ public class ControllerReference {
 	}
 
 	public void logout() {
-		Peer u = this.getUser();
+		Peer u = getUser();
 		if (u != null) {
-			u.setAction("");
+			u.setAction("logout");
 			this.updateObject(u);
 			this.setUser(null);
+		}else{
+			logger.warn("USer is null");
 		}
 
 	}

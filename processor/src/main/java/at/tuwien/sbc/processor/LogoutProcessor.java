@@ -14,23 +14,24 @@ import at.tuwien.sbc.model.Peer;
 @Notify
 @NotifyType(update = true)
 @TransactionalEvent
-public class LoginProcessor {
+public class LogoutProcessor {
 
-	private static Logger logger = Logger.getLogger(LoginProcessor.class);
+	private static Logger logger = Logger.getLogger(LogoutProcessor.class);
 
 	@EventTemplate
 	public Peer loginPeer() {
 		Peer template = new Peer();
-		template.setAction("login");
+		template.setAction("logout");
 		return template;
 
 	}
 
 	@SpaceDataEvent
 	public Peer eventListener(Peer peer) {
-		logger.info("Peer: " + peer.toString() + " is logged in. Setting Action to LOGGEDIN!");
+		logger.info("Peer: " + peer.toString() + " is logged OUT. Setting Action to NULL!");
 		logger.info("Peer has events: " + (peer.getEvents() != null ? peer.getEvents().toString() : ""));
-		peer.setAction("loggedIn");
+		logger.info("Sending notifications");
+		peer.setAction(null);
 		return peer;
 	}
 

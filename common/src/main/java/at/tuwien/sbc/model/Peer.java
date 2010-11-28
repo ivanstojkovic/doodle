@@ -87,12 +87,13 @@ public class Peer implements Serializable {
     public void setAction(String action) {
         this.action = action;
     }
-    
-    public String toString() {
-        return "[Peer: " + this.getName() + "]";
-    }
 
     @Override
+	public String toString() {
+		return "Peer [name=" + name + ", password=" + password + ", action=" + action + "]";
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
