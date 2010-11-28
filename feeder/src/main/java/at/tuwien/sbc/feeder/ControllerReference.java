@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.openspaces.core.EntryAlreadyInSpaceException;
 import org.openspaces.core.GigaSpace;
 
 import at.tuwien.sbc.model.DoodleEvent;
@@ -13,7 +14,7 @@ import com.j_spaces.core.LeaseContext;
 import com.j_spaces.core.client.UpdateModifiers;
 
 public class ControllerReference {
-	
+
 	private static Logger logger = Logger.getLogger(ControllerReference.class);
 
 	private static ControllerReference uniqueInstance;
@@ -21,7 +22,7 @@ public class ControllerReference {
 	private GigaSpace gigaSpace;
 
 	private Peer user;
-		
+
 	public static synchronized ControllerReference getInstance() {
 		if (uniqueInstance == null) {
 			uniqueInstance = new ControllerReference();
@@ -65,10 +66,8 @@ public class ControllerReference {
 		Peer newPeer = new Peer(user, pass, "register");
 		newPeer.setEvents(null);
 		newPeer.setOrganized(null);
-		LeaseContext<Peer> ctx = this.getGigaSpace().write(newPeer, 1000 * 60 * 60 * 24, 5000, UpdateModifiers.WRITE_ONLY);
-		DoodleEvent event = new DoodleEvent();
-		event.setName("Ivan");
-		LeaseContext<DoodleEvent> ctx1 = this.getGigaSpace().write(event, 1000 * 60 * 60 * 24, 5000, UpdateModifiers.WRITE_ONLY);
+		LeaseContext<Peer> ctx = this.getGigaSpace().write(newPeer, 1000 * 60 * 60 * 24, 5000,
+		        UpdateModifiers.WRITE_ONLY);
 		return ctx.getObject();
 
 	}
@@ -113,7 +112,7 @@ public class ControllerReference {
 			u.setAction("logout");
 			this.updateObject(u);
 			this.setUser(null);
-		}else{
+		} else {
 			logger.warn("USer is null");
 		}
 
@@ -129,9 +128,29 @@ public class ControllerReference {
 		this.gigaSpace.write(o, 1000 * 60 * 60, 5000, UpdateModifiers.UPDATE_ONLY);
 	}
 
+	@Deprecated
 	public void createEvent(DoodleEvent event) {
 		this.getGigaSpace().write(event, 1000 * 60 * 60, 5000, UpdateModifiers.WRITE_ONLY);
 		// will throw an exception if the event already exists
+	}
+
+	/**
+	 * Writes the object to the space. If the object is already there nothing is
+	 * done and null is returned.
+	 * 
+	 * @param o
+	 *            the object to write.
+	 * @return the object if the write was successful and null otherwise.
+	 */
+	public Object writeObject(Object o) {
+		try {
+			LeaseContext<Object> ctx = this.getGigaSpace().write(o, 1000 * 60 * 60, 5000, UpdateModifiers.WRITE_ONLY);
+			return o;
+		} catch (EntryAlreadyInSpaceException e) {
+			ControllerReference.logger.error("Object already in space: " + o.toString());
+			return null;
+		}
+
 	}
 
 	public List<DoodleEvent> getInvitations() {
@@ -146,8 +165,8 @@ public class ControllerReference {
 
 		DoodleEvent[] events = this.getGigaSpace().readMultiple(eventTemplate, 100);
 		for (int i = 0; i < events.length; i++) {
-			for (Peer p : events[i].getInvitations()) {
-				if (p.equals(user)) {
+			for (String p : events[i].getInvitations()) {
+				if (p.equals(user.getName())) {
 					eventsInvitedTo.add(events[i]);
 				}
 			}
@@ -156,10 +175,10 @@ public class ControllerReference {
 		return eventsInvitedTo;
 	}
 
-	public List<Peer> getParticipantsForEvent(DoodleEvent selectedItem) {
+	public List<String> getParticipantsForEvent(DoodleEvent selectedItem) {
 		DoodleEvent foundEvent = gigaSpace.readIfExists(selectedItem);
 		if (foundEvent == null) {
-			return new ArrayList<Peer>();
+			return new ArrayList<String>();
 		}
 		return foundEvent.getParticipants();
 	}

@@ -8,29 +8,29 @@ import java.util.List;
 
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
-import com.gigaspaces.annotation.pojo.SpaceProperty;
 
 @SpaceClass
 public class DoodleEvent implements Serializable {
 
+   // private static final long serialVersionUID = -9105918974900011400L;
+
 	private String id;
 
 	private String name;
+	
+	private String action;
 
-	private DoodleSchedule fixSchedule;
+	private String fixSchedule;
 
-	private List<DoodleSchedule> schedules;
+	private String owner;
+	
+	private List<String> schedules;
 
-	private Peer owner;
+	private List<String> invitations;
 
-	// how do we manage these...
-	// how do we prevent somebody inviting himself...
-	// may be make DoodleInvite class with id of invited peer...
-	private List<Peer> invitations;
+	private List<String> participants;
 
-	private List<Peer> participants;
-
-	private List<DoodleComment> comments;
+	private List<String> comments;
 
 	public DoodleEvent() {
 		super();
@@ -53,55 +53,55 @@ public class DoodleEvent implements Serializable {
 		this.name = name;
 	}
 
-	public DoodleSchedule getFixSchedule() {
+	public String getFixSchedule() {
 		return fixSchedule;
 	}
 
-	public void setFixSchedule(DoodleSchedule fixSchedule) {
+	public void setFixSchedule(String fixSchedule) {
 		this.fixSchedule = fixSchedule;
 	}
 
-	public List<DoodleSchedule> getSchedules() {
+	public List<String> getSchedules() {
 		if (schedules == null) {
-			schedules = new ArrayList<DoodleSchedule>();
+			schedules = new ArrayList<String>();
 		}
 		return schedules;
 	}
 
-	public void setSchedules(List<DoodleSchedule> schedules) {
+	public void setSchedules(List<String> schedules) {
 		this.schedules = schedules;
 	}
 
-	public List<Peer> getInvitations() {
+	public List<String> getInvitations() {
 		if (invitations == null) {
-			invitations = new ArrayList<Peer>();
+			invitations = new ArrayList<String>();
 		}
 		return invitations;
 	}
 
-	public void setInvitations(List<Peer> invitations) {
+	public void setInvitations(List<String> invitations) {
 		this.invitations = invitations;
 	}
 
-	public List<Peer> getParticipants() {
+	public List<String> getParticipants() {
 		if (participants == null) {
-			participants = new ArrayList<Peer>();
+			participants = new ArrayList<String>();
 		}
 		return participants;
 	}
 
-	public void setParticipants(List<Peer> participants) {
+	public void setParticipants(List<String> participants) {
 		this.participants = participants;
 	}
 
-	public List<DoodleComment> getComments() {
+	public List<String> getComments() {
 		if (comments == null) {
-			comments = new ArrayList<DoodleComment>();
+			comments = new ArrayList<String>();
 		}
 		return comments;
 	}
 
-	public void setComments(List<DoodleComment> comments) {
+	public void setComments(List<String> comments) {
 		this.comments = comments;
 	}
 
@@ -111,35 +111,42 @@ public class DoodleEvent implements Serializable {
 	}
 
 	public void addInvite(Peer peer) {
+		if (!getInvitations().contains(peer.getName())) {
+			getInvitations().add(peer.getName());
+		}
+	}
+	
+	public void addInvite(String peer) {
 		if (!getInvitations().contains(peer)) {
 			getInvitations().add(peer);
 		}
 	}
 
 	public void removeInvitation(Peer user) {
-		if (getInvitations() != null && getInvitations().contains(user)) {
-			getInvitations().remove(user);
-			Iterator<DoodleSchedule> i = getSchedules().iterator();
+		if (getInvitations() != null && getInvitations().contains(user.getName())) {
+			getInvitations().remove(user.getName());
+			Iterator<String> i = getSchedules().iterator();
 			while (i.hasNext()) {
-				DoodleSchedule ds = i.next();
-				if (ds.getParticipant().equals(user)) {
-					i.remove();
-				}
+				//TODO
+//				DoodleSchedule ds = i.next();
+//				if (ds.getParticipant().equals(user.getName())) {
+//					i.remove();
+//				}
 			}
 		}
 	}
 
 	public void addParticipant(Peer user) {
-		if (!getParticipants().contains(user)) {
-			getParticipants().add(user);
+		if (!getParticipants().contains(user.getName())) {
+			getParticipants().add(user.getName());
 		}
 	}
 
-	public void setOwner(Peer owner) {
+	public void setOwner(String owner) {
 		this.owner = owner;
 	}
 
-	public Peer getOwner() {
+	public String getOwner() {
 		return owner;
 	}
 
@@ -173,5 +180,13 @@ public class DoodleEvent implements Serializable {
 			return false;
 		return true;
 	}
+
+	public void setAction(String action) {
+	    this.action = action;
+    }
+
+	public String getAction() {
+	    return action;
+    }
 
 }

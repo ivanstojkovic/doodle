@@ -180,14 +180,14 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 		}
 	}
 
-	private List<Peer> getParticipantsForSelectedEvent() {
+	private List<String> getParticipantsForSelectedEvent() {
 		if (cmbEvent != null) {
 			DoodleEvent event = (DoodleEvent) cmbEvent.getSelectedItem();
 			if (event != null) {
 				return event.getParticipants();
 			}
 		}
-		return new ArrayList<Peer>();
+		return new ArrayList<String>();
 	}
 
 	public void actionPerformed(ActionEvent evt) {
@@ -208,22 +208,28 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
 					if (name != null) {
 
+						Peer current = ControllerReference.getInstance().getUser();
 						DoodleEvent event = new DoodleEvent();
 						event.setName(name);
-						Peer current = ControllerReference.getInstance().getUser();
-						logger.info("Peer" + current.toString());
+						event.setAction("new");
+						event.setOwner(current.getName());
+						ControllerReference.getInstance().writeObject(event);
+						
 						for (int d = startCal.get(Calendar.DAY_OF_YEAR); d <= endCal.get(Calendar.DAY_OF_YEAR); d++) {
 							for (int h = startCal.get(Calendar.HOUR_OF_DAY); h < endCal.get(Calendar.HOUR_OF_DAY); h++) {
-								DoodleSchedule day = new DoodleSchedule(current);
+								DoodleSchedule day = new DoodleSchedule(current.getName(), event.getId());
 								day.setDay(d);
 								day.setHour(h);
-								event.getSchedules().add(day);
+								ControllerReference.getInstance().writeObject(day);
+								event.getSchedules().add(day.getId());
 								for(int i = 0; i<lstInvites.getSelectedValues().length; i++) {
-									if(lstInvites.getSelectedValues()[i].equals(current)) {
+									if(lstInvites.getSelectedValues()[i].equals(current.getName())) {
 										continue;
 									}
-									Peer p = (Peer) lstInvites.getSelectedValues()[i];
-									event.getSchedules().add(new DoodleSchedule(d, h, p));
+									String s = (String) lstInvites.getSelectedValues()[i];
+									DoodleSchedule forPeer = new DoodleSchedule(d, h, s, event.getId());
+									ControllerReference.getInstance().writeObject(forPeer);
+									event.getSchedules().add(forPeer.getId());
 								}
 							}
 						}
@@ -231,17 +237,13 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 						Object[] peers = lstInvites.getSelectedValues();
 
 						for (Object p : peers) {
-							Peer peer = (Peer) p;
+							String peer = (String) p;
 							event.addInvite(peer);
 						}
 
-						//Peer user = ControllerReference.getInstance().getUser();
-						event.setOwner(current);
-						current.getOrganized().add(event);
 
-						System.out.println(event.toString());
-						ControllerReference.getInstance().createEvent(event);
-						//ControllerReference.getInstance().updateObject(current);
+						event.setAction("update");
+						ControllerReference.getInstance().updateObject(event);
 						current = ControllerReference.getInstance().getUser();
 
 						cmbEvent.setModel(this.getEventsModel(current));

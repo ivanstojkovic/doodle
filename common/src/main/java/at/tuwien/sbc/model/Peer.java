@@ -16,9 +16,9 @@ public class Peer implements Serializable {
     
    // private PeerType type;
     
-    private List<DoodleEvent> organized;
+    private List<String> organized;
     
-    private List<DoodleEvent> events;
+    private List<String> events;
     
     private String action;
     
@@ -50,25 +50,25 @@ public class Peer implements Serializable {
 //        this.type = type;
 //    }
     
-    public List<DoodleEvent> getOrganized() {
+    public List<String> getOrganized() {
     	if(organized==null) {
-    		organized = new ArrayList<DoodleEvent>();
+    		organized = new ArrayList<String>();
     	}
         return organized;
     }
     
-    public void setOrganized(List<DoodleEvent> organized) {
+    public void setOrganized(List<String> organized) {
         this.organized = organized;
     }
     
-    public List<DoodleEvent> getEvents() {
+    public List<String> getEvents() {
     	if(events==null) {
-    		events = new ArrayList<DoodleEvent>();
+    		events = new ArrayList<String>();
     	}
         return events;
     }
     
-    public void setEvents(List<DoodleEvent> events) {
+    public void setEvents(List<String> events) {
         this.events = events;
     }
     

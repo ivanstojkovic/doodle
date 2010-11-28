@@ -14,30 +14,34 @@ public class DoodleSchedule implements Serializable {
 
 	private int hour;
 
-	private Peer participant;
+	private String participant;
+	
+	private String event;
 
 	private boolean selected;
 
-	public DoodleSchedule(Peer participant) {
+	public DoodleSchedule(String participant, String event) {
 		this.participant = participant;
+		this.event = event;
 	}
 
 	public DoodleSchedule() {
 		super();
 	}
 
-	public DoodleSchedule(int day, int hour, Peer participant) {
+	public DoodleSchedule(int day, int hour, String participant, String event) {
 		super();
 		this.day = day;
 		this.hour = hour;
 		this.participant = participant;
+		this.event = event;
 	}
 
-	public Peer getParticipant() {
+	public String getParticipant() {
 		return participant;
 	}
 
-	public void setParticipant(Peer participant) {
+	public void setParticipant(String participant) {
 		this.participant = participant;
 	}
 
@@ -78,4 +82,12 @@ public class DoodleSchedule implements Serializable {
 	public boolean isSelected() {
 		return selected;
 	}
+
+	public void setEvent(String event) {
+	    this.event = event;
+    }
+
+	public String getEvent() {
+	    return event;
+    }
 }
