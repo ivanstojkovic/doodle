@@ -11,6 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import at.tuwien.sbc.feeder.gui.panels.PeerEventsPanel;
+
 public class TabbedPanel extends JPanel {
     
     private JTabbedPane tabs;
