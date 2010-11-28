@@ -123,22 +123,12 @@ public class Peer implements Serializable {
         return true;
     }
     
-    public void notifiyInvite(DoodleEvent evt) {
-    	System.out.println("You received an invite for evt " + evt);
-    }
-    
-    public void notifyInviteEdited(DoodleEvent evt) {
-    	System.out.println("Event edited: " + evt.toString());
-    }
-    
-    public void notifyInviteRemoved(DoodleEvent evt) {
-    	System.out.println("You are no longer invited for event: " + evt.toString());
-    }
-    
-    public void notifyInviteAccepted(boolean accepted) {
-    	System.out.println("Invite accepted");
-    	//refresh view... 
+    public void addOrganized(String eventId) {
+    	if (this.organized == null) {
+    		this.organized = new ArrayList<String>();
+    	}
     	
+    	this.organized.add(eventId);
     }
     
     

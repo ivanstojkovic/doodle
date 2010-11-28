@@ -54,10 +54,12 @@ public class ControllerReference {
 
 	public Peer getUser() {
 		if (user != null) {
-			Peer p = new Peer(user.getName(), user.getPassword(), null);
+			Peer p = new Peer(user.getName(), null, null);
 			p.setEvents(null);
 			p.setOrganized(null);
-			return gigaSpace.readIfExists(p);
+			Peer result = gigaSpace.readIfExists(p);
+			System.out.println("Searching for the user [" + user.getName() + "]: " + result);
+			return result;
 		}
 		return null;
 	}
@@ -79,7 +81,7 @@ public class ControllerReference {
 		Peer peer = this.getGigaSpace().readIfExists(log);
 		if (peer != null) {
 			peer.setAction("login");
-			this.getGigaSpace().write(peer);
+			this.updateObject(peer);
 		} else {
 			logger.info("Peer is null");
 		}

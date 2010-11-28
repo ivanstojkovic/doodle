@@ -107,7 +107,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 					pnlPeers.add(scrlInvites);
 					scrlInvites.setBounds(5, 36, 134, 77);
 					{
-						ListModel lstInvitesModel = new DefaultComboBoxModel(ControllerReference.getInstance().getAllPeers());
+						ListModel lstInvitesModel = new DefaultComboBoxModel(ControllerReference.getInstance()
+						        .getAllPeers());
 						lstInvites = new JList();
 						scrlInvites.setViewportView(lstInvites);
 						lstInvites.setModel(lstInvitesModel);
@@ -126,7 +127,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 					pnlPeers.add(scrlParticipants);
 					scrlParticipants.setBounds(5, 141, 134, 74);
 					{
-						ListModel lstParticipantsModel = new DefaultComboBoxModel(getParticipantsForSelectedEvent().toArray());
+						ListModel lstParticipantsModel = new DefaultComboBoxModel(getParticipantsForSelectedEvent()
+						        .toArray());
 						lstParicipants = new JList();
 						scrlParticipants.setViewportView(lstParicipants);
 						lstParicipants.setModel(lstParticipantsModel);
@@ -213,40 +215,46 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 						event.setName(name);
 						event.setAction("new");
 						event.setOwner(current.getName());
-						ControllerReference.getInstance().writeObject(event);
 						
+						Object[] peers = lstInvites.getSelectedValues();
+
+						for (Object p : peers) {
+							Peer peer = (Peer) p;
+							event.addInvite(peer);
+						}
+
+						ControllerReference.getInstance().writeObject(event);
+
 						for (int d = startCal.get(Calendar.DAY_OF_YEAR); d <= endCal.get(Calendar.DAY_OF_YEAR); d++) {
 							for (int h = startCal.get(Calendar.HOUR_OF_DAY); h < endCal.get(Calendar.HOUR_OF_DAY); h++) {
 								DoodleSchedule day = new DoodleSchedule(current.getName(), event.getId());
 								day.setDay(d);
 								day.setHour(h);
+								System.out.println("dId: " + day.getId());
 								ControllerReference.getInstance().writeObject(day);
-								event.getSchedules().add(day.getId());
-								for(int i = 0; i<lstInvites.getSelectedValues().length; i++) {
-									if(lstInvites.getSelectedValues()[i].equals(current.getName())) {
+								System.out.println("dId: " + day.getId());
+								//event.getSchedules().add(day.getId());
+								for (int i = 0; i < lstInvites.getSelectedValues().length; i++) {
+									if (lstInvites.getSelectedValues()[i].equals(current)) {
 										continue;
 									}
-									String s = (String) lstInvites.getSelectedValues()[i];
-									DoodleSchedule forPeer = new DoodleSchedule(d, h, s, event.getId());
+									Peer p = (Peer) lstInvites.getSelectedValues()[i];
+									DoodleSchedule forPeer = new DoodleSchedule(d, h, p.getName(), event.getId());
 									ControllerReference.getInstance().writeObject(forPeer);
-									event.getSchedules().add(forPeer.getId());
+								//	event.getSchedules().add(forPeer.getId());
 								}
 							}
 						}
-						
-						Object[] peers = lstInvites.getSelectedValues();
 
-						for (Object p : peers) {
-							String peer = (String) p;
-							event.addInvite(peer);
-						}
-
-
-						event.setAction("update");
-						ControllerReference.getInstance().updateObject(event);
+//						event.setAction("update");
+//						ControllerReference.getInstance().updateObject(event);
 						current = ControllerReference.getInstance().getUser();
 
-						cmbEvent.setModel(this.getEventsModel(current));
+						if (current != null) {
+							cmbEvent.setModel(this.getEventsModel(current));
+						} else {
+							System.out.println("didn't retrieve the user");
+						}
 					}
 
 				} else {
@@ -328,8 +336,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 		lstInvites.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getAllPeers()));
 		DoodleEvent e = (DoodleEvent) cmbEvent.getSelectedItem();
 		if (e != null) {
-			lstParicipants.setModel(new DefaultComboBoxModel(ControllerReference.getInstance()
-					.getParticipantsForEvent((DoodleEvent) cmbEvent.getSelectedItem()).toArray()));
+			lstParicipants.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getParticipantsForEvent(
+			        (DoodleEvent) cmbEvent.getSelectedItem()).toArray()));
 		}
 		cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
 	}
