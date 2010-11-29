@@ -11,6 +11,7 @@ import at.tuwien.sbc.model.DoodleEvent;
 import at.tuwien.sbc.model.Peer;
 
 import com.j_spaces.core.LeaseContext;
+import com.j_spaces.core.client.ReadModifiers;
 import com.j_spaces.core.client.UpdateModifiers;
 
 public class ControllerReference {
@@ -144,13 +145,11 @@ public class ControllerReference {
 	 *            the object to write.
 	 * @return the object if the write was successful and null otherwise.
 	 */
-	public Object writeObject(Object o) {
+	public void writeObject(Object o) {
 		try {
-			LeaseContext<Object> ctx = this.getGigaSpace().write(o, 1000 * 60 * 60, 5000, UpdateModifiers.WRITE_ONLY);
-			return o;
+			LeaseContext<Object> ctx = this.getGigaSpace().write(o);
 		} catch (EntryAlreadyInSpaceException e) {
 			ControllerReference.logger.error("Object already in space: " + o.toString());
-			return null;
 		}
 
 	}

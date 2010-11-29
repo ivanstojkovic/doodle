@@ -228,8 +228,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 						for (int d = startCal.get(Calendar.DAY_OF_YEAR); d <= endCal.get(Calendar.DAY_OF_YEAR); d++) {
 							for (int h = startCal.get(Calendar.HOUR_OF_DAY); h < endCal.get(Calendar.HOUR_OF_DAY); h++) {
 								DoodleSchedule day = new DoodleSchedule(current.getName(), event.getId());
-								day.setDay(d);
-								day.setHour(h);
+								day.setDay(d+"");
+								day.setHour(h+"");
 								System.out.println("dId: " + day.getId());
 								ControllerReference.getInstance().writeObject(day);
 								System.out.println("dId: " + day.getId());
@@ -239,7 +239,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 										continue;
 									}
 									Peer p = (Peer) lstInvites.getSelectedValues()[i];
-									DoodleSchedule forPeer = new DoodleSchedule(d, h, p.getName(), event.getId());
+									DoodleSchedule forPeer = new DoodleSchedule(d+"", h+"", p.getName(), event.getId());
 									ControllerReference.getInstance().writeObject(forPeer);
 								//	event.getSchedules().add(forPeer.getId());
 								}
@@ -248,6 +248,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
 //						event.setAction("update");
 //						ControllerReference.getInstance().updateObject(event);
+						logger.info("HIER");
 						current = ControllerReference.getInstance().getUser();
 
 						if (current != null) {

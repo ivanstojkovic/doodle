@@ -9,15 +9,18 @@ import org.openspaces.events.TransactionalEvent;
 import org.openspaces.events.adapter.SpaceDataEvent;
 import org.openspaces.events.notify.Notify;
 import org.openspaces.events.notify.NotifyType;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import at.tuwien.sbc.model.DoodleEvent;
-import at.tuwien.sbc.model.DoodleSchedule;
 import at.tuwien.sbc.model.Peer;
+
+import com.j_spaces.core.client.UpdateModifiers;
 
 @EventDriven
 @Notify
 @NotifyType(update = true, write = true)
-@TransactionalEvent
+//@TransactionalEvent
 public class EventProcessor {
 
 	private static Logger logger = Logger.getLogger(EventProcessor.class);
@@ -34,6 +37,7 @@ public class EventProcessor {
 	
 
 	@SpaceDataEvent
+//	@Transactional(propagation = Propagation.REQUIRED)
 	public DoodleEvent eventListener(DoodleEvent event) {
 		logger.info("processing event: " + event.toString());
 
@@ -46,10 +50,12 @@ public class EventProcessor {
 
 		System.out.println(event.getId());
 		peer.addOrganized(event.getId());
-		//this.space.write(peer, 1000 * 60 * 60 * 24);
+		this.space.write(peer);
 
 		event.setAction(null);
+		logger.info("fertig");
 		return event;
 	}
+
 
 }

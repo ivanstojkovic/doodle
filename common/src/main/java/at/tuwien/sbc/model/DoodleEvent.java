@@ -106,7 +106,7 @@ public class DoodleEvent implements Serializable {
 	}
 
 	public String toString() {
-		return "[Event: " + this.name + "\nOwner: " + (owner != null ? this.owner.toString() : "null") + "\ninvites: "
+		return "[Event: " + this.name + "Action: " + this.getAction() + "\nOwner: " + (owner != null ? this.owner.toString() : "null") + "\ninvites: "
 				+ Arrays.deepToString(getInvitations().toArray()) + "\nSchedules: " + Arrays.deepToString(getSchedules().toArray()) + "]";
 	}
 

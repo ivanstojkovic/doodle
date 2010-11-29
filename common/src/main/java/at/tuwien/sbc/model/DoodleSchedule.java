@@ -4,21 +4,22 @@ import java.io.Serializable;
 
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
+import com.gigaspaces.annotation.pojo.SpaceProperty;
+import com.gigaspaces.annotation.pojo.SpaceProperty.IndexType;
 
 @SpaceClass
 public class DoodleSchedule implements Serializable {
 
 	private String id;
 
-	private int day;
+	private String day;
 
-	private int hour;
+	private String hour;
 
 	private String participant;
 	
 	private String event;
 
-	private boolean selected;
 
 	public DoodleSchedule(String participant, String event) {
 		this.participant = participant;
@@ -29,7 +30,7 @@ public class DoodleSchedule implements Serializable {
 		super();
 	}
 
-	public DoodleSchedule(int day, int hour, String participant, String event) {
+	public DoodleSchedule(String day, String hour, String participant, String event) {
 		super();
 		this.day = day;
 		this.hour = hour;
@@ -54,12 +55,12 @@ public class DoodleSchedule implements Serializable {
 		this.id = id;
 	}
 
-	public void setDay(int day) {
+	public void setDay(String day) {
 		this.day = day;
 	}
 
-	public int getDay() {
-		return day;
+	public String getDay() {
+		return this.day;
 	}
 
 	@Override
@@ -67,20 +68,12 @@ public class DoodleSchedule implements Serializable {
 		return "DS[day=" + day + ", hour=" + hour + "]";
 	}
 
-	public void setHour(int hour) {
+	public void setHour(String hour) {
 		this.hour = hour;
 	}
 
-	public int getHour() {
+	public String getHour() {
 		return hour;
-	}
-
-	public void setSelected(boolean selected) {
-		this.selected = selected;
-	}
-
-	public boolean isSelected() {
-		return selected;
 	}
 
 	public void setEvent(String event) {
@@ -90,4 +83,31 @@ public class DoodleSchedule implements Serializable {
 	public String getEvent() {
 	    return event;
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DoodleSchedule other = (DoodleSchedule) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
+	
 }
