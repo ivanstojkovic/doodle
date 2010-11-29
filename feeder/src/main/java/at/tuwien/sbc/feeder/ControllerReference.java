@@ -119,4 +119,9 @@ public class ControllerReference {
         this.getGigaSpace().write(event, 1000 * 60 * 60, 5000, UpdateModifiers.WRITE_ONLY);
         // will throw an exception if the event already exists
     }
+
+    public void clearAll() {
+       this.getGigaSpace().clean();
+        
+    }
 }

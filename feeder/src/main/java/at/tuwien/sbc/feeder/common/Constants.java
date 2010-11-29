@@ -25,6 +25,8 @@ public final class Constants {
     public static final String CMD_BTN_SHOW = "overview.show";
 
     public static final String CMD_BTN_CREATE = "organization.create";
+
+    public static final String CMD_MENU_CLEAR = "menu.clear";
     
     private Constants() {
         
