@@ -11,7 +11,7 @@ import org.openspaces.events.notify.NotifyType;
 
 import at.tuwien.sbc.model.Peer;
 
-@EventDriven @Notify @NotifyType(update=true, write = true) @TransactionalEvent
+//@EventDriven @Notify @NotifyType(update=true, write = true) @TransactionalEvent
 public class RegistrationProcessor {
 	
 	private static Logger logger = Logger.getLogger(RegistrationProcessor.class);

@@ -139,8 +139,8 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 				e.addParticipant(user);
 				//TODO do we need this.. Event processor shall be responsible
 				user.getEvents().add(e.getId()); 
-				ControllerReference.getInstance().updateObject(e);
-				ControllerReference.getInstance().updateObject(user);
+				ControllerReference.getInstance().getGigaSpace().write(e);
+				ControllerReference.getInstance().getGigaSpace().write(user);
 				//	Because of the Model of Combo Box
 				showInvitationComponents();
 			}
@@ -149,7 +149,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 			if(e!=null) {
 				Peer user = ControllerReference.getInstance().getUser();
 				e.removeInvitation(user);
-				ControllerReference.getInstance().updateObject(e);
+				ControllerReference.getInstance().getGigaSpace().write(e);
 //				Because of the Model of Combo Box
 				showInvitationComponents();
 			}
@@ -203,7 +203,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 		if (you.getOrganized().isEmpty()) {
 			buf.append("You have not organized any event");
 		} else {
-			buf.append("Participation Events:");
+			buf.append("Organized Events:");
 			//TODO retrieve Events
 			for (String e : you.getOrganized()) {
 				buf.append("\n");
