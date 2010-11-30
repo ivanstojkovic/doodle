@@ -137,10 +137,8 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 				Peer user = ControllerReference.getInstance().getUser();
 				e.removeInvitation(user);
 				e.addParticipant(user);
-				//TODO do we need this.. Event processor shall be responsible
-				user.retrieveEvents().add(e.getId()); 
+				e.setAction("processIt");
 				ControllerReference.getInstance().getGigaSpace().write(e);
-				ControllerReference.getInstance().getGigaSpace().write(user);
 				//	Because of the Model of Combo Box
 				showInvitationComponents();
 			}

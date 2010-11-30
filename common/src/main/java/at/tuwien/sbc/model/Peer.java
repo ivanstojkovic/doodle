@@ -73,7 +73,7 @@ public class Peer {
     
     @Override
     public String toString() {
-        return "Peer [name=" + name + ", password=" + password + ", action=" + action + "]";
+        return "Peer ["+ name + ", " + password + "]";
     }
     
     @Override

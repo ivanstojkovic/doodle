@@ -54,16 +54,15 @@ public class ControllerReference {
     }
     
     public Peer getUser() {
-//        if (user != null) {
-//            Peer p = new Peer(user.getName(), null, null);
-//            p.setEvents(null);
-//            p.setOrganized(null);
-//            Peer result = gigaSpace.readIfExists(p);
-//            System.out.println("Searching for the user [" + user.getName() + "]: " + result);
-//            return result;
-//        }
-//        return null;
-        return this.user;
+        if (user != null) {
+            Peer p = new Peer(user.getName(), null, null);
+            p.setEvents(null);
+            p.setOrganized(null);
+            Peer result = gigaSpace.readIfExists(p);
+            System.out.println("Searching for the user [" + user.getName() + "]: " + result);
+            return result;
+        }
+        return null;
     }
     
     public Peer register(String user, String pass) {

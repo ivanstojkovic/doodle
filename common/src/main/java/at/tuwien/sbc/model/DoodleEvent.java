@@ -142,14 +142,6 @@ public class DoodleEvent {
     public void removeInvitation(Peer user) {
         if (retrieveInvitations() != null && retrieveInvitations().contains(user.getName())) {
             retrieveInvitations().remove(user.getName());
-            Iterator<String> i = retrieveSchedules().iterator();
-            while (i.hasNext()) {
-                // TODO
-                // DoodleSchedule ds = i.next();
-                // if (ds.getParticipant().equals(user.getName())) {
-                // i.remove();
-                // }
-            }
         }
     }
     

@@ -223,11 +223,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                             event.addInvite(peer);
                         }
                         
+                        event.setAction("processIt");
                         ControllerReference.getInstance().getGigaSpace().write(event);
-                        current.addOrganized(event.getId());
-                        ControllerReference.getInstance().getGigaSpace().write(current);
-                        ControllerReference.getInstance().setUser(current);
-                        
                         
                         for (int d = startCal.get(Calendar.DAY_OF_YEAR); d <= endCal.get(Calendar.DAY_OF_YEAR); d++) {
                             for (int h = startCal.get(Calendar.HOUR_OF_DAY); h < endCal.get(Calendar.HOUR_OF_DAY); h++) {
@@ -254,8 +251,6 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                         
                         if (current != null) {
                             cmbEvent.setModel(this.getEventsModel(current));
-                        } else {
-                            System.out.println("didn't retrieve the user");
                         }
                     }
                     
@@ -276,9 +271,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 for (Object p : peers) {
                     Peer peer = (Peer) p;
                     event.addInvite(peer);
+                    event.setAction("processIt");
                     ControllerReference.getInstance().getGigaSpace().write(event);
-                    // TODO send Notification to Peer => the User must listen on
-                    // DoodleEvent change with hit name in Invitation
                 }
             }
         } else if (cmd.equals(Constants.CMD_BTN_REMOVE_INVITATION)) {
