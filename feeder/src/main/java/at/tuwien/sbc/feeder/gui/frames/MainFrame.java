@@ -40,6 +40,8 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
     
     private JTabbedPane tbPnl;
     private JPanel pnlOverview;
+    private JMenuItem itmClear;
+    private JMenu mnSpace;
     private SearchPanel pnlSearch;
     private JLabel lblGreet;
     private JPanel pnlGreet;
@@ -131,6 +133,18 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
                     }
                 }
                 {
+                    mnSpace = new JMenu();
+                    menuBar.add(mnSpace);
+                    mnSpace.setText("Space");
+                    {
+                        itmClear = new JMenuItem();
+                        mnSpace.add(itmClear);
+                        itmClear.setText("Clear");
+                        itmClear.setActionCommand(Constants.CMD_MENU_CLEAR);
+                        itmClear.addActionListener(this);
+                    }
+                }
+                {
                     jMenu2 = new JMenu();
                     menuBar.add(jMenu2);
                     jMenu2.setText("Help");
@@ -192,6 +206,16 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
         if (cmd.equals(Constants.CMD_MENU_HELP)) {
             JOptionPane.showMessageDialog(this, "No help! Abandon ship...");
         }
+        
+        if (cmd.equals(Constants.CMD_MENU_CLEAR)) {
+            int response = JOptionPane.showConfirmDialog(this,
+                "Are you sure, you want to clear the whole space? All data will be lost!");
+            
+            if (response == JOptionPane.YES_OPTION) {
+                this.callback(false);
+                ControllerReference.getInstance().clearAll();
+            }
+        }
     }
     
     public void callback(boolean loggedIn) {
@@ -207,7 +231,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
             } else {
                 this.lblGreet.setText("Welcome " + user.getName());
             }
-
+            
             EventOrganizationPanel tab = (EventOrganizationPanel) this.tabs.getTabs().getComponentAt(0);
             tab.refresh();
             
