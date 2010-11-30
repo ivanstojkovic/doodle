@@ -44,7 +44,9 @@
         The Data feeder bean, writing new Data objects to the space in a constant interval.
     -->
     <bean id="dataFeeder" class="at.tuwien.sbc.feeder.Feeder" depends-on="gigaSpace">
-        <!-- <property name="numberOfTypes" value="${numberOfTypes}" /> -->
     </bean>
-    
+<!-- 
+    <bean id="test" class="at.tuwien.sbc.feeder.EventTest" depends-on="gigaSpace">
+    </bean>
+ -->
 </beans>

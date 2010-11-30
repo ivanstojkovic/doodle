@@ -16,9 +16,9 @@ public class Peer implements Serializable {
     
    // private PeerType type;
     
-    private List<DoodleEvent> organized;
+    private List<String> organized;
     
-    private List<DoodleEvent> events;
+    private List<String> events;
     
     private String action;
     
@@ -50,25 +50,25 @@ public class Peer implements Serializable {
 //        this.type = type;
 //    }
     
-    public List<DoodleEvent> getOrganized() {
+    public List<String> getOrganized() {
     	if(organized==null) {
-    		organized = new ArrayList<DoodleEvent>();
+    		organized = new ArrayList<String>();
     	}
         return organized;
     }
     
-    public void setOrganized(List<DoodleEvent> organized) {
+    public void setOrganized(List<String> organized) {
         this.organized = organized;
     }
     
-    public List<DoodleEvent> getEvents() {
+    public List<String> getEvents() {
     	if(events==null) {
-    		events = new ArrayList<DoodleEvent>();
+    		events = new ArrayList<String>();
     	}
         return events;
     }
     
-    public void setEvents(List<DoodleEvent> events) {
+    public void setEvents(List<String> events) {
         this.events = events;
     }
     
@@ -87,12 +87,13 @@ public class Peer implements Serializable {
     public void setAction(String action) {
         this.action = action;
     }
-    
-    public String toString() {
-        return "[Peer: " + this.getName() + "]";
-    }
 
     @Override
+	public String toString() {
+		return "Peer [name=" + name + ", password=" + password + ", action=" + action + "]";
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -122,22 +123,12 @@ public class Peer implements Serializable {
         return true;
     }
     
-    public void notifiyInvite(DoodleEvent evt) {
-    	System.out.println("You received an invite for evt " + evt);
-    }
-    
-    public void notifyInviteEdited(DoodleEvent evt) {
-    	System.out.println("Event edited: " + evt.toString());
-    }
-    
-    public void notifyInviteRemoved(DoodleEvent evt) {
-    	System.out.println("You are no longer invited for event: " + evt.toString());
-    }
-    
-    public void notifyInviteAccepted(boolean accepted) {
-    	System.out.println("Invite accepted");
-    	//refresh view... 
+    public void addOrganized(String eventId) {
+    	if (this.organized == null) {
+    		this.organized = new ArrayList<String>();
+    	}
     	
+    	this.organized.add(eventId);
     }
     
     

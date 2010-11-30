@@ -4,40 +4,45 @@ import java.io.Serializable;
 
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
+import com.gigaspaces.annotation.pojo.SpaceProperty;
+import com.gigaspaces.annotation.pojo.SpaceProperty.IndexType;
 
 @SpaceClass
 public class DoodleSchedule implements Serializable {
 
 	private String id;
 
-	private int day;
+	private String day;
 
-	private int hour;
+	private String hour;
 
-	private Peer participant;
+	private String participant;
+	
+	private String event;
 
-	private boolean selected;
 
-	public DoodleSchedule(Peer participant) {
+	public DoodleSchedule(String participant, String event) {
 		this.participant = participant;
+		this.event = event;
 	}
 
 	public DoodleSchedule() {
 		super();
 	}
 
-	public DoodleSchedule(int day, int hour, Peer participant) {
+	public DoodleSchedule(String day, String hour, String participant, String event) {
 		super();
 		this.day = day;
 		this.hour = hour;
 		this.participant = participant;
+		this.event = event;
 	}
 
-	public Peer getParticipant() {
+	public String getParticipant() {
 		return participant;
 	}
 
-	public void setParticipant(Peer participant) {
+	public void setParticipant(String participant) {
 		this.participant = participant;
 	}
 
@@ -50,12 +55,12 @@ public class DoodleSchedule implements Serializable {
 		this.id = id;
 	}
 
-	public void setDay(int day) {
+	public void setDay(String day) {
 		this.day = day;
 	}
 
-	public int getDay() {
-		return day;
+	public String getDay() {
+		return this.day;
 	}
 
 	@Override
@@ -63,19 +68,46 @@ public class DoodleSchedule implements Serializable {
 		return "DS[day=" + day + ", hour=" + hour + "]";
 	}
 
-	public void setHour(int hour) {
+	public void setHour(String hour) {
 		this.hour = hour;
 	}
 
-	public int getHour() {
+	public String getHour() {
 		return hour;
 	}
 
-	public void setSelected(boolean selected) {
-		this.selected = selected;
+	public void setEvent(String event) {
+	    this.event = event;
+    }
+
+	public String getEvent() {
+	    return event;
+    }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
 	}
 
-	public boolean isSelected() {
-		return selected;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DoodleSchedule other = (DoodleSchedule) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
+	
+	
 }

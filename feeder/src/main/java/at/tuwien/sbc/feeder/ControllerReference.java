@@ -10,7 +10,6 @@ import at.tuwien.sbc.model.DoodleEvent;
 import at.tuwien.sbc.model.Peer;
 
 import com.j_spaces.core.LeaseContext;
-import com.j_spaces.core.client.UpdateModifiers;
 
 public class ControllerReference {
     
@@ -38,7 +37,7 @@ public class ControllerReference {
         this.gigaSpace = gigaSpace;
     }
     
-    private GigaSpace getGigaSpace() {
+    public GigaSpace getGigaSpace() {
         return gigaSpace;
     }
     
@@ -53,20 +52,21 @@ public class ControllerReference {
     
     public Peer getUser() {
         if (user != null) {
-            Peer p = new Peer(user.getName(), user.getPassword(), null);
+            Peer p = new Peer(user.getName(), null, null);
             p.setEvents(null);
             p.setOrganized(null);
-            return gigaSpace.readIfExists(p);
+            Peer result = gigaSpace.readIfExists(p);
+            System.out.println("Searching for the user [" + user.getName() + "]: " + result);
+            return result;
         }
         return null;
     }
     
     public Peer register(String user, String pass) {
-        Peer newPeer = new Peer(user, pass, "register");
+        Peer newPeer = new Peer(user, pass, null);
         newPeer.setEvents(null);
         newPeer.setOrganized(null);
-        LeaseContext<Peer> ctx = this.getGigaSpace().write(newPeer, 1000 * 60 * 60 * 24, 5000,
-            UpdateModifiers.WRITE_ONLY);
+        LeaseContext<Peer> ctx = this.getGigaSpace().write(newPeer);
         return ctx.getObject();
         
     }
@@ -76,13 +76,13 @@ public class ControllerReference {
         log.setOrganized(null);
         log.setEvents(null);
         Peer peer = this.getGigaSpace().readIfExists(log);
-        if (peer != null) {
-            peer.setAction("login");
-            this.getGigaSpace().write(peer);
-        } else {
-            logger.info("Peer is null");
-        }
-        
+//        if (peer != null) {
+//            peer.setAction("login");
+//            this.getGigaSpace().write(peer);
+//        } else {
+//            logger.info("Peer is null");
+//        }
+//        
         this.setUser(peer);
         return peer;
         
@@ -106,12 +106,15 @@ public class ControllerReference {
     }
     
     public void logout() {
-        Peer u = this.getUser();
-        if (u != null) {
-            u.setAction("");
-            this.updateObject(u);
-            this.setUser(null);
-        }
+
+//        Peer u = getUser();
+//        if (u != null) {
+//            u.setAction("logout");
+//            this.getGigaSpace().write(u);
+//            this.setUser(null);
+//        } else {
+//            logger.warn("USer is null");
+//        }
         
     }
     
@@ -121,14 +124,36 @@ public class ControllerReference {
         return this.gigaSpace.readMultiple(template, Integer.MAX_VALUE);
     }
     
-    public void updateObject(Object o) {
-        this.gigaSpace.write(o, 1000 * 60 * 60, 5000, UpdateModifiers.UPDATE_ONLY);
-    }
-    
-    public void createEvent(DoodleEvent event) {
-        this.getGigaSpace().write(event, 1000 * 60 * 60, 5000, UpdateModifiers.WRITE_ONLY);
-        // will throw an exception if the event already exists
-    }
+    // public void updateObject(Object o) {
+    // this.gigaSpace.write(o, 1000 * 60 * 60, 5000,
+    // UpdateModifiers.UPDATE_ONLY);
+    // }
+    //
+    // @Deprecated
+    // public void createEvent(DoodleEvent event) {
+    // this.getGigaSpace().write(event, 1000 * 60 * 60, 5000,
+    // UpdateModifiers.WRITE_ONLY);
+    // // will throw an exception if the event already exists
+    // }
+    //
+    // /**
+    // * Writes the object to the space. If the object is already there nothing
+    // is
+    // * done and null is returned.
+    // *
+    // * @param o
+    // * the object to write.
+    // * @return the object if the write was successful and null otherwise.
+    // */
+    // public void writeObject(Object o) {
+    // try {
+    // LeaseContext<Object> ctx = this.getGigaSpace().write(o);
+    // } catch (EntryAlreadyInSpaceException e) {
+    // ControllerReference.logger.error("Object already in space: " +
+    // o.toString());
+    // }
+    //
+    // }
     
     public List<DoodleEvent> getInvitations() {
         List<DoodleEvent> eventsInvitedTo = new ArrayList<DoodleEvent>();
@@ -142,8 +167,8 @@ public class ControllerReference {
         
         DoodleEvent[] events = this.getGigaSpace().readMultiple(eventTemplate, 100);
         for (int i = 0; i < events.length; i++) {
-            for (Peer p : events[i].getInvitations()) {
-                if (p.equals(user)) {
+            for (String p : events[i].getInvitations()) {
+                if (p.equals(user.getName())) {
                     eventsInvitedTo.add(events[i]);
                 }
             }
@@ -152,16 +177,16 @@ public class ControllerReference {
         return eventsInvitedTo;
     }
     
-    public List<Peer> getParticipantsForEvent(DoodleEvent selectedItem) {
-        DoodleEvent foundEvent = gigaSpace.readIfExists(selectedItem);
-        if (foundEvent == null) {
-            return new ArrayList<Peer>();
-        }
-        return foundEvent.getParticipants();
-    }
-    
     public void clearAll() {
         this.getGigaSpace().clean();
         
+    }
+    
+    public List<String> getParticipantsForEvent(DoodleEvent selectedItem) {
+        DoodleEvent foundEvent = gigaSpace.readIfExists(selectedItem);
+        if (foundEvent == null) {
+            return new ArrayList<String>();
+        }
+        return foundEvent.getParticipants();
     }
 }

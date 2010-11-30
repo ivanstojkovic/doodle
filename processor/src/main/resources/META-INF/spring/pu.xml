@@ -4,26 +4,32 @@
 	xmlns:os-events="http://www.openspaces.org/schema/events"
 	xmlns:os-remoting="http://www.openspaces.org/schema/remoting"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.openspaces.org/schema/core http://www.openspaces.org/schema/core/openspaces-core.xsd
        http://www.openspaces.org/schema/events http://www.openspaces.org/schema/events/openspaces-events.xsd
        http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd
          http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-2.1.xsd">
+           http://www.springframework.org/schema/context/spring-context-2.1.xsd
+           http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
 
 	<context:component-scan base-package="at.tuwien.sbc" />
+
+	<tx:annotation-driven transaction-manager="transactionManager"/>
 	<!--
 		Spring property configurer which allows us to use system properties
 		(such as user.name).
 	-->
 	<bean id="propertiesConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
-		
+
 	<!--
 		Enables the usage of @GigaSpaceContext annotation based injection.
 	-->
 	<os-core:giga-space-context />
 	<os-events:annotation-support />
+	
 
 
 	<!--
@@ -36,12 +42,12 @@
 	<!--
         Defines a local Jini transaction manager.
     -->
-	<os-core:local-tx-manager id="transactionManager"
-		space="space" />
+	<os-core:local-tx-manager id="transactionManager" space="space" />
 
 	<!--
 		OpenSpaces simplified space API built on top of IJSpace/JavaSpace.
 	-->
 	<os-core:giga-space id="gigaSpace" space="space"
 		tx-manager="transactionManager" />
+
 </beans>
