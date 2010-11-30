@@ -17,9 +17,9 @@ import at.tuwien.sbc.model.Peer;
 
 import com.j_spaces.core.client.UpdateModifiers;
 
-@EventDriven
-@Notify
-@NotifyType(update = true, write = true)
+//@EventDriven
+//@Notify
+//@NotifyType(update = true, write = true)
 //@TransactionalEvent
 public class EventProcessor {
 

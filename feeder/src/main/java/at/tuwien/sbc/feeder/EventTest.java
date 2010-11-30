@@ -40,6 +40,8 @@ public class EventTest implements InitializingBean, DisposableBean {
 		p.addOrganized(e.getName());
 		space.write(p);
 		
+		
+		
 		DoodleSchedule ds = new DoodleSchedule(p.getName(), e.getName());
 		space.write(ds);
 		
