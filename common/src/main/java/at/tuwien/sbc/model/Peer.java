@@ -1,6 +1,5 @@
 package at.tuwien.sbc.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,13 +7,11 @@ import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
 
 @SpaceClass
-public class Peer implements Serializable {
-
-	private String name;
+public class Peer {
+    
+    private String name;
     
     private String password;
-    
-   // private PeerType type;
     
     private List<String> organized;
     
@@ -33,7 +30,7 @@ public class Peer implements Serializable {
         this.action = action;
     }
     
-    @SpaceId(autoGenerate=false)
+    @SpaceId(autoGenerate = false)
     public String getName() {
         return name;
     }
@@ -42,18 +39,7 @@ public class Peer implements Serializable {
         this.name = name;
     }
     
-//    public PeerType getType() {
-//        return type;
-//    }
-//    
-//    public void setType(PeerType type) {
-//        this.type = type;
-//    }
-    
     public List<String> getOrganized() {
-    	if(organized==null) {
-    		organized = new ArrayList<String>();
-    	}
         return organized;
     }
     
@@ -62,9 +48,6 @@ public class Peer implements Serializable {
     }
     
     public List<String> getEvents() {
-    	if(events==null) {
-    		events = new ArrayList<String>();
-    	}
         return events;
     }
     
@@ -87,20 +70,20 @@ public class Peer implements Serializable {
     public void setAction(String action) {
         this.action = action;
     }
-
+    
     @Override
-	public String toString() {
-		return "Peer [name=" + name + ", password=" + password + ", action=" + action + "]";
-	}
-
-	@Override
+    public String toString() {
+        return "Peer [name=" + name + ", password=" + password + ", action=" + action + "]";
+    }
+    
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
-
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -124,12 +107,27 @@ public class Peer implements Serializable {
     }
     
     public void addOrganized(String eventId) {
-    	if (this.organized == null) {
-    		this.organized = new ArrayList<String>();
-    	}
-    	
-    	this.organized.add(eventId);
+        if (this.organized == null) {
+            this.organized = new ArrayList<String>();
+        }
+        
+        this.organized.add(eventId);
     }
     
+    public List<String> retrieveOrganized() {
+        if (this.organized == null) {
+            this.organized = new ArrayList<String>();
+        }
+        
+        return this.organized;
+    }
+    
+    public List<String> retrieveEvents() {
+        if (this.events == null) {
+            this.events = new ArrayList<String>();
+        }
+        
+        return this.events;
+    }
     
 }

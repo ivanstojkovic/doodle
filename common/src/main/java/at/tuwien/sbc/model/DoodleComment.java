@@ -1,9 +1,8 @@
 package at.tuwien.sbc.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
-public class DoodleComment implements Serializable {
+public class DoodleComment  {
 
 	private long id;
 

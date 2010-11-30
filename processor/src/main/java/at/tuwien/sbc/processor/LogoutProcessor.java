@@ -10,10 +10,10 @@ import org.openspaces.events.notify.NotifyType;
 
 import at.tuwien.sbc.model.Peer;
 
-//@EventDriven
-//@Notify
-//@NotifyType(update = true)
-//@TransactionalEvent
+@EventDriven
+@Notify
+@NotifyType(update = true)
+@TransactionalEvent
 public class LogoutProcessor {
 
 	private static Logger logger = Logger.getLogger(LogoutProcessor.class);

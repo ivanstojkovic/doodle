@@ -3,6 +3,8 @@ package at.tuwien.sbc.feeder;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.jini.core.lease.Lease;
+
 import org.apache.log4j.Logger;
 import org.openspaces.core.GigaSpace;
 
@@ -10,6 +12,7 @@ import at.tuwien.sbc.model.DoodleEvent;
 import at.tuwien.sbc.model.Peer;
 
 import com.j_spaces.core.LeaseContext;
+import com.j_spaces.core.client.UpdateModifiers;
 
 public class ControllerReference {
     
@@ -46,46 +49,57 @@ public class ControllerReference {
         throw new CloneNotSupportedException("Singletons cannot be cloned");
     }
     
-    private void setUser(Peer user) {
+    public void setUser(Peer user) {
         this.user = user;
     }
     
     public Peer getUser() {
-        if (user != null) {
-            Peer p = new Peer(user.getName(), null, null);
-            p.setEvents(null);
-            p.setOrganized(null);
-            Peer result = gigaSpace.readIfExists(p);
-            System.out.println("Searching for the user [" + user.getName() + "]: " + result);
-            return result;
-        }
-        return null;
+//        if (user != null) {
+//            Peer p = new Peer(user.getName(), null, null);
+//            p.setEvents(null);
+//            p.setOrganized(null);
+//            Peer result = gigaSpace.readIfExists(p);
+//            System.out.println("Searching for the user [" + user.getName() + "]: " + result);
+//            return result;
+//        }
+//        return null;
+        return this.user;
     }
     
     public Peer register(String user, String pass) {
-        Peer newPeer = new Peer(user, pass, null);
-        newPeer.setEvents(null);
-        newPeer.setOrganized(null);
-        LeaseContext<Peer> ctx = this.getGigaSpace().write(newPeer);
+        Peer newPeer = new Peer(user, pass, "register");
+//        newPeer.setEvents(null);
+//        newPeer.setOrganized(null);
+        LeaseContext<Peer> ctx = this.getGigaSpace().write(newPeer, Lease.FOREVER, 1000, UpdateModifiers.WRITE_ONLY);
         return ctx.getObject();
         
     }
     
     public Peer login(String user, String pass) {
         Peer log = new Peer(user, pass, null);
-        log.setOrganized(null);
-        log.setEvents(null);
+//        log.setOrganized(null);
+//        log.setEvents(null);
         Peer peer = this.getGigaSpace().readIfExists(log);
-//        if (peer != null) {
-//            peer.setAction("login");
-//            this.getGigaSpace().write(peer);
-//        } else {
-//            logger.info("Peer is null");
-//        }
-//        
+        if (peer != null) {
+            peer.setAction("login");
+            this.getGigaSpace().write(peer);
+        } else {
+            logger.info("Peer is null");
+        }
+        
         this.setUser(peer);
         return peer;
         
+    }
+    
+    public Peer takePeer(Peer peer) {
+        Peer template = new Peer(peer.getName(), null, null);
+        Peer result = this.gigaSpace.take(template);
+        if (result == null) {
+            logger.error("FRIGGIN NULL");
+        }
+        
+        return result;
     }
     
     public List<Peer> searchByName(String regex) {
@@ -106,54 +120,24 @@ public class ControllerReference {
     }
     
     public void logout() {
-
-//        Peer u = getUser();
-//        if (u != null) {
-//            u.setAction("logout");
-//            this.getGigaSpace().write(u);
-//            this.setUser(null);
-//        } else {
-//            logger.warn("USer is null");
-//        }
-        
+        Peer u = getUser();
+        if (u != null) {
+            u.setAction("logout");
+            this.getGigaSpace().write(u);
+            this.setUser(null);
+        } else {
+            logger.warn("USer is null");
+            this.setUser(null);
+        }
     }
     
     public Peer[] getAllPeers() {
-        Peer template = new Peer();
+        Peer template = new Peer(null, null, null);
+        template.setEvents(null);
+        template.setOrganized(null);
         
         return this.gigaSpace.readMultiple(template, Integer.MAX_VALUE);
     }
-    
-    // public void updateObject(Object o) {
-    // this.gigaSpace.write(o, 1000 * 60 * 60, 5000,
-    // UpdateModifiers.UPDATE_ONLY);
-    // }
-    //
-    // @Deprecated
-    // public void createEvent(DoodleEvent event) {
-    // this.getGigaSpace().write(event, 1000 * 60 * 60, 5000,
-    // UpdateModifiers.WRITE_ONLY);
-    // // will throw an exception if the event already exists
-    // }
-    //
-    // /**
-    // * Writes the object to the space. If the object is already there nothing
-    // is
-    // * done and null is returned.
-    // *
-    // * @param o
-    // * the object to write.
-    // * @return the object if the write was successful and null otherwise.
-    // */
-    // public void writeObject(Object o) {
-    // try {
-    // LeaseContext<Object> ctx = this.getGigaSpace().write(o);
-    // } catch (EntryAlreadyInSpaceException e) {
-    // ControllerReference.logger.error("Object already in space: " +
-    // o.toString());
-    // }
-    //
-    // }
     
     public List<DoodleEvent> getInvitations() {
         List<DoodleEvent> eventsInvitedTo = new ArrayList<DoodleEvent>();
@@ -167,7 +151,7 @@ public class ControllerReference {
         
         DoodleEvent[] events = this.getGigaSpace().readMultiple(eventTemplate, 100);
         for (int i = 0; i < events.length; i++) {
-            for (String p : events[i].getInvitations()) {
+            for (String p : events[i].retrieveInvitations()) {
                 if (p.equals(user.getName())) {
                     eventsInvitedTo.add(events[i]);
                 }
@@ -182,11 +166,14 @@ public class ControllerReference {
         
     }
     
-    public List<String> getParticipantsForEvent(DoodleEvent selectedItem) {
-        DoodleEvent foundEvent = gigaSpace.readIfExists(selectedItem);
+    public List<String> getParticipantsForEvent(String selectedEventItem) {
+        DoodleEvent template = new DoodleEvent();
+        template.setId(selectedEventItem);
+        
+        DoodleEvent foundEvent = gigaSpace.readIfExists(template);
         if (foundEvent == null) {
             return new ArrayList<String>();
         }
-        return foundEvent.getParticipants();
+        return foundEvent.retrieveParticipants();
     }
 }

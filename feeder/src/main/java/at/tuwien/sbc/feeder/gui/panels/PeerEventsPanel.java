@@ -138,7 +138,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 				e.removeInvitation(user);
 				e.addParticipant(user);
 				//TODO do we need this.. Event processor shall be responsible
-				user.getEvents().add(e.getId()); 
+				user.retrieveEvents().add(e.getId()); 
 				ControllerReference.getInstance().getGigaSpace().write(e);
 				ControllerReference.getInstance().getGigaSpace().write(user);
 				//	Because of the Model of Combo Box
@@ -162,12 +162,12 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 		// for this user.. the field in the controller has to be updated..
 		Peer you = ControllerReference.getInstance().getUser();
 
-		if (you.getEvents().isEmpty()) {
+		if (you.retrieveEvents().isEmpty()) {
 			buf.append("You are not participating in any event");
 		} else {
 			buf.append("Participation Events:");
 			//TODO retrieve events
-			for (String e : you.getEvents()) {
+			for (String e : you.retrieveEvents()) {
 				buf.append("\n");
 				buf.append(e);
 			}
@@ -200,12 +200,12 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 		// for this user.. the field in the controller has to be updated..
 		Peer you = ControllerReference.getInstance().getUser();
 
-		if (you.getOrganized().isEmpty()) {
+		if (you.retrieveOrganized().isEmpty()) {
 			buf.append("You have not organized any event");
 		} else {
 			buf.append("Organized Events:");
 			//TODO retrieve Events
-			for (String e : you.getOrganized()) {
+			for (String e : you.retrieveOrganized()) {
 				buf.append("\n");
 				buf.append(e);
 			}

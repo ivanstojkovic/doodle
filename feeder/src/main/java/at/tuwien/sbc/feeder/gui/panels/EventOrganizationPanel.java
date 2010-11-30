@@ -186,7 +186,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         if (cmbEvent != null) {
             DoodleEvent event = (DoodleEvent) cmbEvent.getSelectedItem();
             if (event != null) {
-                return event.getParticipants();
+                return event.retrieveParticipants();
             }
         }
         return new ArrayList<String>();
@@ -226,6 +226,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                         ControllerReference.getInstance().getGigaSpace().write(event);
                         current.addOrganized(event.getId());
                         ControllerReference.getInstance().getGigaSpace().write(current);
+                        ControllerReference.getInstance().setUser(current);
                         
                         
                         for (int d = startCal.get(Calendar.DAY_OF_YEAR); d <= endCal.get(Calendar.DAY_OF_YEAR); d++) {
@@ -236,7 +237,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                                 System.out.println("dId: " + day.getId());
                                 ControllerReference.getInstance().getGigaSpace().write(day);
                                 System.out.println("dId: " + day.getId());
-                                 event.getSchedules().add(day.getId());
+                                 //event.getSchedules().add(day.getId());
                                 for (int i = 0; i < lstInvites.getSelectedValues().length; i++) {
                                     if (lstInvites.getSelectedValues()[i].equals(current)) {
                                         continue;
@@ -245,7 +246,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                                     DoodleSchedule forPeer = new DoodleSchedule(d + "", h + "", p.getName(), event
                                         .getId());
                                     ControllerReference.getInstance().getGigaSpace().write(forPeer);
-                                     event.getSchedules().add(forPeer.getId());
+                                     //event.getSchedules().add(forPeer.getId());
                                 }
                             }
                         }
@@ -302,7 +303,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         if (user == null) {
             return new DefaultComboBoxModel();
         } else {
-            return new DefaultComboBoxModel(user.getOrganized().toArray());
+            return new DefaultComboBoxModel(user.retrieveOrganized().toArray());
         }
     }
     
@@ -335,10 +336,10 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     
     public void refresh() {
         lstInvites.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getAllPeers()));
-        DoodleEvent e = (DoodleEvent) cmbEvent.getSelectedItem();
+        String e = (String) cmbEvent.getSelectedItem();
         if (e != null) {
             lstParicipants.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getParticipantsForEvent(
-                (DoodleEvent) cmbEvent.getSelectedItem()).toArray()));
+                (String) cmbEvent.getSelectedItem()).toArray()));
         }
         cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
     }

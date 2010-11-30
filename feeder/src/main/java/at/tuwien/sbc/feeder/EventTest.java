@@ -45,6 +45,10 @@ public class EventTest implements InitializingBean, DisposableBean {
 		DoodleSchedule ds = new DoodleSchedule(p.getName(), e.getName());
 		space.write(ds);
 		
+		p.setAction(null);
+		p.setEvents(null);
+		p.setOrganized(null);
+		
 		Peer readPeer = space.read(p);
 		if(readPeer == null) {
 			System.out.println("NULL");

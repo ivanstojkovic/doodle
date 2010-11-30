@@ -1,14 +1,10 @@
 package at.tuwien.sbc.model;
 
-import java.io.Serializable;
-
 import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
-import com.gigaspaces.annotation.pojo.SpaceProperty;
-import com.gigaspaces.annotation.pojo.SpaceProperty.IndexType;
 
 @SpaceClass
-public class DoodleSchedule implements Serializable {
+public class DoodleSchedule {
 
 	private String id;
 
