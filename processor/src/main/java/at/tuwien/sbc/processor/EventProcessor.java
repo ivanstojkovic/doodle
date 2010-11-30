@@ -37,7 +37,7 @@ public class EventProcessor {
 	
 
 	@SpaceDataEvent
-//	@Transactional(propagation = Propagation.REQUIRED)
+	//@Transactional(propagation = Propagation.REQUIRED)
 	public DoodleEvent eventListener(DoodleEvent event) {
 		logger.info("processing event: " + event.toString());
 

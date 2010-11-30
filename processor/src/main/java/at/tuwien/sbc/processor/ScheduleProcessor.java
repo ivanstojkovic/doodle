@@ -11,11 +11,11 @@ import org.openspaces.events.notify.NotifyType;
 
 import at.tuwien.sbc.model.DoodleEvent;
 import at.tuwien.sbc.model.DoodleSchedule;
-
-@EventDriven
-@Notify
-@NotifyType(update = true, write = true)
-@TransactionalEvent
+//
+//@EventDriven
+//@Notify
+//@NotifyType(update = true, write = true)
+//@TransactionalEvent
 public class ScheduleProcessor {
 	
 	@GigaSpaceContext

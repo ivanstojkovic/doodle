@@ -24,65 +24,41 @@ public class EventTest implements InitializingBean, DisposableBean {
 	public void afterPropertiesSet() throws Exception {
 		ControllerReference.getInstance().setGigaSpace(space);
 		
-		Peer p = new Peer("test", "test", "register");
-		ControllerReference.getInstance().register(p.getName(), p.getPassword());		
-		ControllerReference.getInstance().login(p.getName(), p.getPassword());
+		Peer p = new Peer("test", "test", "test");
+		space.write(p);
 		
-		Peer current = ControllerReference.getInstance().getUser();
-		DoodleEvent event = new DoodleEvent();
-		event.setName("test");
-		event.setAction("new");
-		event.setOwner(current.getName());
+		p.setAction(null);
+		space.write(p);
 		
-		ControllerReference.getInstance().writeObject(event);
 		
-		current = ControllerReference.getInstance().getUser();
+		DoodleEvent e = new DoodleEvent();
+		e.setName("test");
+		e.setAction("test");
+		e.setOwner(p.getName());
+		space.write(e);
 		
-		if (current == null) {
-			System.out.println("NULLLLLLLL!");
-		}else{
-			System.out.println("AAAAAAAAAAAAAAAAAAAA");
+		p.addOrganized(e.getName());
+		space.write(p);
+		
+		DoodleSchedule ds = new DoodleSchedule(p.getName(), e.getName());
+		space.write(ds);
+		
+		Peer readPeer = space.read(p);
+		if(readPeer == null) {
+			System.out.println("NULL");
 		}
 		
-		event.setOwner("test");
-		ControllerReference.getInstance().writeObject(event);
-		
-		current = ControllerReference.getInstance().getUser();
-		
-		if (current == null) {
-			System.out.println("NULLLLLLLL!");
-		}else{
-			System.out.println("AAAAAAAAAAAAAAAAAAAA");
-		}
-		
-		event.setOwner("test");
-		ControllerReference.getInstance().writeObject(event);
-		
-current = ControllerReference.getInstance().getUser();
-		
-		if (current == null) {
-			System.out.println("NULLLLLLLL!");
-		}else{
-			System.out.println("AAAAAAAAAAAAAAAAAAAA");
+		DoodleEvent readEvent = space.read(e);
+		if(readEvent == null) {
+			System.out.println("NULL");
 		}
 
-
-		
-//		Thread.sleep(3000);
-		
-		DoodleSchedule day = new DoodleSchedule("a", "a");
-		day.setDay("1");
-		day.setHour("1");
-		ControllerReference.getInstance().writeObject(day);
-
-		
-		current = ControllerReference.getInstance().getUser();
-		
-		if (current == null) {
-			System.out.println("NULLLLLLLL!");
-		}else{
-			System.out.println("AAAAAAAAAAAAAAAAAAAA");
+		DoodleSchedule readDS = space.read(ds);
+		if(readDS == null) {
+			System.out.println("NULL");
 		}
+		
+		
 		System.exit(0);
 			
 	}
