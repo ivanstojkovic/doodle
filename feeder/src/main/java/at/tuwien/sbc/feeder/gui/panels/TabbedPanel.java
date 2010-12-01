@@ -22,12 +22,12 @@ public class TabbedPanel extends JPanel {
         ImageIcon icon = createImageIcon("images/organize.jpg");
         
         EventOrganizationPanel pnlOrg = new EventOrganizationPanel();
-        this.getTabs().addTab("Organization", icon, pnlOrg, "Does nothing");
+        this.getTabs().addTab("Organization", icon, pnlOrg, "Organize Events");
         this.getTabs().setMnemonicAt(0, KeyEvent.VK_1);
         
         icon = createImageIcon("images/overview.jpg");
         PeerEventsPanel pnlPE = new PeerEventsPanel();
-        this.getTabs().addTab("Overview", icon, pnlPE, "Does twice as much nothing");
+        this.getTabs().addTab("Overview", icon, pnlPE, "Overview over your events");
         this.getTabs().setMnemonicAt(1, KeyEvent.VK_2);
         
         // Add the tabbed pane to this panel.
@@ -49,15 +49,6 @@ public class TabbedPanel extends JPanel {
             t.setEnabled(enable);
             this.recursiveEnabling((Container) this.getTabs().getComponentAt(tab), enable);
         }
-    }
-    
-    protected JComponent makeTextPanel(String text) {
-        JPanel panel = new JPanel(false);
-        JLabel filler = new JLabel(text);
-        filler.setHorizontalAlignment(JLabel.CENTER);
-        panel.setLayout(new GridLayout(1, 1));
-        panel.add(filler);
-        return panel;
     }
     
     /** Returns an ImageIcon, or null if the path was invalid. */

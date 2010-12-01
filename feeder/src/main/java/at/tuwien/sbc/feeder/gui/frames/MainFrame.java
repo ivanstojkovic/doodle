@@ -83,23 +83,20 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
             this.setIconImage(cal.getImage());
             {
                 pnlGreet = new JPanel();
-                BoxLayout pnlGreetLayout = new BoxLayout(pnlGreet, javax.swing.BoxLayout.X_AXIS);
                 getContentPane().add(pnlGreet, BorderLayout.NORTH);
-                pnlGreet.setLayout(pnlGreetLayout);
-                pnlGreet.setPreferredSize(new java.awt.Dimension(725, 40));
+                pnlGreet.setLayout(null);
+                pnlGreet.setPreferredSize(new java.awt.Dimension(725, 69));
                 {
                     lblGreet = new JLabel();
                     pnlGreet.add(lblGreet);
                     lblGreet.setText("You are currently not logged in");
-                    lblGreet.setBounds(4, 6, 223, 15);
-                    lblGreet.setPreferredSize(new java.awt.Dimension(470, 15));
+                    lblGreet.setBounds(12, 13, 226, 15);
                 }
                 {
                     pnlSearch = new SearchPanel();
                     pnlGreet.add(pnlSearch);
-                    pnlSearch.setBounds(427, 1, 298, 33);
+                    pnlSearch.setBounds(318, 4, 300, 40);
                     pnlSearch.getTxtSearch().setText("peer name");
-                    pnlSearch.setPreferredSize(new java.awt.Dimension(345, 40));
                 }
             }
             {
@@ -172,7 +169,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
             }
             
             pack();
-            this.setSize(735, 432);
+            this.setSize(643, 430);
         } catch (Exception e) {
             // add your error handling code here
             e.printStackTrace();

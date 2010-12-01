@@ -2,6 +2,7 @@ package at.tuwien.sbc.feeder.gui.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -34,6 +35,7 @@ import at.tuwien.sbc.model.DoodleSpaceObject;
 import at.tuwien.sbc.model.Peer;
 
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo
@@ -55,6 +57,9 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     private static final Logger logger = Logger.getLogger(EventOrganizationPanel.class);
     private JPanel pnlNorth;
     private JScrollPane scrlInvites;
+    private JPanel pnlCenter;
+    private JButton btnRemoveInvite;
+    private JButton btnAddInvite;
     private JButton removeParticipantBtn;
     private JPanel jPanel1;
     private SingleSchedulePanel pnlSchedule;
@@ -66,7 +71,6 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     private JPanel pnlPeers;
     private JButton btnEdit;
     private JButton btnCreate;
-    private JPanel pnlButtons;
     private JComboBox cmbEvent;
 
     public EventOrganizationPanel() {
@@ -78,108 +82,127 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         try {
             BorderLayout thisLayout = new BorderLayout();
             this.setLayout(thisLayout);
-            this.setPreferredSize(new java.awt.Dimension(470, 320));
+            this.setPreferredSize(new java.awt.Dimension(513, 265));
             {
-                jPanel1 = new JPanel();
-                this.add(jPanel1, BorderLayout.CENTER);
-                BorderLayout jPanel1Layout = new BorderLayout();
-                jPanel1.setLayout(jPanel1Layout);
+                pnlCenter = new JPanel();
+                GridLayout pnlCenterLayout = new GridLayout(1, 1);
+                pnlCenterLayout.setColumns(1);
+                pnlCenterLayout.setHgap(5);
+                pnlCenterLayout.setVgap(5);
+                pnlCenter.setLayout(pnlCenterLayout);
+                this.add(pnlCenter, BorderLayout.CENTER);
+                pnlCenter.setPreferredSize(new java.awt.Dimension(0, 0));
                 {
-                    pnlSchedule = new SingleSchedulePanel();
-                    jPanel1.add(pnlSchedule, BorderLayout.NORTH);
-                    pnlSchedule.setPreferredSize(new java.awt.Dimension(300, 61));
-                }
-            }
-            {
-                pnlPeers = new JPanel();
-                pnlPeers.setLayout(null);
-                this.add(pnlPeers, BorderLayout.EAST);
-                pnlPeers.setPreferredSize(new java.awt.Dimension(229, 252));
-                pnlPeers.setBorder(BorderFactory.createTitledBorder("Peers"));
-                {
-                    lblInvites = new JLabel();
-                    pnlPeers.add(lblInvites);
-                    lblInvites.setText("Invitations:");
-                    lblInvites.setIcon(new ImageIcon(ClassLoader.getSystemResource("images/refresh.png")));
-                    lblInvites.setBounds(5, 20, 134, 15);
-                    lblInvites.addMouseListener(this);
-                }
-                {
-                    scrlInvites = new JScrollPane();
-                    pnlPeers.add(scrlInvites);
-                    scrlInvites.setBounds(5, 36, 134, 77);
+                    pnlNorth = new JPanel();
+                    this.add(pnlNorth, BorderLayout.NORTH);
+                    pnlNorth.setLayout(null);
+                    pnlNorth.setPreferredSize(new java.awt.Dimension(513, 33));
                     {
-                        ListModel lstInvitesModel = new DefaultComboBoxModel(ControllerReference.getInstance()
-                                .getAllPeers());
-                        lstInvites = new JList();
-                        scrlInvites.setViewportView(lstInvites);
-                        lstInvites.setModel(lstInvitesModel);
-                        lstInvites.setSize(208, 75);
-                        lstInvites.setPreferredSize(new java.awt.Dimension(0, 0));
+                        cmbEvent = new JComboBox();
+                        pnlNorth.add(cmbEvent, new CellConstraints("2, 2, 1, 1, default, default"));
+                        cmbEvent.setBounds(9, 6, 181, 27);
+                        cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
                     }
                 }
                 {
-                    lblParticipants = new JLabel();
-                    pnlPeers.add(lblParticipants);
-                    lblParticipants.setText("Participants:");
-                    lblParticipants.setBounds(5, 117, 94, 18);
-                }
-                {
-                    scrlParticipants = new JScrollPane();
-                    pnlPeers.add(scrlParticipants);
-                    scrlParticipants.setBounds(5, 141, 134, 74);
+                    jPanel1 = new JPanel();
+                    pnlCenter.add(jPanel1);
+                    jPanel1.setLayout(null);
+                    jPanel1.setPreferredSize(new java.awt.Dimension(246, 252));
+                    jPanel1.setBorder(BorderFactory.createTitledBorder("Dates"));
                     {
-                        ListModel lstParticipantsModel = new DefaultComboBoxModel(getParticipantsForSelectedEvent()
-                                .toArray());
-                        lstParicipants = new JList();
-                        scrlParticipants.setViewportView(lstParicipants);
-                        lstParicipants.setModel(lstParticipantsModel);
-                        lstParicipants.setSize(208, 75);
+                        pnlSchedule = new SingleSchedulePanel();
+                        jPanel1.add(pnlSchedule, new CellConstraints("2, 1, 1, 1, default, default"));
+                        pnlSchedule.setBounds(9, 20, 232, 61);
+                        pnlSchedule.setPreferredSize(new java.awt.Dimension(0, 0));
+                    }
+                    {
+                        btnCreate = new JButton();
+                        jPanel1.add(btnCreate);
+                        btnCreate.setText("Create");
+                        btnCreate.setBounds(9, 87, 110, 23);
+                        btnCreate.setActionCommand(Constants.CMD_BTN_CREATE);
+                        btnCreate.addActionListener(this);
+                    }
+                    {
+                        btnEdit = new JButton();
+                        jPanel1.add(btnEdit);
+                        btnEdit.setText("Update");
+                        btnEdit.setBounds(130, 87, 110, 23);
+                        btnEdit.setActionCommand(Constants.CMD_BTN_UPDATE);
+                        btnEdit.addActionListener(this);
+                        btnEdit.setEnabled(this.isUpdateAllowed());
+                        
                     }
                 }
                 {
-                    removeParticipantBtn = new JButton();
-                    pnlPeers.add(removeParticipantBtn);
-                    removeParticipantBtn.setText("remove");
-                    removeParticipantBtn.setBounds(151, 148, 57, 22);
-                    removeParticipantBtn.addActionListener(this);
-                    removeParticipantBtn.setActionCommand(Constants.CMD_BTN_REMOVE_PARTICIPANT);
-                }
-            }
-            {
-                pnlNorth = new JPanel();
-                this.add(pnlNorth, BorderLayout.NORTH);
-                pnlNorth.setLayout(null);
-                pnlNorth.setPreferredSize(new java.awt.Dimension(400, 37));
-                {
-                    cmbEvent = new JComboBox();
-                    pnlNorth.add(cmbEvent, new CellConstraints("2, 2, 1, 1, default, default"));
-                    cmbEvent.setBounds(9, 6, 181, 27);
-                    cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
-                }
-            }
-            {
-                pnlButtons = new JPanel();
-                this.add(pnlButtons, BorderLayout.SOUTH);
-                pnlButtons.setLayout(null);
-                pnlButtons.setPreferredSize(new java.awt.Dimension(400, 31));
-                {
-                    btnCreate = new JButton();
-                    pnlButtons.add(btnCreate, new CellConstraints("4, 1, 1, 1, default, default"));
-                    btnCreate.setText("Create");
-                    btnCreate.setBounds(253, 4, 92, 23);
-                    btnCreate.setActionCommand(Constants.CMD_BTN_CREATE);
-                    btnCreate.addActionListener(this);
-                }
-                {
-                    btnEdit = new JButton();
-                    pnlButtons.add(btnEdit);
-                    btnEdit.setText("Update");
-                    btnEdit.setBounds(345, 4, 90, 23);
-                    btnEdit.setActionCommand(Constants.CMD_BTN_UPDATE);
-                    btnEdit.addActionListener(this);
-                    btnEdit.setEnabled(this.isUpdateAllowed());
-                    
+                    pnlPeers = new JPanel();
+                    pnlCenter.add(pnlPeers);
+                    pnlPeers.setLayout(null);
+                    pnlPeers.setPreferredSize(new java.awt.Dimension(236, 283));
+                    pnlPeers.setBorder(BorderFactory.createTitledBorder("Peers"));
+                    {
+                        lblInvites = new JLabel();
+                        pnlPeers.add(lblInvites);
+                        lblInvites.setText("Invitations:");
+                        lblInvites.setIcon(new ImageIcon(ClassLoader.getSystemResource("images/refresh.png")));
+                        lblInvites.setBounds(5, 15, 134, 20);
+                        lblInvites.addMouseListener(this);
+                    }
+                    {
+                        scrlInvites = new JScrollPane();
+                        pnlPeers.add(scrlInvites);
+                        scrlInvites.setBounds(5, 36, 134, 77);
+                        {
+                            ListModel lstInvitesModel = new DefaultComboBoxModel(ControllerReference.getInstance()
+                                    .getAllPeers());
+                            lstInvites = new JList();
+                            scrlInvites.setViewportView(lstInvites);
+                            lstInvites.setModel(lstInvitesModel);
+                            lstInvites.setSize(208, 75);
+                            lstInvites.setPreferredSize(new java.awt.Dimension(131, 74));
+                        }
+                    }
+                    {
+                        lblParticipants = new JLabel();
+                        pnlPeers.add(lblParticipants);
+                        lblParticipants.setText("Participants:");
+                        lblParticipants.setBounds(5, 117, 94, 18);
+                    }
+                    {
+                        scrlParticipants = new JScrollPane();
+                        pnlPeers.add(scrlParticipants);
+                        scrlParticipants.setBounds(5, 141, 134, 74);
+                        {
+                            ListModel lstParticipantsModel = new DefaultComboBoxModel(getParticipantsForSelectedEvent()
+                                    .toArray());
+                            lstParicipants = new JList();
+                            scrlParticipants.setViewportView(lstParicipants);
+                            lstParicipants.setModel(lstParticipantsModel);
+                            lstParicipants.setSize(240, 75);
+                            lstParicipants.setPreferredSize(new java.awt.Dimension(131, 71));
+                        }
+                    }
+                    {
+                        removeParticipantBtn = new JButton();
+                        pnlPeers.add(removeParticipantBtn);
+                        removeParticipantBtn.setText("-");
+                        removeParticipantBtn.setBounds(145, 141, 43, 28);
+                        removeParticipantBtn.addActionListener(this);
+                        removeParticipantBtn.setActionCommand(Constants.CMD_BTN_REMOVE_PARTICIPANT);
+                    }
+                    {
+                        btnAddInvite = new JButton();
+                        pnlPeers.add(btnAddInvite);
+                        btnAddInvite.setText("+");
+                        btnAddInvite.setBounds(145, 36, 48, 27);
+                    }
+                    {
+                        btnRemoveInvite = new JButton();
+                        pnlPeers.add(btnRemoveInvite);
+                        btnRemoveInvite.setText("-");
+                        btnRemoveInvite.setBounds(196, 36, 42, 27);
+                    }
                 }
             }
 
@@ -199,20 +222,20 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
     private boolean isEventEditPossible(String name) {
         DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(name);
-        
+
         if (event.retrieveParticipants().isEmpty()) {
             return true;
         }
-        
+
         return false;
     }
 
     private List<String> getParticipantsForSelectedEvent() {
-        if (cmbEvent != null) {
+        if (cmbEvent.getSelectedItem() != null) {
             String e = (String) cmbEvent.getSelectedItem();
-            
+
             DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(e);
-            
+
             if (event != null) {
                 return event.retrieveParticipants();
             }
@@ -224,26 +247,26 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         String cmd = evt.getActionCommand();
 
         if (cmd.equals(Constants.CMD_BTN_CREATE)) {
-          this.createEvent();
+            this.createEvent();
         } else if (cmd.equals(Constants.CMD_BTN_UPDATE)) {
             this.updateEvent();
-            
+
         } else if (cmd.equals(Constants.CMD_BTN_ADD_INVITATION)) {
 
-                DoodleEvent event = (DoodleEvent) cmbEvent.getSelectedItem();
-                if (event != null) {
+            DoodleEvent event = (DoodleEvent) cmbEvent.getSelectedItem();
+            if (event != null) {
 
-                    Object[] peers = lstInvites.getSelectedValues();
+                Object[] peers = lstInvites.getSelectedValues();
 
-                    for (Object p : peers) {
-                        Peer peer = (Peer) p;
-                        event.addInvite(peer);
-                        event.setAction("processIt");
-                        ControllerReference.getInstance().getGigaSpace().write(event);
-                    }
+                for (Object p : peers) {
+                    Peer peer = (Peer) p;
+                    event.addInvite(peer);
+                    event.setAction("processIt");
+                    ControllerReference.getInstance().getGigaSpace().write(event);
                 }
-            } else if (cmd.equals(Constants.CMD_BTN_REMOVE_INVITATION)) {
-                // TODO Remove Invitation if the user has not already participated
+            }
+        } else if (cmd.equals(Constants.CMD_BTN_REMOVE_INVITATION)) {
+            // TODO Remove Invitation if the user has not already participated
         } else if (cmd.equals(Constants.CMD_BTN_REMOVE_PARTICIPANT)) {
 
             // TODO We must notify the participant
@@ -268,7 +291,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         } else {
             logger.error("NULL");
         }
-        
+
     }
 
     private void createEvent() {
@@ -312,8 +335,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                                     continue;
                                 }
                                 Peer p = (Peer) lstInvites.getSelectedValues()[i];
-                                DoodleSchedule forPeer = new DoodleSchedule(d + "", h + "", p.getName(), event
-                                        .getId());
+                                DoodleSchedule forPeer = new DoodleSchedule(d + "", h + "", p.getName(), event.getId());
                                 ControllerReference.getInstance().getGigaSpace().write(forPeer);
                                 event.retrieveSchedules().add(forPeer.getId());
                             }
@@ -322,7 +344,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
                     ControllerReference.getInstance().getGigaSpace().write(event);
                     this.refresh();
-                      
+
                 }
 
             } else {
@@ -332,7 +354,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         } catch (ParseException e) {
             // TODO Something
         }
-        
+
     }
 
     private DefaultComboBoxModel getEventsModel(Peer user) {
@@ -375,23 +397,25 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         logger.info("in refresh()");
         // Refresh Event - meanwhile couuld one Peer participate to this event
         if (cmbEvent.getSelectedItem() != null) {
-            DoodleEvent refreshedEvent = ControllerReference.getInstance().findEventByNameAndUser(cmbEvent.getSelectedItem().toString());
+            DoodleEvent refreshedEvent = ControllerReference.getInstance().findEventByNameAndUser(
+                    cmbEvent.getSelectedItem().toString());
             // refresh Participant List
             if (refreshedEvent != null) {
                 lstParicipants.setModel(new DefaultComboBoxModel(refreshedEvent.retrieveParticipants().toArray()));
             }
-        }else{
-            //  if no event ist in ComboBox the list of Participants must be empty
+        } else {
+            // if no event ist in ComboBox the list of Participants must be
+            // empty
             logger.info("clearing Participation Box");
-            lstParicipants.setModel(new DefaultComboBoxModel(new Object[]{}));
+            lstParicipants.setModel(new DefaultComboBoxModel(new Object[] {}));
         }
-        
-        //  update Registered Peers
+
+        // update Registered Peers
         lstInvites.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getAllPeers()));
-        
-        //  update ComboBox
+
+        // update ComboBox
         cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
-        
+
         btnEdit.setEnabled(this.isUpdateAllowed());
     }
 
