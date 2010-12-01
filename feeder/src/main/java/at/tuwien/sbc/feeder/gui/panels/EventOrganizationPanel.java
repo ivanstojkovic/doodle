@@ -132,7 +132,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                         btnEdit.setActionCommand(Constants.CMD_BTN_UPDATE);
                         btnEdit.addActionListener(this);
                         btnEdit.setEnabled(this.isUpdateAllowed());
-                        
+
                     }
                 }
                 {
@@ -288,6 +288,70 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(name);
         if (event != null) {
             logger.info("updating event with id: " + event.getId());
+            try {
+                if (event.retrieveParticipants().isEmpty()) {
+                    Date start = this.pnlSchedule.getTxtStart().getDate();
+                    Date end = this.pnlSchedule.getTxtEnd().getDate();
+                    Calendar endCal = Calendar.getInstance();
+                    Calendar startCal = Calendar.getInstance();
+                    endCal.setTime(end);
+                    startCal.setTime(start);
+
+                    if (start.before(end) && (startCal.get(Calendar.HOUR_OF_DAY) < endCal.get(Calendar.HOUR_OF_DAY))) {
+
+                        name = JOptionPane.showInputDialog("Please type in a name for this event.", name);
+
+                        if (name != null && !name.equals("")) {
+
+                            Peer current = ControllerReference.getInstance().getUser();
+                            List<DoodleSchedule> schedules = new ArrayList<DoodleSchedule>();
+                            for (int d = startCal.get(Calendar.DAY_OF_YEAR); d <= endCal.get(Calendar.DAY_OF_YEAR); d++) {
+                                for (int h = startCal.get(Calendar.HOUR_OF_DAY); h < endCal.get(Calendar.HOUR_OF_DAY); h++) {
+                                    DoodleSchedule day = new DoodleSchedule(current.getName(), event.getId());
+                                    day.setDay(d + "");
+                                    day.setHour(h + "");
+                                    ControllerReference.getInstance().getGigaSpace().write(day);
+                                    schedules.add(day);
+                                    for (int i = 0; i < lstInvites.getSelectedValues().length; i++) {
+                                        if (lstInvites.getSelectedValues()[i].equals(current)) {
+                                            continue;
+                                        }
+                                        Peer p = (Peer) lstInvites.getSelectedValues()[i];
+                                        DoodleSchedule forPeer = new DoodleSchedule(d + "", h + "", p.getName(), event
+                                                .getId());
+                                        ControllerReference.getInstance().getGigaSpace().write(forPeer);
+                                        schedules.add(forPeer);
+                                    }
+                                }
+                            }
+
+                            event = (DoodleEvent) ControllerReference.getInstance().refresh(event);
+                            if (event.retrieveParticipants().isEmpty()) {
+                                List<String> sIds = new ArrayList<String>();
+                                // TODO delete old schedules..
+                                for (DoodleSchedule s : schedules) {
+                                    ControllerReference.getInstance().getGigaSpace().write(s);
+                                    sIds.add(s.getId());
+
+                                }
+                                event.retrieveSchedules().clear();
+                                event.retrieveSchedules().addAll(sIds);
+                                ControllerReference.getInstance().getGigaSpace().write(event);
+                            }
+
+                            ControllerReference.getInstance().getGigaSpace().write(event);
+                            this.refresh();
+                        } else {
+                            logger.warn("event name cannot be empty");
+                        }
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(this, "This event has subscribed peers and cannot be changed!");
+                }
+            } catch (ParseException e) {
+                // TODO something
+            }
         } else {
             logger.error("NULL");
         }
@@ -307,7 +371,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
                 String name = JOptionPane.showInputDialog("Please type in a name for this event.");
 
-                if (name != null) {
+                if (name != null && !name.equals("")) {
 
                     Peer current = ControllerReference.getInstance().getUser();
                     DoodleEvent event = new DoodleEvent();
@@ -345,6 +409,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     ControllerReference.getInstance().getGigaSpace().write(event);
                     this.refresh();
 
+                } else {
+                    logger.warn("event name cannot be empty");
                 }
 
             } else {
