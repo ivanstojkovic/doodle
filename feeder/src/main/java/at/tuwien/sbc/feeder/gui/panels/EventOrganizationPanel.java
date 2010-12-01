@@ -373,6 +373,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
     public void refresh() {
         logger.info("in refresh()");
+        
         // Refresh Event - meanwhile couuld one Peer participate to this event
         if (cmbEvent.getSelectedItem() != null) {
             DoodleEvent refreshedEvent = ControllerReference.getInstance().findEventByNameAndUser(cmbEvent.getSelectedItem().toString());
@@ -388,7 +389,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         
         //  update Registered Peers
         lstInvites.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getAllPeers()));
-        
+       
         //  update ComboBox
         cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
         
