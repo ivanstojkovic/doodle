@@ -371,27 +371,11 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
     }
 
-//    public void refresh() {
-//        lstInvites.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getAllPeers()));
-//        String e = (String) cmbEvent.getSelectedItem();
-//        if (e != null) {
-//            lstParicipants.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getParticipantsForEvent(
-//                    (String) cmbEvent.getSelectedItem()).toArray()));
-//        }
-//        cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
-//        
-//        
-//    }
-    
     public void refresh() {
         logger.info("in refresh()");
         // Refresh Event - meanwhile couuld one Peer participate to this event
         if (cmbEvent.getSelectedItem() != null) {
-            logger.info("SELECTED EVENT: " + cmbEvent.getSelectedItem().toString());
-            DoodleEvent de = ControllerReference.getInstance().findEventByNameAndUser(cmbEvent.getSelectedItem().toString());
-            //we do not need the next line of code.. findEvent does a refresh...
-            DoodleEvent refreshedEvent = (DoodleEvent) ControllerReference.getInstance().refresh(de);
-            logger.info("REFRESHED EVENT: " + refreshedEvent);
+            DoodleEvent refreshedEvent = ControllerReference.getInstance().findEventByNameAndUser(cmbEvent.getSelectedItem().toString());
             // refresh Participant List
             if (refreshedEvent != null) {
                 lstParicipants.setModel(new DefaultComboBoxModel(refreshedEvent.retrieveParticipants().toArray()));
