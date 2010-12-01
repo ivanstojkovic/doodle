@@ -66,12 +66,12 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     private JButton btnCreate;
     private JPanel pnlButtons;
     private JComboBox cmbEvent;
-    
+
     public EventOrganizationPanel() {
         super();
         initGUI();
     }
-    
+
     private void initGUI() {
         try {
             BorderLayout thisLayout = new BorderLayout();
@@ -108,7 +108,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     scrlInvites.setBounds(5, 36, 134, 77);
                     {
                         ListModel lstInvitesModel = new DefaultComboBoxModel(ControllerReference.getInstance()
-                            .getAllPeers());
+                                .getAllPeers());
                         lstInvites = new JList();
                         scrlInvites.setViewportView(lstInvites);
                         lstInvites.setModel(lstInvitesModel);
@@ -128,7 +128,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     scrlParticipants.setBounds(5, 141, 134, 74);
                     {
                         ListModel lstParticipantsModel = new DefaultComboBoxModel(getParticipantsForSelectedEvent()
-                            .toArray());
+                                .toArray());
                         lstParicipants = new JList();
                         scrlParticipants.setViewportView(lstParicipants);
                         lstParicipants.setModel(lstParticipantsModel);
@@ -142,6 +142,18 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     removeParticipantBtn.setBounds(151, 148, 57, 22);
                     removeParticipantBtn.addActionListener(this);
                     removeParticipantBtn.setActionCommand(Constants.CMD_BTN_REMOVE_PARTICIPANT);
+                }
+            }
+            {
+                pnlNorth = new JPanel();
+                this.add(pnlNorth, BorderLayout.NORTH);
+                pnlNorth.setLayout(null);
+                pnlNorth.setPreferredSize(new java.awt.Dimension(400, 37));
+                {
+                    cmbEvent = new JComboBox();
+                    pnlNorth.add(cmbEvent, new CellConstraints("2, 2, 1, 1, default, default"));
+                    cmbEvent.setBounds(9, 6, 181, 27);
+                    cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
                 }
             }
             {
@@ -162,180 +174,199 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     pnlButtons.add(btnEdit);
                     btnEdit.setText("Update");
                     btnEdit.setBounds(345, 4, 90, 23);
+                    btnEdit.setActionCommand(Constants.CMD_BTN_UPDATE);
+                    btnEdit.addActionListener(this);
+                    btnEdit.setEnabled(this.isUpdateAllowed());
+                    
                 }
             }
-            {
-                pnlNorth = new JPanel();
-                this.add(pnlNorth, BorderLayout.NORTH);
-                pnlNorth.setLayout(null);
-                pnlNorth.setPreferredSize(new java.awt.Dimension(400, 37));
-                {
-                    cmbEvent = new JComboBox();
-                    pnlNorth.add(cmbEvent, new CellConstraints("2, 2, 1, 1, default, default"));
-                    cmbEvent.setBounds(9, 6, 181, 27);
-                    cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
-                }
-            }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
+    private boolean isUpdateAllowed() {
+        if (cmbEvent.getItemCount() == 0) {
+            return false;
+        } else {
+            String event = (String) cmbEvent.getSelectedItem();
+            return this.isEventEditPossible(event);
+        }
+    }
+
+    private boolean isEventEditPossible(String name) {
+        DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(name);
+        
+        if (event.retrieveParticipants().isEmpty()) {
+            return true;
+        }
+        
+        return false;
+    }
+
     private List<String> getParticipantsForSelectedEvent() {
         if (cmbEvent != null) {
-            DoodleEvent event = (DoodleEvent) cmbEvent.getSelectedItem();
+            String e = (String) cmbEvent.getSelectedItem();
+            
+            DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(e);
+            
             if (event != null) {
                 return event.retrieveParticipants();
             }
         }
         return new ArrayList<String>();
     }
-    
+
     public void actionPerformed(ActionEvent evt) {
         String cmd = evt.getActionCommand();
-        
+
         if (cmd.equals(Constants.CMD_BTN_CREATE)) {
-            try {
-                Date start = this.pnlSchedule.getTxtStart().getDate();
-                Date end = this.pnlSchedule.getTxtEnd().getDate();
-                Calendar endCal = Calendar.getInstance();
-                Calendar startCal = Calendar.getInstance();
-                endCal.setTime(end);
-                startCal.setTime(start);
-                
-                if (start.before(end) && (startCal.get(Calendar.HOUR_OF_DAY) < endCal.get(Calendar.HOUR_OF_DAY))) {
-                    
-                    String name = JOptionPane.showInputDialog("Please type in a name for this event.");
-                    
-                    if (name != null) {
-                        
-                        Peer current = ControllerReference.getInstance().getUser();
-                        DoodleEvent event = new DoodleEvent();
-                        event.setName(name);
-                        event.setAction("new");
-                        event.setOwner(current.getName());
-                        
-                        Object[] peers = lstInvites.getSelectedValues();
-                        
-                        for (Object p : peers) {
-                            Peer peer = (Peer) p;
-                            event.addInvite(peer);
-                        }
-                        
-                        event.setAction("processIt");
-                        ControllerReference.getInstance().getGigaSpace().write(event);
-                        
-                        for (int d = startCal.get(Calendar.DAY_OF_YEAR); d <= endCal.get(Calendar.DAY_OF_YEAR); d++) {
-                            for (int h = startCal.get(Calendar.HOUR_OF_DAY); h < endCal.get(Calendar.HOUR_OF_DAY); h++) {
-                                DoodleSchedule day = new DoodleSchedule(current.getName(), event.getId());
-                                day.setDay(d + "");
-                                day.setHour(h + "");
-                                System.out.println("dId: " + day.getId());
-                                ControllerReference.getInstance().getGigaSpace().write(day);
-                                System.out.println("dId: " + day.getId());
-                                 //event.getSchedules().add(day.getId());
-                                for (int i = 0; i < lstInvites.getSelectedValues().length; i++) {
-                                    if (lstInvites.getSelectedValues()[i].equals(current)) {
-                                        continue;
-                                    }
-                                    Peer p = (Peer) lstInvites.getSelectedValues()[i];
-                                    DoodleSchedule forPeer = new DoodleSchedule(d + "", h + "", p.getName(), event
-                                        .getId());
-                                    ControllerReference.getInstance().getGigaSpace().write(forPeer);
-                                     //event.getSchedules().add(forPeer.getId());
-                                }
-                            }
-                        }
-                        
-                        
-                        if (current != null) {
-                            cmbEvent.setModel(this.getEventsModel(current));
-                        }
-                    }
-                    
-                } else {
-                    JOptionPane.showMessageDialog(this, "Idiot!");
-                }
-                
-            } catch (ParseException e) {
-                // TODO Something
-            }
-        } else if (cmd.equals(Constants.CMD_BTN_ADD_INVITATION)) {
+          this.createEvent();
+        } else if (cmd.equals(Constants.CMD_BTN_UPDATE)) {
+            this.updateEvent();
             
-            DoodleEvent event = (DoodleEvent) cmbEvent.getSelectedItem();
-            if (event != null) {
-                
-                Object[] peers = lstInvites.getSelectedValues();
-                
-                for (Object p : peers) {
-                    Peer peer = (Peer) p;
-                    event.addInvite(peer);
-                    event.setAction("processIt");
-                    ControllerReference.getInstance().getGigaSpace().write(event);
-                }
-            }
-        } else if (cmd.equals(Constants.CMD_BTN_REMOVE_INVITATION)) {
-            // TODO Remove Invitation if the user has not already participated
+         
         } else if (cmd.equals(Constants.CMD_BTN_REMOVE_PARTICIPANT)) {
-            
+
             // TODO We must notify the participant
-            
+
             DoodleEvent event = (DoodleEvent) cmbEvent.getSelectedItem();
             if (event != null) {
-                
+
                 Object[] peers = lstParicipants.getSelectedValues();
-                
+
                 for (Object p : peers) {
                     lstParicipants.remove((Component) p);
                 }
             }
         }
     }
-    
+
+    private void updateEvent() {
+        String name = (String) this.cmbEvent.getSelectedItem();
+        DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(name);
+        if (event != null) {
+            logger.info("updating event with id: " + event.getId());
+        } else {
+            logger.error("NULL");
+        }
+        
+    }
+
+    private void createEvent() {
+        try {
+            Date start = this.pnlSchedule.getTxtStart().getDate();
+            Date end = this.pnlSchedule.getTxtEnd().getDate();
+            Calendar endCal = Calendar.getInstance();
+            Calendar startCal = Calendar.getInstance();
+            endCal.setTime(end);
+            startCal.setTime(start);
+
+            if (start.before(end) && (startCal.get(Calendar.HOUR_OF_DAY) < endCal.get(Calendar.HOUR_OF_DAY))) {
+
+                String name = JOptionPane.showInputDialog("Please type in a name for this event.");
+
+                if (name != null) {
+
+                    Peer current = ControllerReference.getInstance().getUser();
+                    DoodleEvent event = new DoodleEvent();
+                    event.setName(name);
+                    event.setAction("new");
+                    event.setOwner(current.getName());
+                    event.setAction("processIt");
+
+                    Object[] peers = lstInvites.getSelectedValues();
+
+                    for (Object p : peers) {
+                        Peer peer = (Peer) p;
+                        event.addInvite(peer);
+                    }
+
+                    for (int d = startCal.get(Calendar.DAY_OF_YEAR); d <= endCal.get(Calendar.DAY_OF_YEAR); d++) {
+                        for (int h = startCal.get(Calendar.HOUR_OF_DAY); h < endCal.get(Calendar.HOUR_OF_DAY); h++) {
+                            DoodleSchedule day = new DoodleSchedule(current.getName(), event.getId());
+                            day.setDay(d + "");
+                            day.setHour(h + "");
+                            ControllerReference.getInstance().getGigaSpace().write(day);
+                            event.retrieveSchedules().add(day.getId());
+                            for (int i = 0; i < lstInvites.getSelectedValues().length; i++) {
+                                if (lstInvites.getSelectedValues()[i].equals(current)) {
+                                    continue;
+                                }
+                                Peer p = (Peer) lstInvites.getSelectedValues()[i];
+                                DoodleSchedule forPeer = new DoodleSchedule(d + "", h + "", p.getName(), event
+                                        .getId());
+                                ControllerReference.getInstance().getGigaSpace().write(forPeer);
+                                event.retrieveSchedules().add(forPeer.getId());
+                            }
+                        }
+                    }
+
+                    ControllerReference.getInstance().getGigaSpace().write(event);
+                    current = ControllerReference.getInstance().getUser();
+
+                    if (current != null) {
+                        cmbEvent.setModel(this.getEventsModel(current));
+                    }
+                }
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Idiot!");
+            }
+
+        } catch (ParseException e) {
+            // TODO Something
+        }
+        
+    }
+
     private DefaultComboBoxModel getEventsModel(Peer user) {
         if (user == null) {
             return new DefaultComboBoxModel();
         } else {
-            return new DefaultComboBoxModel(user.retrieveOrganized().toArray());
+            List<String> names = ControllerReference.getInstance().getEventNamesFromIds(user.retrieveOrganized());
+            return new DefaultComboBoxModel(names.toArray());
         }
     }
-    
+
     public void mouseClicked(MouseEvent e) {
         if (e.getSource() == lblInvites) {
             lstInvites.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getAllPeers()));
         }
-        
+
     }
-    
+
     public void mouseEntered(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
     public void mouseExited(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
     public void mousePressed(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
     public void mouseReleased(MouseEvent e) {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
     public void refresh() {
         lstInvites.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getAllPeers()));
         String e = (String) cmbEvent.getSelectedItem();
         if (e != null) {
             lstParicipants.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getParticipantsForEvent(
-                (String) cmbEvent.getSelectedItem()).toArray()));
+                    (String) cmbEvent.getSelectedItem()).toArray()));
         }
         cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
+        
+        btnEdit.setEnabled(this.isUpdateAllowed());
     }
-    
+
 }
