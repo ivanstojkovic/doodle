@@ -2,9 +2,9 @@ package at.tuwien.sbc.model;
 
 import java.util.Date;
 
-public class DoodleComment  {
+public class DoodleComment implements DoodleSpaceObject {
 
-	private long id;
+	private String id;
 
 	private Peer author;
 
@@ -23,11 +23,11 @@ public class DoodleComment  {
 		super();
 	}
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

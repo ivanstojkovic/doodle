@@ -50,11 +50,10 @@ public class EventProcessor {
 			Peer foundParticipant = space.readIfExists(new Peer(peer, null, null));
 			if (foundParticipant != null && !foundParticipant.retrieveEvents().contains(event.getId())) {
 				logger.info("adding Event " +event.getName() + " to List of Peer["+foundParticipant.toString()+"] participating Events");
-				foundParticipant.retrieveEvents().add(event.getId());
+				foundParticipant.addEvent(event.getId());
 				space.write(foundParticipant);
 			}
 		}
-		
 	}
 
 	private void updatePeerAsOwner(DoodleEvent event) {

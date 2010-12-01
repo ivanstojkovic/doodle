@@ -4,7 +4,7 @@ import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
 
 @SpaceClass
-public class DoodleSchedule {
+public class DoodleSchedule implements DoodleSpaceObject {
 
 	private String id;
 

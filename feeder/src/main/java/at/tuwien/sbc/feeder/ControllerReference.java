@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.openspaces.core.GigaSpace;
 
 import at.tuwien.sbc.model.DoodleEvent;
+import at.tuwien.sbc.model.DoodleSpaceObject;
 import at.tuwien.sbc.model.Peer;
 
 import com.j_spaces.core.LeaseContext;
@@ -174,5 +175,21 @@ public class ControllerReference {
             return new ArrayList<String>();
         }
         return foundEvent.retrieveParticipants();
+    }
+    
+    public Object refresh(DoodleSpaceObject o) {
+    	if(o == null) {
+    		return null;
+    	}
+    	if(o instanceof DoodleEvent) {
+    		DoodleEvent temp = new DoodleEvent();
+    		temp.setId(o.getId());
+    		return gigaSpace.readIfExists(temp);
+    	}
+    	if(o instanceof Peer) {
+    		Peer temp = new Peer(o.getId(), null, null);
+    		return gigaSpace.readIfExists(temp);
+    	}
+    	return null;
     }
 }

@@ -7,7 +7,7 @@ import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
 
 @SpaceClass
-public class Peer {
+public class Peer implements DoodleSpaceObject {
     
     private String name;
     
@@ -73,7 +73,7 @@ public class Peer {
     
     @Override
     public String toString() {
-        return "Peer ["+ name + ", " + password + "]";
+        return "Peer ["+ name + "]";
     }
     
     @Override
@@ -129,5 +129,17 @@ public class Peer {
         
         return this.events;
     }
+    
+    public void addEvent(String eventId) {
+    	retrieveEvents().add(eventId);
+    }
+    
+    public String getId() {
+    	return name;
+    }
+
+	public void setId(String id) {
+		this.name = id;
+	}
     
 }
