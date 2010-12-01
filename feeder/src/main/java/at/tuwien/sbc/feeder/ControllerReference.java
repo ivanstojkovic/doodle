@@ -135,6 +135,9 @@ public class ControllerReference {
     }
 
     public DoodleEvent findEventByNameAndUser(String name) {
+    	if(name == null) {
+    		return null;
+    	}
         // WARNING one user can have two events with same name.. Problem...
         DoodleEvent template = new DoodleEvent();
         template.setName(name);

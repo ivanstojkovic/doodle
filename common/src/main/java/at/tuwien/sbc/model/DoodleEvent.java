@@ -202,4 +202,16 @@ public class DoodleEvent implements DoodleSpaceObject {
 		return action;
 	}
 
+	public void removeComment(String selectedComment) {
+		if (retrieveComments().size() > 0) {
+			Iterator<String> i = retrieveComments().iterator();
+			while (i.hasNext()) {
+				String comment = i.next();
+				if (comment.equals(selectedComment)) {
+					i.remove();
+				}
+			}
+		}
+	}
+
 }

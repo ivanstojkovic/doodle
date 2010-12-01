@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
+import javax.swing.event.ListDataListener;
 
 import org.apache.log4j.Logger;
 
@@ -57,6 +59,10 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     private static final Logger logger = Logger.getLogger(EventOrganizationPanel.class);
     private JPanel pnlNorth;
     private JScrollPane scrlInvites;
+    private JButton commentAddNew;
+    private JButton commentDelete;
+    private JList commentList;
+    private JPanel commentsPanel;
     private JPanel pnlCenter;
     private JButton btnRemoveInvite;
     private JButton btnAddInvite;
@@ -82,16 +88,49 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         try {
             BorderLayout thisLayout = new BorderLayout();
             this.setLayout(thisLayout);
-            this.setPreferredSize(new java.awt.Dimension(513, 265));
+            this.setPreferredSize(new java.awt.Dimension(600, 600));
+            this.setSize(600, 600);
+            {
+            	commentsPanel = new JPanel();
+            	this.add(commentsPanel, BorderLayout.SOUTH);
+            	commentsPanel.setLayout(null);
+            	commentsPanel.setPreferredSize(new java.awt.Dimension(500, 140));
+            	commentsPanel.setSize(500, 140);
+            	commentsPanel.setBorder(BorderFactory.createTitledBorder("Comments"));
+            	{
+            		commentList = new JList();
+            		commentsPanel.add(commentList);
+            		commentList.setModel(new DefaultComboBoxModel(getCommentsForSelectedEvent().toArray()));
+            		commentList.setBounds(17, 20, 451, 103);
+            	}
+            	{
+            		commentDelete = new JButton();
+            		commentsPanel.add(commentDelete);
+            		commentDelete.setText("-");
+            		commentDelete.setBounds(475, 20, 44, 26);
+            		commentDelete.setActionCommand(Constants.CMD_BTN_REMOVE_COMMENT);
+            		commentDelete.addActionListener(this);
+
+            	}
+            	{
+            		commentAddNew = new JButton();
+            		commentsPanel.add(commentAddNew);
+            		commentAddNew.setText("new comment");
+            		commentAddNew.setBounds(475, 101, 121, 22);
+            		commentAddNew.setActionCommand(Constants.CMD_BTN_ADD_COMMENT);
+            		commentAddNew.addActionListener(this);
+            	}
+            }
             {
                 pnlCenter = new JPanel();
-                GridLayout pnlCenterLayout = new GridLayout(1, 1);
+                GridLayout pnlCenterLayout = new GridLayout(1, 2);
                 pnlCenterLayout.setColumns(1);
                 pnlCenterLayout.setHgap(5);
                 pnlCenterLayout.setVgap(5);
                 pnlCenter.setLayout(pnlCenterLayout);
                 this.add(pnlCenter, BorderLayout.CENTER);
-                pnlCenter.setPreferredSize(new java.awt.Dimension(0, 0));
+                pnlCenter.setPreferredSize(new java.awt.Dimension(600, 250));
+                pnlCenter.setSize(600, 250);
                 {
                     pnlNorth = new JPanel();
                     this.add(pnlNorth, BorderLayout.NORTH);
@@ -102,13 +141,15 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                         pnlNorth.add(cmbEvent, new CellConstraints("2, 2, 1, 1, default, default"));
                         cmbEvent.setBounds(9, 6, 181, 27);
                         cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
+                        cmbEvent.addActionListener(this);
+                        cmbEvent.setActionCommand(Constants.CMD_EVENT_COMBO_CHANGED);
                     }
                 }
                 {
                     jPanel1 = new JPanel();
                     pnlCenter.add(jPanel1);
                     jPanel1.setLayout(null);
-                    jPanel1.setPreferredSize(new java.awt.Dimension(246, 252));
+                    jPanel1.setPreferredSize(new java.awt.Dimension(254, 241));
                     jPanel1.setBorder(BorderFactory.createTitledBorder("Dates"));
                     {
                         pnlSchedule = new SingleSchedulePanel();
@@ -242,6 +283,19 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         }
         return new ArrayList<String>();
     }
+    
+    private List<String> getCommentsForSelectedEvent() {
+    	if (cmbEvent != null && cmbEvent.getSelectedItem() != null) {
+    		String e = (String) cmbEvent.getSelectedItem();
+    		
+    		DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(e);
+    		
+    		if (event != null) {
+    			return event.retrieveComments();
+    		}
+    	}
+    	return new ArrayList<String>();
+    }
 
     public void actionPerformed(ActionEvent evt) {
         String cmd = evt.getActionCommand();
@@ -280,6 +334,30 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     lstParicipants.remove((Component) p);
                 }
             }
+        } else if(cmd.equals(Constants.CMD_BTN_ADD_COMMENT)) {
+        	DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser((String)cmbEvent.getSelectedItem());
+            if (event != null) {
+            	String comment = JOptionPane.showInputDialog("Type your comment for Event: " + event.getName(), "");
+            	if(comment != null && comment.length()>0) {
+            		event.retrieveComments().add(ControllerReference.getInstance().getUser().getName() + ": " + comment);
+            		ControllerReference.getInstance().getGigaSpace().write(event);
+            		refresh();
+            	}
+            }else{
+            	JOptionPane.showMessageDialog(this, "No Event selected");
+            }
+        } else if(cmd.equals(Constants.CMD_BTN_REMOVE_COMMENT)) {
+			String selectedComment = (String) commentList.getSelectedValue();
+			DoodleEvent selectedEvent = ControllerReference.getInstance().findEventByNameAndUser((String)cmbEvent.getSelectedItem());
+			if (selectedComment != null && selectedEvent != null) {
+				selectedEvent.removeComment(selectedComment);
+				ControllerReference.getInstance().getGigaSpace().write(selectedEvent);
+				refresh();
+			}else{
+            	JOptionPane.showMessageDialog(this, "To delete a comment please select one Event a one Comment from the list");
+            }
+        }else if(cmd.equals(Constants.CMD_EVENT_COMBO_CHANGED)) {
+        	refresh();
         }
     }
 
@@ -407,6 +485,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     }
 
                     ControllerReference.getInstance().getGigaSpace().write(event);
+                    //	TODO wenn ein neues Event erzeugt wird soll man cmbEvent.setSelectedItem(event.getId) aufrufen
                     this.refresh();
 
                 } else {
@@ -462,6 +541,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     public void refresh() {
         logger.info("in refresh()");
         
+        Object selectedEvent = cmbEvent.getSelectedItem();
+        
         // Refresh Event - meanwhile couuld one Peer participate to this event
         if (cmbEvent.getSelectedItem() != null) {
             DoodleEvent refreshedEvent = ControllerReference.getInstance().findEventByNameAndUser(
@@ -469,6 +550,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             // refresh Participant List
             if (refreshedEvent != null) {
                 lstParicipants.setModel(new DefaultComboBoxModel(refreshedEvent.retrieveParticipants().toArray()));
+                // update CommentList
+                commentList.setModel(new DefaultComboBoxModel(getCommentsForSelectedEvent().toArray()));
             }
         } else {
             // if no event ist in ComboBox the list of Participants must be
@@ -482,6 +565,10 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
         // update ComboBox
         cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
+        
+        if(selectedEvent!=null) {
+        	cmbEvent.setSelectedItem(selectedEvent);
+        }
 
         btnEdit.setEnabled(this.isUpdateAllowed());
     }

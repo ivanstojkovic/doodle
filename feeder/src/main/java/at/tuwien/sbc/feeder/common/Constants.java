@@ -41,6 +41,12 @@ public final class Constants {
     public static final String CMD_BTN_INVITATION_CONFIRM = "overview.confirm";
     
     public static final String CMD_BTN_INVITATION_REJECT = "overview.reject";
+
+	public static String CMD_BTN_ADD_COMMENT = "overview.add_comment";
+
+	public static String CMD_BTN_REMOVE_COMMENT = "overview.remove_comment";
+
+	public static String CMD_EVENT_COMBO_CHANGED = "overview.event_combo_changed";
     
     private Constants() {
         

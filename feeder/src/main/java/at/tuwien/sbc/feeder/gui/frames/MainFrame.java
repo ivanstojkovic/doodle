@@ -169,7 +169,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
             }
             
             pack();
-            this.setSize(643, 430);
+            this.setSize(643, 560);
         } catch (Exception e) {
             // add your error handling code here
             e.printStackTrace();
