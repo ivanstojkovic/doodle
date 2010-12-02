@@ -125,12 +125,16 @@ public class DoodleEvent implements DoodleSpaceObject {
 		this.comments = comments;
 	}
 
-	public String toString() {
-		return "[Event: " + this.name + "Action: " + this.getAction() + "\nOwner: " + (owner != null ? this.owner.toString() : "null")
-				+ "\ninvites: " + Arrays.deepToString(retrieveInvitations().toArray()) + "\nSchedules: "
-				+ Arrays.deepToString(retrieveSchedules().toArray()) + "]";
-	}
+//	public String toString() {
+//		return "[Event: " + this.name + "Action: " + this.getAction() + "\nOwner: " + (owner != null ? this.owner.toString() : "null")
+//				+ "\ninvites: " + Arrays.deepToString(retrieveInvitations().toArray()) + "\nSchedules: "
+//				+ Arrays.deepToString(retrieveSchedules().toArray()) + "]";
+//	}
 
+	public String toString() {
+	    return this.getName();
+	}
+	
 	public boolean addInvite(Peer peer) {
 		if (!retrieveInvitations().contains(peer.getName())) {
 			return retrieveInvitations().add(peer.getName());

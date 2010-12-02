@@ -21,6 +21,7 @@ import javax.swing.SwingUtilities;
 import at.tuwien.sbc.feeder.ControllerReference;
 import at.tuwien.sbc.feeder.common.Constants;
 import at.tuwien.sbc.feeder.gui.panels.EventOrganizationPanel;
+import at.tuwien.sbc.feeder.gui.panels.PeerEventsPanel;
 import at.tuwien.sbc.feeder.gui.panels.SearchPanel;
 import at.tuwien.sbc.feeder.gui.panels.TabbedPanel;
 import at.tuwien.sbc.feeder.interfaces.LoginCallback;
@@ -229,9 +230,6 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
                 this.lblGreet.setText("Welcome " + user.getName());
             }
             
-            EventOrganizationPanel tab = (EventOrganizationPanel) this.tabs.getTabs().getComponentAt(0);
-            tab.refresh();
-            
         } else {
             ControllerReference.getInstance().logout();
             this.itmLogout.setEnabled(false);
@@ -239,6 +237,11 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
             this.tabs.enableTab(-1, false);
             this.lblGreet.setText("You are currently not logged in!");
         }
+        
+        EventOrganizationPanel eop = (EventOrganizationPanel) this.tabs.getTabs().getComponentAt(0);
+        PeerEventsPanel pep = (PeerEventsPanel) this.tabs.getTabs().getComponentAt(1);
+        eop.refresh();
+        pep.refresh();
         
     }
     

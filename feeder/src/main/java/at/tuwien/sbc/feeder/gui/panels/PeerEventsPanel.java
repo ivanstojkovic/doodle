@@ -156,16 +156,14 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 
 	private String retrieveParticipantEvents() {
 		StringBuffer buf = new StringBuffer(42);
-		// TODO be careful what happens if a new event comes in the space
-		// for this user.. the field in the controller has to be updated..
 		Peer you = ControllerReference.getInstance().getUser();
 
 		if (you.retrieveEvents().isEmpty()) {
 			buf.append("You are not participating in any event");
 		} else {
 			buf.append("Participation Events:");
-			//TODO retrieve events
-			for (String e : you.retrieveEvents()) {
+			List<String> names = ControllerReference.getInstance().getEventNamesFromIds(you.retrieveEvents());
+			for (String e : names) {
 				buf.append("\n");
 				buf.append(e);
 			}
@@ -185,7 +183,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 			buf.append("Invitations:");
 			for (DoodleEvent e : eventsInvitedTo) {
 				buf.append("\n");
-				buf.append(e.toString());
+				buf.append(e.getName());
 			}
 		}
 
@@ -194,16 +192,14 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 
 	private String retrieveOrganizedEvents() {
 		StringBuffer buf = new StringBuffer(42);
-		// TODO be careful what happens if a new event comes in the space
-		// for this user.. the field in the controller has to be updated..
 		Peer you = ControllerReference.getInstance().getUser();
 
 		if (you.retrieveOrganized().isEmpty()) {
 			buf.append("You have not organized any event");
 		} else {
 			buf.append("Organized Events:");
-			//TODO retrieve Events
-			for (String e : you.retrieveOrganized()) {
+			List<String> names = ControllerReference.getInstance().getEventNamesFromIds(you.retrieveOrganized());
+			for (String e : names) {
 				buf.append("\n");
 				buf.append(e);
 			}
@@ -223,6 +219,12 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 		rejectBtn.setVisible(false);
 		subscribeBtn.setVisible(false);
 		invitationsCmb.setVisible(false);
+	}
+	
+	public void refresh() {
+	    this.txtArea.setText("");
+	    this.hideInvitationComponents();
+	    this.cmbType.setSelectedIndex(0);
 	}
 
 }

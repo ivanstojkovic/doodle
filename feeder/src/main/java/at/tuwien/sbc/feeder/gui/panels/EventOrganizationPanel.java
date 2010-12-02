@@ -189,7 +189,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     {
                         lblInvites = new JLabel();
                         pnlPeers.add(lblInvites);
-                        lblInvites.setText("Invitations:");
+                        lblInvites.setText("Invite Peers:");
                         lblInvites.setIcon(new ImageIcon(ClassLoader.getSystemResource("images/refresh.png")));
                         lblInvites.setBounds(5, 15, 134, 20);
                         lblInvites.addMouseListener(this);
