@@ -131,22 +131,19 @@ public class DoodleEvent implements DoodleSpaceObject {
 				+ Arrays.deepToString(retrieveSchedules().toArray()) + "]";
 	}
 
-	public void addInvite(Peer peer) {
+	public boolean addInvite(Peer peer) {
 		if (!retrieveInvitations().contains(peer.getName())) {
-			retrieveInvitations().add(peer.getName());
+			return retrieveInvitations().add(peer.getName());
 		}
+		return false;
 	}
 
-	public void addInvite(String peer) {
-		if (!retrieveInvitations().contains(peer)) {
-			retrieveInvitations().add(peer);
+	public boolean removeInvitation(Peer user) {
+		if (retrieveInvitations().contains(user.getName())) {
+		    return retrieveInvitations().remove(user.getName());
 		}
-	}
-
-	public void removeInvitation(Peer user) {
-		if (retrieveInvitations() != null && retrieveInvitations().contains(user.getName())) {
-			retrieveInvitations().remove(user.getName());
-		}
+		
+		return false;
 	}
 
 	public void addParticipant(Peer user) {

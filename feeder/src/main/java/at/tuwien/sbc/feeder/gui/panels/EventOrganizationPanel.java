@@ -62,7 +62,6 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     private JPanel pnlCenter;
     private JButton btnRemoveInvite;
     private JButton btnAddInvite;
-    private JButton removeParticipantBtn;
     private JPanel jPanel1;
     private SingleSchedulePanel pnlSchedule;
     private JList lstInvites;
@@ -87,35 +86,35 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             this.setPreferredSize(new java.awt.Dimension(600, 600));
             this.setSize(600, 600);
             {
-            	commentsPanel = new JPanel();
-            	this.add(commentsPanel, BorderLayout.SOUTH);
-            	commentsPanel.setLayout(null);
-            	commentsPanel.setPreferredSize(new java.awt.Dimension(500, 140));
-            	commentsPanel.setSize(500, 140);
-            	commentsPanel.setBorder(BorderFactory.createTitledBorder("Comments"));
-            	{
-            		commentList = new JList();
-            		commentsPanel.add(commentList);
-            		commentList.setModel(new DefaultComboBoxModel(getCommentsForSelectedEvent().toArray()));
-            		commentList.setBounds(17, 20, 451, 103);
-            	}
-            	{
-            		commentDelete = new JButton();
-            		commentsPanel.add(commentDelete);
-            		commentDelete.setText("-");
-            		commentDelete.setBounds(475, 20, 44, 26);
-            		commentDelete.setActionCommand(Constants.CMD_BTN_REMOVE_COMMENT);
-            		commentDelete.addActionListener(this);
+                commentsPanel = new JPanel();
+                this.add(commentsPanel, BorderLayout.SOUTH);
+                commentsPanel.setLayout(null);
+                commentsPanel.setPreferredSize(new java.awt.Dimension(500, 140));
+                commentsPanel.setSize(500, 140);
+                commentsPanel.setBorder(BorderFactory.createTitledBorder("Comments"));
+                {
+                    commentList = new JList();
+                    commentsPanel.add(commentList);
+                    commentList.setModel(new DefaultComboBoxModel(getCommentsForSelectedEvent().toArray()));
+                    commentList.setBounds(17, 20, 451, 103);
+                }
+                {
+                    commentDelete = new JButton();
+                    commentsPanel.add(commentDelete);
+                    commentDelete.setText("-");
+                    commentDelete.setBounds(475, 20, 44, 26);
+                    commentDelete.setActionCommand(Constants.CMD_BTN_REMOVE_COMMENT);
+                    commentDelete.addActionListener(this);
 
-            	}
-            	{
-            		commentAddNew = new JButton();
-            		commentsPanel.add(commentAddNew);
-            		commentAddNew.setText("new comment");
-            		commentAddNew.setBounds(475, 101, 121, 22);
-            		commentAddNew.setActionCommand(Constants.CMD_BTN_ADD_COMMENT);
-            		commentAddNew.addActionListener(this);
-            	}
+                }
+                {
+                    commentAddNew = new JButton();
+                    commentsPanel.add(commentAddNew);
+                    commentAddNew.setText("new comment");
+                    commentAddNew.setBounds(475, 101, 121, 22);
+                    commentAddNew.setActionCommand(Constants.CMD_BTN_ADD_COMMENT);
+                    commentAddNew.addActionListener(this);
+                }
             }
             {
                 pnlCenter = new JPanel();
@@ -221,24 +220,20 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                         }
                     }
                     {
-                        removeParticipantBtn = new JButton();
-                        pnlPeers.add(removeParticipantBtn);
-                        removeParticipantBtn.setText("-");
-                        removeParticipantBtn.setBounds(145, 141, 43, 28);
-                        removeParticipantBtn.addActionListener(this);
-                        removeParticipantBtn.setActionCommand(Constants.CMD_BTN_REMOVE_PARTICIPANT);
-                    }
-                    {
                         btnAddInvite = new JButton();
                         pnlPeers.add(btnAddInvite);
                         btnAddInvite.setText("+");
                         btnAddInvite.setBounds(145, 36, 48, 27);
+                        btnAddInvite.setActionCommand(Constants.CMD_BTN_ADD_INVITATION);
+                        btnAddInvite.addActionListener(this);
                     }
                     {
                         btnRemoveInvite = new JButton();
                         pnlPeers.add(btnRemoveInvite);
                         btnRemoveInvite.setText("-");
                         btnRemoveInvite.setBounds(196, 36, 42, 27);
+                        btnRemoveInvite.setActionCommand(Constants.CMD_BTN_REMOVE_INVITATION);
+                        btnRemoveInvite.addActionListener(this);
                     }
                 }
             }
@@ -279,18 +274,18 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         }
         return new ArrayList<String>();
     }
-    
+
     private List<String> getCommentsForSelectedEvent() {
-    	if (cmbEvent != null && cmbEvent.getSelectedItem() != null) {
-    		String e = (String) cmbEvent.getSelectedItem();
-    		
-    		DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(e);
-    		
-    		if (event != null) {
-    			return event.retrieveComments();
-    		}
-    	}
-    	return new ArrayList<String>();
+        if (cmbEvent != null && cmbEvent.getSelectedItem() != null) {
+            String e = (String) cmbEvent.getSelectedItem();
+
+            DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(e);
+
+            if (event != null) {
+                return event.retrieveComments();
+            }
+        }
+        return new ArrayList<String>();
     }
 
     public void actionPerformed(ActionEvent evt) {
@@ -298,63 +293,124 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
         if (cmd.equals(Constants.CMD_BTN_CREATE)) {
             this.createEvent();
+
         } else if (cmd.equals(Constants.CMD_BTN_UPDATE)) {
             this.updateEvent();
 
         } else if (cmd.equals(Constants.CMD_BTN_ADD_INVITATION)) {
+            this.addInvite();
 
-            DoodleEvent event = (DoodleEvent) cmbEvent.getSelectedItem();
+        } else if (cmd.equals(Constants.CMD_BTN_REMOVE_INVITATION)) {
+            this.removeInvite();
+
+        } else if (cmd.equals(Constants.CMD_BTN_ADD_COMMENT)) {
+            DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(
+                    (String) cmbEvent.getSelectedItem());
             if (event != null) {
+                String comment = JOptionPane.showInputDialog("Type your comment for Event: " + event.getName(), "");
+                if (comment != null && comment.length() > 0) {
+                    event.retrieveComments()
+                            .add(ControllerReference.getInstance().getUser().getName() + ": " + comment);
+                    ControllerReference.getInstance().getGigaSpace().write(event);
+                    refresh();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "No Event selected");
+            }
+        } else if (cmd.equals(Constants.CMD_BTN_REMOVE_COMMENT)) {
+            String selectedComment = (String) commentList.getSelectedValue();
+            DoodleEvent selectedEvent = ControllerReference.getInstance().findEventByNameAndUser(
+                    (String) cmbEvent.getSelectedItem());
+            if (selectedComment != null && selectedEvent != null) {
+                selectedEvent.removeComment(selectedComment);
+                ControllerReference.getInstance().getGigaSpace().write(selectedEvent);
+                refresh();
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "To delete a comment please select one Event a one Comment from the list");
+            }
+        } else if (cmd.equals(Constants.CMD_EVENT_COMBO_CHANGED)) {
+            refresh();
+        }
+    }
 
-                Object[] peers = lstInvites.getSelectedValues();
-
+    private void removeInvite() {
+        String name = (String) cmbEvent.getSelectedItem();
+        DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(name);
+        
+        if (event != null) {
+            
+            Object[] peers = lstInvites.getSelectedValues();
+            if (peers.length >0) {
+                boolean atLeastOne = false;
                 for (Object p : peers) {
                     Peer peer = (Peer) p;
-                    event.addInvite(peer);
+                    boolean removed = event.removeInvitation(peer);
+                    if (removed) {
+                        atLeastOne = true;
+                        //remove all schedules for this one
+                        ControllerReference.getInstance().deleteOldSchedules(peer.getId(), event.getId());
+                    }
+                }
+                
+                //how do we remove the notification in the removed clients????
+                if (atLeastOne) {
+                    JOptionPane.showMessageDialog(this, "Invitation removed successfully");
                     event.setAction("processIt");
                     ControllerReference.getInstance().getGigaSpace().write(event);
+                } else {
+                    JOptionPane.showMessageDialog(this, "All selected peers were not invited");  
                 }
+                
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select at least one peer");
             }
-        } else if (cmd.equals(Constants.CMD_BTN_REMOVE_INVITATION)) {
-            // TODO Remove Invitation if the user has not already participated
-        } else if (cmd.equals(Constants.CMD_BTN_REMOVE_PARTICIPANT)) {
-
-            // TODO We must notify the participant
-
-            DoodleEvent event = (DoodleEvent) cmbEvent.getSelectedItem();
-            if (event != null) {
-
-                Object[] peers = lstParicipants.getSelectedValues();
-
-                for (Object p : peers) {
-                    lstParicipants.remove((Component) p);
-                }
-            }
-        } else if(cmd.equals(Constants.CMD_BTN_ADD_COMMENT)) {
-        	DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser((String)cmbEvent.getSelectedItem());
-            if (event != null) {
-            	String comment = JOptionPane.showInputDialog("Type your comment for Event: " + event.getName(), "");
-            	if(comment != null && comment.length()>0) {
-            		event.retrieveComments().add(ControllerReference.getInstance().getUser().getName() + ": " + comment);
-            		ControllerReference.getInstance().getGigaSpace().write(event);
-            		refresh();
-            	}
-            }else{
-            	JOptionPane.showMessageDialog(this, "No Event selected");
-            }
-        } else if(cmd.equals(Constants.CMD_BTN_REMOVE_COMMENT)) {
-			String selectedComment = (String) commentList.getSelectedValue();
-			DoodleEvent selectedEvent = ControllerReference.getInstance().findEventByNameAndUser((String)cmbEvent.getSelectedItem());
-			if (selectedComment != null && selectedEvent != null) {
-				selectedEvent.removeComment(selectedComment);
-				ControllerReference.getInstance().getGigaSpace().write(selectedEvent);
-				refresh();
-			}else{
-            	JOptionPane.showMessageDialog(this, "To delete a comment please select one Event a one Comment from the list");
-            }
-        }else if(cmd.equals(Constants.CMD_EVENT_COMBO_CHANGED)) {
-        	refresh();
+            
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select an event");
         }
+
+    }
+
+    private void addInvite() {
+
+        String name = (String) cmbEvent.getSelectedItem();
+        DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(name);
+        if (event != null) {
+            Object[] peers = lstInvites.getSelectedValues();
+
+            if (peers.length > 0) {
+                boolean atLeastOne = false;
+                for (Object p : peers) {
+                    Peer peer = (Peer) p;
+                    boolean added = event.addInvite(peer);
+                    if (added) {
+                        atLeastOne = true;
+                        //add all schedules for this one..
+                        DoodleSchedule[] schedules = ControllerReference.getInstance().readSchedules(event.getId());
+                        DoodleSchedule nSchedule;
+                        for (DoodleSchedule schedule : schedules) {
+                            nSchedule = new DoodleSchedule(peer.getId(), event.getId());
+                            nSchedule.setHour(schedule.getHour());
+                            nSchedule.setDay(schedule.getDay());
+                        }
+                    }
+                }
+                
+                if (atLeastOne) {
+                    JOptionPane.showMessageDialog(this, "Invitation sent successfully");
+                    event.setAction("processIt");
+                    ControllerReference.getInstance().getGigaSpace().write(event);
+                } else {
+                    JOptionPane.showMessageDialog(this, "All selected peers were already invited");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select at least one peer");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select an event");
+        }
+
     }
 
     private void updateEvent() {
@@ -402,7 +458,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                             event = (DoodleEvent) ControllerReference.getInstance().refresh(event);
                             if (event.retrieveParticipants().isEmpty()) {
                                 List<String> sIds = new ArrayList<String>();
-                                ControllerReference.getInstance().deleteOldSchedules(event.getId());
+                                //delete all old schedules
+                                ControllerReference.getInstance().deleteOldSchedules(null, event.getId());
                                 for (DoodleSchedule s : schedules) {
                                     ControllerReference.getInstance().getGigaSpace().write(s);
                                     sIds.add(s.getId());
@@ -481,9 +538,9 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     }
 
                     ControllerReference.getInstance().getGigaSpace().write(event);
-                    //	TODO wenn ein neues Event erzeugt wird soll man cmbEvent.setSelectedItem(event.getId) aufrufen
+                    // TODO wenn ein neues Event erzeugt wird soll man
+                    // cmbEvent.setSelectedItem(event.getId) aufrufen
                     this.refresh();
-                    
 
                 } else {
                     logger.warn("event name cannot be empty");
@@ -537,12 +594,12 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
     public void refresh() {
         logger.info("in refresh()");
-       
+
         // update ComboBox
         cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
-       
+
         String selectedEvent = (String) cmbEvent.getSelectedItem();
-        
+
         // Refresh Event - meanwhile couuld one Peer participate to this event
         if (cmbEvent.getSelectedItem() != null) {
             DoodleEvent refreshedEvent = ControllerReference.getInstance().findEventByNameAndUser(
@@ -566,45 +623,45 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
         // update ComboBox
         cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
-        
-        if(selectedEvent!=null) {
-        	cmbEvent.setSelectedItem(selectedEvent);
+
+        if (selectedEvent != null) {
+            cmbEvent.setSelectedItem(selectedEvent);
         }
 
         btnEdit.setEnabled(this.isUpdateAllowed());
     }
 
     private void refreshSchedules(String id) {
-        DoodleSchedule[] schedules = ControllerReference.getInstance().retrieveSchedules(id);
-        
+        DoodleSchedule[] schedules = ControllerReference.getInstance().readSchedules(id);
+
         int minday = Integer.MAX_VALUE;
         int minhour = Integer.MAX_VALUE;
         int maxday = Integer.MIN_VALUE;
         int maxhour = Integer.MIN_VALUE;
-        
+
         for (DoodleSchedule s : schedules) {
             int day = Integer.parseInt(s.getDay());
             int hour = Integer.parseInt(s.getHour());
-         
+
             if (day < minday) {
                 minday = day;
             }
-            
+
             if (day > maxday) {
                 maxday = day;
             }
-            
+
             if (hour < minhour) {
                 minhour = hour;
             }
-            
+
             if (hour > maxhour) {
                 maxhour = hour;
             }
         }
-        this.pnlSchedule.getTxtStart().setText(minhour+"."+minday);
-        this.pnlSchedule.getTxtEnd().setText(maxhour+"."+maxday);
-        
+        this.pnlSchedule.getTxtStart().setText(minhour + "." + minday);
+        this.pnlSchedule.getTxtEnd().setText(maxhour + "." + maxday);
+
     }
 
 }

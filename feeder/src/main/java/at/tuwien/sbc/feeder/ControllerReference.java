@@ -220,13 +220,14 @@ public class ControllerReference {
 
     }
 
-    public void deleteOldSchedules(String id) {
-        DoodleSchedule template = new DoodleSchedule(null, id);
+    public void deleteOldSchedules(String userId, String eventId) {
+        DoodleSchedule template = new DoodleSchedule(userId, eventId);
         this.getGigaSpace().takeMultiple(template, Integer.MAX_VALUE);
         
     }
     
-    public DoodleSchedule[] retrieveSchedules(String id) {
+    public DoodleSchedule[] readSchedules(String id) {
         return this.getGigaSpace().readMultiple(new DoodleSchedule(this.user.getId(), id), Integer.MAX_VALUE);
     }
+    
 }
