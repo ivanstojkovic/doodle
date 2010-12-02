@@ -11,6 +11,7 @@ import org.openspaces.events.notify.Notify;
 import org.openspaces.events.notify.NotifyType;
 
 import at.tuwien.sbc.model.DoodleEvent;
+import at.tuwien.sbc.model.DoodleSchedule;
 import at.tuwien.sbc.model.Peer;
 
 @EventDriven
@@ -41,6 +42,7 @@ public class EventProcessor {
 		logger.info("Event " + event.getName() + " cahnged!");
 		updatePeerAsOwner(event);
 		updatePeerParticipation(event);
+		updateSchedules(event);
 		event.setAction(null);
 		return event;
 	}
@@ -64,6 +66,17 @@ public class EventProcessor {
 			foundOwner.addOrganized(event.getId());
 			space.write(foundOwner);
 		}
+	}
+	
+	private void updateSchedules(DoodleEvent event) {
+	    DoodleSchedule template;
+	    for (String sId : event.getSchedules()) {
+	        template = new DoodleSchedule();
+	        template.setId(sId);
+	        DoodleSchedule schedule = this.space.readIfExists(template);
+	        schedule.setEvent(event.getId());
+	        this.space.write(schedule);
+	    }
 	}
 
 }

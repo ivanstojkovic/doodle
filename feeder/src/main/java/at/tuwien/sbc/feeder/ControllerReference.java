@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.openspaces.core.GigaSpace;
 
 import at.tuwien.sbc.model.DoodleEvent;
+import at.tuwien.sbc.model.DoodleSchedule;
 import at.tuwien.sbc.model.DoodleSpaceObject;
 import at.tuwien.sbc.model.Peer;
 
@@ -217,5 +218,15 @@ public class ControllerReference {
         }
         return result;
 
+    }
+
+    public void deleteOldSchedules(String id) {
+        DoodleSchedule template = new DoodleSchedule(null, id);
+        this.getGigaSpace().takeMultiple(template, Integer.MAX_VALUE);
+        
+    }
+    
+    public DoodleSchedule[] retrieveSchedules(String id) {
+        return this.getGigaSpace().readMultiple(new DoodleSchedule(this.user.getId(), id), Integer.MAX_VALUE);
     }
 }

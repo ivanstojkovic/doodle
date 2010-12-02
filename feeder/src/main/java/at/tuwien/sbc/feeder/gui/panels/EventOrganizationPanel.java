@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -25,7 +24,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
-import javax.swing.event.ListDataListener;
 
 import org.apache.log4j.Logger;
 
@@ -33,11 +31,9 @@ import at.tuwien.sbc.feeder.ControllerReference;
 import at.tuwien.sbc.feeder.common.Constants;
 import at.tuwien.sbc.model.DoodleEvent;
 import at.tuwien.sbc.model.DoodleSchedule;
-import at.tuwien.sbc.model.DoodleSpaceObject;
 import at.tuwien.sbc.model.Peer;
 
 import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo
@@ -406,7 +402,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                             event = (DoodleEvent) ControllerReference.getInstance().refresh(event);
                             if (event.retrieveParticipants().isEmpty()) {
                                 List<String> sIds = new ArrayList<String>();
-                                // TODO delete old schedules..
+                                ControllerReference.getInstance().deleteOldSchedules(event.getId());
                                 for (DoodleSchedule s : schedules) {
                                     ControllerReference.getInstance().getGigaSpace().write(s);
                                     sIds.add(s.getId());
@@ -487,6 +483,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     ControllerReference.getInstance().getGigaSpace().write(event);
                     //	TODO wenn ein neues Event erzeugt wird soll man cmbEvent.setSelectedItem(event.getId) aufrufen
                     this.refresh();
+                    
 
                 } else {
                     logger.warn("event name cannot be empty");
@@ -540,8 +537,11 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
     public void refresh() {
         logger.info("in refresh()");
-        
-        Object selectedEvent = cmbEvent.getSelectedItem();
+       
+        // update ComboBox
+        cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
+       
+        String selectedEvent = (String) cmbEvent.getSelectedItem();
         
         // Refresh Event - meanwhile couuld one Peer participate to this event
         if (cmbEvent.getSelectedItem() != null) {
@@ -552,6 +552,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 lstParicipants.setModel(new DefaultComboBoxModel(refreshedEvent.retrieveParticipants().toArray()));
                 // update CommentList
                 commentList.setModel(new DefaultComboBoxModel(getCommentsForSelectedEvent().toArray()));
+                this.refreshSchedules(refreshedEvent.getId());
             }
         } else {
             // if no event ist in ComboBox the list of Participants must be
@@ -571,6 +572,39 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         }
 
         btnEdit.setEnabled(this.isUpdateAllowed());
+    }
+
+    private void refreshSchedules(String id) {
+        DoodleSchedule[] schedules = ControllerReference.getInstance().retrieveSchedules(id);
+        
+        int minday = Integer.MAX_VALUE;
+        int minhour = Integer.MAX_VALUE;
+        int maxday = Integer.MIN_VALUE;
+        int maxhour = Integer.MIN_VALUE;
+        
+        for (DoodleSchedule s : schedules) {
+            int day = Integer.parseInt(s.getDay());
+            int hour = Integer.parseInt(s.getHour());
+         
+            if (day < minday) {
+                minday = day;
+            }
+            
+            if (day > maxday) {
+                maxday = day;
+            }
+            
+            if (hour < minhour) {
+                minhour = hour;
+            }
+            
+            if (hour > maxhour) {
+                maxhour = hour;
+            }
+        }
+        this.pnlSchedule.getTxtStart().setText(minhour+"."+minday);
+        this.pnlSchedule.getTxtEnd().setText(maxhour+"."+maxday);
+        
     }
 
 }
