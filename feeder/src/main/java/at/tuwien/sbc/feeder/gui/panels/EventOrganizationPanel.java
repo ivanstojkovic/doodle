@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.ParseException;
@@ -50,7 +52,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 /**
  * TODO add refresh button for participants.
  */
-public class EventOrganizationPanel extends javax.swing.JPanel implements ActionListener, MouseListener {
+public class EventOrganizationPanel extends javax.swing.JPanel implements ActionListener, MouseListener, ComponentListener {
 
     private static final Logger logger = Logger.getLogger(EventOrganizationPanel.class);
     private JPanel pnlNorth;
@@ -262,7 +264,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     }
 
     private boolean isEventEditPossible(String name) {
-        DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(name);
+        DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(name);
 
         if (event.retrieveParticipants().isEmpty()) {
             return true;
@@ -275,7 +277,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         if (cmbEvent.getSelectedItem() != null) {
             String e = (String) cmbEvent.getSelectedItem();
 
-            DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(e);
+            DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(e);
 
             if (event != null) {
                 return event.retrieveParticipants();
@@ -288,7 +290,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         if (cmbEvent != null && cmbEvent.getSelectedItem() != null) {
             String e = (String) cmbEvent.getSelectedItem();
 
-            DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(e);
+            DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(e);
 
             if (event != null) {
                 return event.retrieveComments();
@@ -316,7 +318,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             this.removeEvent();
 
         } else if (cmd.equals(Constants.CMD_BTN_ADD_COMMENT)) {
-            DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(
+            DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(
                     (String) cmbEvent.getSelectedItem());
             if (event != null) {
                 String comment = JOptionPane.showInputDialog("Type your comment for Event: " + event.getName(), "");
@@ -331,7 +333,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             }
         } else if (cmd.equals(Constants.CMD_BTN_REMOVE_COMMENT)) {
             String selectedComment = (String) commentList.getSelectedValue();
-            DoodleEvent selectedEvent = ControllerReference.getInstance().findEventByNameAndUser(
+            DoodleEvent selectedEvent = ControllerReference.getInstance().findEventByNameAndOwner(
                     (String) cmbEvent.getSelectedItem());
             if (selectedComment != null && selectedEvent != null) {
                 selectedEvent.removeComment(selectedComment);
@@ -354,7 +356,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             int choice = JOptionPane.showConfirmDialog(this,
                     "Are you sure you want to delete this event. All Event Data will be removed!");
             if (choice == JOptionPane.YES_OPTION) {
-                DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(name);
+                DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(name);
                 ControllerReference.getInstance().deleteOldSchedules(null, event.getId());
                 DoodleEvent template = new DoodleEvent(event.getId());
                 ControllerReference.getInstance().getGigaSpace().take(template);
@@ -367,7 +369,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
     private void removeInvite() {
         String name = (String) cmbEvent.getSelectedItem();
-        DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(name);
+        DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(name);
 
         if (event != null) {
 
@@ -406,7 +408,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     private void addInvite() {
 
         String name = (String) cmbEvent.getSelectedItem();
-        DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(name);
+        DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(name);
         if (event != null) {
             Object[] peers = lstInvites.getSelectedValues();
 
@@ -446,7 +448,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
     private void updateEvent() {
         String name = (String) this.cmbEvent.getSelectedItem();
-        DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(name);
+        DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(name);
         if (event != null) {
             logger.info("updating event with id: " + event.getId());
             try {
@@ -633,7 +635,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
         // Refresh Event - meanwhile couuld one Peer participate to this event
         if (cmbEvent.getSelectedItem() != null) {
-            DoodleEvent refreshedEvent = ControllerReference.getInstance().findEventByNameAndUser(
+            DoodleEvent refreshedEvent = ControllerReference.getInstance().findEventByNameAndOwner(
                     cmbEvent.getSelectedItem().toString());
             // refresh Participant List
             if (refreshedEvent != null) {
@@ -641,6 +643,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 // update CommentList
                 commentList.setModel(new DefaultComboBoxModel(getCommentsForSelectedEvent().toArray()));
                 this.refreshSchedules(refreshedEvent.getId());
+            }else{
+            	commentList.setModel(new DefaultComboBoxModel());
             }
         } else {
             // if no event ist in ComboBox the list of Participants must be
@@ -694,5 +698,24 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         this.pnlSchedule.getTxtEnd().setText(maxhour + "." + maxday);
 
     }
+
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void componentResized(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void componentShown(ComponentEvent e) {
+		refresh();
+	}
 
 }
