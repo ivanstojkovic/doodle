@@ -135,7 +135,7 @@ public class ControllerReference {
     }
 
     public DoodleEvent findEventByNameAndUser(String name) {
-    	if(name == null) {
+    	if(name == null || this.user == null) {
     		return null;
     	}
         // WARNING one user can have two events with same name.. Problem...
@@ -209,7 +209,6 @@ public class ControllerReference {
             template.setId(id);
             DoodleEvent event = this.gigaSpace.readIfExists(template);
             if (event != null) {
-                logger.info("adding name");
                 result.add(event.getName());
             } else {
                 logger.warn("An event was not found.. Please inspect!");

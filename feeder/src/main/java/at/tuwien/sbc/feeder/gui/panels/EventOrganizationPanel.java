@@ -626,8 +626,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     public void refresh() {
         logger.info("in refresh()");
 
-        // update ComboBox
-        cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
+//        // update ComboBox
+//        cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
 
         String selectedEvent = (String) cmbEvent.getSelectedItem();
 
