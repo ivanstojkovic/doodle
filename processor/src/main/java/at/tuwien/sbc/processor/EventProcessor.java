@@ -12,6 +12,7 @@ import org.openspaces.events.notify.NotifyType;
 
 import at.tuwien.sbc.model.DoodleEvent;
 import at.tuwien.sbc.model.DoodleSchedule;
+import at.tuwien.sbc.model.Notification;
 import at.tuwien.sbc.model.Peer;
 
 @EventDriven
@@ -43,8 +44,21 @@ public class EventProcessor {
         updatePeerAsOwner(event);
         updatePeerParticipation(event);
         updateSchedules(event);
+        updateInvites(event);
         event.setAction(null);
         return event;
+    }
+
+    private void updateInvites(DoodleEvent event) {
+        for (String pId : event.retrieveInvitations()) {
+            Peer invite = this.space.readIfExists(new Peer(pId, null, null));
+            
+            if (invite != null) {
+                Notification notify = new Notification(invite.getId(), "You are invited to a new Event: " + event.getName());
+                this.space.write(notify);
+            }
+        }
+        
     }
 
     private void updatePeerParticipation(DoodleEvent event) {

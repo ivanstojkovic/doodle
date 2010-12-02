@@ -15,7 +15,6 @@ public class Feeder implements InitializingBean, DisposableBean {
     @GigaSpaceContext
     private GigaSpace gigaSpace;
     
-    
     public Feeder() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {

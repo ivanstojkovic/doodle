@@ -61,7 +61,6 @@ public class ControllerReference {
             p.setEvents(null);
             p.setOrganized(null);
             Peer result = gigaSpace.read(p, 5000);
-            System.out.println("Searching for the user [" + user.getName() + "]: " + result);
             return result;
         }
         return null;

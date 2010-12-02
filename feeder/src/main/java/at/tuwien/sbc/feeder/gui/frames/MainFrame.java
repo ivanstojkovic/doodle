@@ -19,6 +19,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import at.tuwien.sbc.feeder.ControllerReference;
+import at.tuwien.sbc.feeder.NotificationsThread;
 import at.tuwien.sbc.feeder.common.Constants;
 import at.tuwien.sbc.feeder.gui.panels.EventOrganizationPanel;
 import at.tuwien.sbc.feeder.gui.panels.PeerEventsPanel;
@@ -41,8 +42,10 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
     
     private JTabbedPane tbPnl;
     private JPanel pnlOverview;
+    private JMenuItem itmRemoveNotifications;
+    private JMenuItem itmRead;
     private JMenuItem itmClear;
-    private JMenu mnSpace;
+    private JMenu mnNotifications;
     private SearchPanel pnlSearch;
     private JLabel lblGreet;
     private JPanel pnlGreet;
@@ -60,14 +63,18 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
     private JPanel pnlOrg;
     
     private TabbedPanel tabs;
+    private NotificationsThread notify;
     
     public MainFrame() {
         super();
         initGUI();
+        this.notify = new NotificationsThread(ControllerReference.getInstance().getGigaSpace(), this);
+        this.notify.start();
     }
     
     protected void processWindowEvent(WindowEvent evt) {
         if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
+            this.notify.setRunning(false);
             this.callback(false);
             this.dispose();
             System.exit(0);
@@ -131,15 +138,22 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
                     }
                 }
                 {
-                    mnSpace = new JMenu();
-                    menuBar.add(mnSpace);
-                    mnSpace.setText("Space");
+                    mnNotifications = new JMenu();
+                    menuBar.add(mnNotifications);
+                    mnNotifications.setText("Notifications");
                     {
-                        itmClear = new JMenuItem();
-                        mnSpace.add(itmClear);
-                        itmClear.setText("Clear");
-                        itmClear.setActionCommand(Constants.CMD_MENU_CLEAR);
-                        itmClear.addActionListener(this);
+                        itmRead = new JMenuItem();
+                        mnNotifications.add(itmRead);
+                        itmRead.setText("Read All Notifications");
+                        itmRead.setActionCommand(Constants.CMD_MENU_READ_NOTIFICATIONS);
+                        itmRead.addActionListener(this);
+                    }
+                    {
+                        itmRemoveNotifications = new JMenuItem();
+                        mnNotifications.add(itmRemoveNotifications);
+                        itmRemoveNotifications.setText("Delete All Notifications");
+                        itmRemoveNotifications.setActionCommand(Constants.CMD_MENU_REMOVE_NOTIFICATIONS);
+                        itmRemoveNotifications.addActionListener(this);
                     }
                 }
                 {
@@ -152,6 +166,14 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
                         itmAbout.setText("About");
                         itmAbout.setActionCommand(Constants.CMD_MENU_ABOUT);
                         itmAbout.addActionListener(this);
+                    }
+                    {
+                        itmClear = new JMenuItem();
+                        jMenu2.add(itmClear);
+                        itmClear.setText("Clear");
+                        itmClear.setActionCommand(Constants.CMD_MENU_CLEAR);
+                        itmClear.setBounds(-43, 19, 47, 23);
+                        itmClear.addActionListener(this);
                     }
                     {
                         itmHelp = new JMenuItem();
@@ -193,6 +215,8 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
         }
         
         if (cmd.equals(Constants.CMD_MENU_QUIT)) {
+            this.notify.setRunning(false);
+            this.callback(false);
             this.dispose();
             System.exit(0);
         }
@@ -213,6 +237,16 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
                 this.callback(false);
                 ControllerReference.getInstance().clearAll();
             }
+        }
+        
+        if (cmd.equals(Constants.CMD_MENU_READ_NOTIFICATIONS)) {
+            //TODO read
+            JOptionPane.showMessageDialog(this, "TODO take and show notifications");
+        }
+        
+        if (cmd.equals(Constants.CMD_MENU_REMOVE_NOTIFICATIONS)) {
+            //TODO remove
+            JOptionPane.showMessageDialog(this, "TODO take notifications");
         }
     }
     
@@ -242,6 +276,12 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
         PeerEventsPanel pep = (PeerEventsPanel) this.tabs.getTabs().getComponentAt(1);
         eop.refresh();
         pep.refresh();
+        
+    }
+
+    public void setNotificationsCount(int count) {
+        this.mnNotifications.setText("Notifications (" + count + ")");
+        this.mnNotifications.updateUI();
         
     }
     

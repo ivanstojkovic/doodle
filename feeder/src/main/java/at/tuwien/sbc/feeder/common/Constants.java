@@ -44,6 +44,10 @@ public final class Constants {
 
     public static final String CMD_BTN_REMOVE_EVENT = "organization.remove.event";
 
+    public static final String CMD_MENU_READ_NOTIFICATIONS = "menu.notifications.read";
+
+    public static final String CMD_MENU_REMOVE_NOTIFICATIONS = "menu.notifications.remove";
+
 	public static String CMD_BTN_ADD_COMMENT = "overview.add_comment";
 
 	public static String CMD_BTN_REMOVE_COMMENT = "overview.remove_comment";
