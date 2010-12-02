@@ -42,6 +42,8 @@ public final class Constants {
     
     public static final String CMD_BTN_INVITATION_REJECT = "overview.reject";
 
+    public static final String CMD_BTN_REMOVE_EVENT = "organization.remove.event";
+
 	public static String CMD_BTN_ADD_COMMENT = "overview.add_comment";
 
 	public static String CMD_BTN_REMOVE_COMMENT = "overview.remove_comment";

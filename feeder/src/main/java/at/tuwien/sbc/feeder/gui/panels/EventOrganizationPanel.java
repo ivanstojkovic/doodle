@@ -55,6 +55,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     private static final Logger logger = Logger.getLogger(EventOrganizationPanel.class);
     private JPanel pnlNorth;
     private JScrollPane scrlInvites;
+    private JButton rmEvent;
     private JButton commentAddNew;
     private JButton commentDelete;
     private JList commentList;
@@ -117,6 +118,28 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 }
             }
             {
+                pnlNorth = new JPanel();
+                this.add(pnlNorth, BorderLayout.NORTH);
+                pnlNorth.setLayout(null);
+                pnlNorth.setPreferredSize(new java.awt.Dimension(513, 33));
+                {
+                    cmbEvent = new JComboBox();
+                    pnlNorth.add(cmbEvent, new CellConstraints("2, 2, 1, 1, default, default"));
+                    cmbEvent.setBounds(9, 6, 181, 27);
+                    cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
+                    cmbEvent.addActionListener(this);
+                    cmbEvent.setActionCommand(Constants.CMD_EVENT_COMBO_CHANGED);
+                }
+                {
+                    rmEvent = new JButton();
+                    pnlNorth.add(rmEvent);
+                    rmEvent.setText("-");
+                    rmEvent.setBounds(196, 7, 43, 26);
+                    rmEvent.setActionCommand(Constants.CMD_BTN_REMOVE_EVENT);
+                    rmEvent.addActionListener(this);
+                }
+            }
+            {
                 pnlCenter = new JPanel();
                 GridLayout pnlCenterLayout = new GridLayout(1, 2);
                 pnlCenterLayout.setColumns(1);
@@ -126,20 +149,6 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 this.add(pnlCenter, BorderLayout.CENTER);
                 pnlCenter.setPreferredSize(new java.awt.Dimension(600, 250));
                 pnlCenter.setSize(600, 250);
-                {
-                    pnlNorth = new JPanel();
-                    this.add(pnlNorth, BorderLayout.NORTH);
-                    pnlNorth.setLayout(null);
-                    pnlNorth.setPreferredSize(new java.awt.Dimension(513, 33));
-                    {
-                        cmbEvent = new JComboBox();
-                        pnlNorth.add(cmbEvent, new CellConstraints("2, 2, 1, 1, default, default"));
-                        cmbEvent.setBounds(9, 6, 181, 27);
-                        cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
-                        cmbEvent.addActionListener(this);
-                        cmbEvent.setActionCommand(Constants.CMD_EVENT_COMBO_CHANGED);
-                    }
-                }
                 {
                     jPanel1 = new JPanel();
                     pnlCenter.add(jPanel1);
@@ -303,6 +312,9 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         } else if (cmd.equals(Constants.CMD_BTN_REMOVE_INVITATION)) {
             this.removeInvite();
 
+        } else if (cmd.equals(Constants.CMD_BTN_REMOVE_EVENT)) {
+            this.removeEvent();
+
         } else if (cmd.equals(Constants.CMD_BTN_ADD_COMMENT)) {
             DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(
                     (String) cmbEvent.getSelectedItem());
@@ -334,38 +346,57 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         }
     }
 
+    private void removeEvent() {
+        String name = (String) cmbEvent.getSelectedItem();
+        if (name == null) {
+            JOptionPane.showMessageDialog(this, "Please select an event");
+        } else {
+            int choice = JOptionPane.showConfirmDialog(this,
+                    "Are you sure you want to delete this event. All Event Data will be removed!");
+            if (choice == JOptionPane.YES_OPTION) {
+                DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(name);
+                ControllerReference.getInstance().deleteOldSchedules(null, event.getId());
+                DoodleEvent template = new DoodleEvent(event.getId());
+                ControllerReference.getInstance().getGigaSpace().take(template);
+                this.refresh();
+                JOptionPane.showMessageDialog(this, "The event was removed successfully");
+            }
+        }
+
+    }
+
     private void removeInvite() {
         String name = (String) cmbEvent.getSelectedItem();
         DoodleEvent event = ControllerReference.getInstance().findEventByNameAndUser(name);
-        
+
         if (event != null) {
-            
+
             Object[] peers = lstInvites.getSelectedValues();
-            if (peers.length >0) {
+            if (peers.length > 0) {
                 boolean atLeastOne = false;
                 for (Object p : peers) {
                     Peer peer = (Peer) p;
                     boolean removed = event.removeInvitation(peer);
                     if (removed) {
                         atLeastOne = true;
-                        //remove all schedules for this one
+                        // remove all schedules for this one
                         ControllerReference.getInstance().deleteOldSchedules(peer.getId(), event.getId());
                     }
                 }
-                
-                //how do we remove the notification in the removed clients????
+
+                // how do we remove the notification in the removed clients????
                 if (atLeastOne) {
                     JOptionPane.showMessageDialog(this, "Invitation removed successfully");
                     event.setAction("processIt");
                     ControllerReference.getInstance().getGigaSpace().write(event);
                 } else {
-                    JOptionPane.showMessageDialog(this, "All selected peers were not invited");  
+                    JOptionPane.showMessageDialog(this, "All selected peers were not invited");
                 }
-                
+
             } else {
                 JOptionPane.showMessageDialog(this, "Please select at least one peer");
             }
-            
+
         } else {
             JOptionPane.showMessageDialog(this, "Please select an event");
         }
@@ -386,7 +417,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     boolean added = event.addInvite(peer);
                     if (added) {
                         atLeastOne = true;
-                        //add all schedules for this one..
+                        // add all schedules for this one..
                         DoodleSchedule[] schedules = ControllerReference.getInstance().readSchedules(event.getId());
                         DoodleSchedule nSchedule;
                         for (DoodleSchedule schedule : schedules) {
@@ -396,7 +427,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                         }
                     }
                 }
-                
+
                 if (atLeastOne) {
                     JOptionPane.showMessageDialog(this, "Invitation sent successfully");
                     event.setAction("processIt");
@@ -458,7 +489,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                             event = (DoodleEvent) ControllerReference.getInstance().refresh(event);
                             if (event.retrieveParticipants().isEmpty()) {
                                 List<String> sIds = new ArrayList<String>();
-                                //delete all old schedules
+                                // delete all old schedules
                                 ControllerReference.getInstance().deleteOldSchedules(null, event.getId());
                                 for (DoodleSchedule s : schedules) {
                                     ControllerReference.getInstance().getGigaSpace().write(s);
