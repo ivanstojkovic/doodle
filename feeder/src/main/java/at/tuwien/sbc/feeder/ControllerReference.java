@@ -134,7 +134,9 @@ public class ControllerReference {
         return this.gigaSpace.readMultiple(template, Integer.MAX_VALUE);
     }
 
-    public DoodleEvent findEventByNameAndUser(String name) {
+    public DoodleEvent findEventByNameAndOwner(String name) {
+    	logger.info("findEventByNameAndUser("+name+")");
+    	logger.info("user = "+user);
     	if(name == null || this.user == null) {
     		return null;
     	}
@@ -144,6 +146,19 @@ public class ControllerReference {
         template.setOwner(this.user.getName());
 
         return ControllerReference.getInstance().getGigaSpace().readIfExists(template);
+    }
+
+    public DoodleEvent findEventByName(String name) {
+    	logger.info("findEventByNameAndUser("+name+")");
+    	logger.info("user = "+user);
+    	if(name == null || this.user == null) {
+    		return null;
+    	}
+    	// WARNING one user can have two events with same name.. Problem...
+    	DoodleEvent template = new DoodleEvent();
+    	template.setName(name);
+    	
+    	return ControllerReference.getInstance().getGigaSpace().readIfExists(template);
     }
 
     public List<DoodleEvent> getInvitations() {

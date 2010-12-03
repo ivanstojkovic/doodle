@@ -4,12 +4,17 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.List;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -31,8 +36,10 @@ import at.tuwien.sbc.model.Peer;
  * PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR
  * ANY CORPORATE OR COMMERCIAL PURPOSE.
  */
-public class PeerEventsPanel extends javax.swing.JPanel implements ActionListener {
+public class PeerEventsPanel extends javax.swing.JPanel implements ActionListener, ComponentListener {
 	private JPanel pnlSelection;
+	private JButton addCommentButton;
+	private JComboBox eventComboBox;
 	private JButton rejectBtn;
 	private JButton subscribeBtn;
 	private JComboBox invitationsCmb;
@@ -97,6 +104,23 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 					rejectBtn.addActionListener(this);
 					rejectBtn.setActionCommand(Constants.CMD_BTN_INVITATION_REJECT);
 				}
+				{
+					ComboBoxModel eventComboBoxModel = getParticipationEventsModel();
+					eventComboBox = new JComboBox();
+					pnlSelection.add(eventComboBox);
+					eventComboBox.setModel(eventComboBoxModel);
+					eventComboBox.setBounds(23, 39, 165, 19);
+					eventComboBox.setVisible(false);
+				}
+				{
+					addCommentButton = new JButton();
+					pnlSelection.add(addCommentButton);
+					addCommentButton.setText("add new comment");
+					addCommentButton.setBounds(209, 36, 147, 22);
+					addCommentButton.setVisible(false);
+					addCommentButton.setActionCommand(Constants.CMD_BTN_ADD_COMMENT);
+					addCommentButton.addActionListener(this);
+				}
 			}
 			{
 				{
@@ -116,10 +140,12 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getActionCommand().equals("cmbType")) {
+			hideInvitationComponents();
+			hideParticipationComponents();
 			if (cmbType.getSelectedItem().equals("Invitations")) {
 				showInvitationComponents();
-			} else {
-				hideInvitationComponents();
+			} else if (cmbType.getSelectedItem().equals("Participant")){
+				showParticipationComponents();
 			}
 		} else if (evt.getActionCommand().equals(Constants.CMD_BTN_SHOW)) {
 			if (cmbType.getSelectedItem().equals("Organizer")) {
@@ -151,7 +177,29 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 //				Because of the Model of Combo Box
 				showInvitationComponents();
 			}
+		} else if (evt.getActionCommand().equals(Constants.CMD_BTN_ADD_COMMENT)) {
+			DoodleEvent event = ControllerReference.getInstance().findEventByName((String) eventComboBox.getSelectedItem());
+			if (event != null) {
+				String comment = JOptionPane.showInputDialog("Type your comment for Event: " + event.getName(), "");
+				if (comment != null && comment.length() > 0) {
+					event.retrieveComments().add(ControllerReference.getInstance().getUser().getName() + ": " + comment);
+					ControllerReference.getInstance().getGigaSpace().write(event);
+				}
+			} else {
+				JOptionPane.showMessageDialog(this, "No Event selected");
+			}
 		}
+	}
+
+	private void showParticipationComponents() {
+		eventComboBox.setVisible(true);
+		addCommentButton.setVisible(true);
+		eventComboBox.setModel(getParticipationEventsModel());
+	}
+
+	private void hideParticipationComponents() {
+		eventComboBox.setVisible(false);
+		addCommentButton.setVisible(false);
 	}
 
 	private String retrieveParticipantEvents() {
@@ -224,7 +272,37 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
 	public void refresh() {
 	    this.txtArea.setText("");
 	    this.hideInvitationComponents();
+	    this.hideParticipationComponents();
 	    this.cmbType.setSelectedIndex(0);
+	}
+	
+	private DefaultComboBoxModel getParticipationEventsModel() {
+		if (ControllerReference.getInstance().getUser() != null) {
+			List<String> names = ControllerReference.getInstance().getEventNamesFromIds(
+					ControllerReference.getInstance().getUser().retrieveEvents());
+			return new DefaultComboBoxModel(names.toArray());
+		} else {
+			return new DefaultComboBoxModel();
+		}
+	}
+
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void componentResized(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void componentShown(ComponentEvent e) {
+		refresh();
 	}
 
 }

@@ -22,11 +22,13 @@ public class TabbedPanel extends JPanel {
         ImageIcon icon = createImageIcon("images/organize.jpg");
         
         EventOrganizationPanel pnlOrg = new EventOrganizationPanel();
+        pnlOrg.addComponentListener(pnlOrg);
         this.getTabs().addTab("Organization", icon, pnlOrg, "Organize Events");
         this.getTabs().setMnemonicAt(0, KeyEvent.VK_1);
         
         icon = createImageIcon("images/overview.jpg");
         PeerEventsPanel pnlPE = new PeerEventsPanel();
+        pnlPE.addComponentListener(pnlPE);
         this.getTabs().addTab("Overview", icon, pnlPE, "Overview over your events");
         this.getTabs().setMnemonicAt(1, KeyEvent.VK_2);
         
