@@ -1,7 +1,6 @@
 package at.tuwien.sbc.feeder.gui.panels;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +32,7 @@ import at.tuwien.sbc.feeder.ControllerReference;
 import at.tuwien.sbc.feeder.common.Constants;
 import at.tuwien.sbc.model.DoodleEvent;
 import at.tuwien.sbc.model.DoodleSchedule;
+import at.tuwien.sbc.model.Notification;
 import at.tuwien.sbc.model.Peer;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -359,12 +359,27 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(name);
                 ControllerReference.getInstance().deleteOldSchedules(null, event.getId());
                 DoodleEvent template = new DoodleEvent(event.getId());
-                ControllerReference.getInstance().getGigaSpace().take(template);
+                event = ControllerReference.getInstance().getGigaSpace().take(template);
+                this.notifyEventRemoval(event);
                 this.refresh();
                 JOptionPane.showMessageDialog(this, "The event was removed successfully");
             }
         }
 
+    }
+
+    private void notifyEventRemoval(DoodleEvent event) {
+        Notification n;
+        for (String s : event.getInvitations()) {
+            n = new Notification(s, "The event: " + event.getName() + " was deleted!");
+            ControllerReference.getInstance().getGigaSpace().write(n);
+        }
+        
+        for (String s : event.getParticipants()) {
+            n = new Notification(s, "The event: " + event.getName() + " was deleted!");
+            ControllerReference.getInstance().getGigaSpace().write(n);
+        }
+        
     }
 
     private void removeInvite() {
@@ -500,6 +515,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                                 }
                                 event.retrieveSchedules().clear();
                                 event.retrieveSchedules().addAll(sIds);
+                                event.setAction("processIt");
                                 ControllerReference.getInstance().getGigaSpace().write(event);
                             }
 
