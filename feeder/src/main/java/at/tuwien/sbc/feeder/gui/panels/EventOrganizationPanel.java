@@ -371,12 +371,12 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     private void notifyEventRemoval(DoodleEvent event) {
         Notification n;
         for (String s : event.getInvitations()) {
-            n = new Notification(s, "The event: " + event.getName() + " was deleted!");
+            n = new Notification(s, "The event '" + event.getName() + "' was deleted!");
             ControllerReference.getInstance().getGigaSpace().write(n);
         }
         
         for (String s : event.getParticipants()) {
-            n = new Notification(s, "The event: " + event.getName() + " was deleted!");
+            n = new Notification(s, "The event '" + event.getName() + "' was deleted!");
             ControllerReference.getInstance().getGigaSpace().write(n);
         }
         

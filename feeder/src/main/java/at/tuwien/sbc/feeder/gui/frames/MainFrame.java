@@ -26,6 +26,7 @@ import at.tuwien.sbc.feeder.gui.panels.PeerEventsPanel;
 import at.tuwien.sbc.feeder.gui.panels.SearchPanel;
 import at.tuwien.sbc.feeder.gui.panels.TabbedPanel;
 import at.tuwien.sbc.feeder.interfaces.LoginCallback;
+import at.tuwien.sbc.model.Notification;
 import at.tuwien.sbc.model.Peer;
 
 /**
@@ -240,13 +241,33 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
         }
         
         if (cmd.equals(Constants.CMD_MENU_READ_NOTIFICATIONS)) {
-            //TODO read
-            JOptionPane.showMessageDialog(this, "TODO take and show notifications");
+            Peer user = ControllerReference.getInstance().getUser();
+            if (user != null) {
+                Notification[] notifications = ControllerReference.getInstance().readNotifications();
+                String msg = "";
+                if (notifications.length > 0) {
+                    for (Notification n : notifications) {
+                        msg += n.getRegarding() + "\n";
+                    }
+                } else {
+                    msg = "There are no new notifications yet!";
+                }
+                JOptionPane.showMessageDialog(this, msg);
+            } else {
+                JOptionPane.showMessageDialog(this, "Please log in first");
+            }
         }
         
         if (cmd.equals(Constants.CMD_MENU_REMOVE_NOTIFICATIONS)) {
-            //TODO remove
-            JOptionPane.showMessageDialog(this, "TODO take notifications");
+            Peer user = ControllerReference.getInstance().getUser();
+            if (user != null) {
+                int i = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete all notifications");
+                if (i == JOptionPane.YES_OPTION) {
+                    ControllerReference.getInstance().takeNotifications();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Please log in first");
+            }
         }
     }
     
@@ -278,10 +299,10 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
         pep.refresh();
         
     }
-
+    
     public void setNotificationsCount(int count) {
         this.mnNotifications.setText("Notifications (" + count + ")");
-        this.mnNotifications.updateUI();
+        // this.mnNotifications.updateUI();
         
     }
     
