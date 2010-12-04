@@ -20,7 +20,7 @@ public class DateTextField extends JTextField implements FocusListener {
         super();
         this.df = new SimpleDateFormat(pattern);
         this.addFocusListener(this);
-        this.setForeground(Color.GRAY);
+        this.setForeground(Color.BLACK);
         this.setText(this.df.toPattern());
         this.setToolTipText("Pattern: " + this.df.toPattern());
     }
@@ -29,7 +29,7 @@ public class DateTextField extends JTextField implements FocusListener {
         super(columns);
         this.df = new SimpleDateFormat(pattern);
         this.addFocusListener(this);
-        this.setForeground(Color.GRAY);
+        this.setForeground(Color.BLACK);
         this.setText(this.df.toPattern());
         this.setToolTipText("Pattern: " + this.df.toPattern());
     }
@@ -38,7 +38,7 @@ public class DateTextField extends JTextField implements FocusListener {
         super(text);
         this.df = new SimpleDateFormat(pattern);
         this.addFocusListener(this);
-        this.setForeground(Color.GRAY);
+        this.setForeground(Color.BLACK);
         this.setText(this.df.toPattern());
         this.setToolTipText("Pattern: " + this.df.toPattern());
     }
@@ -47,7 +47,7 @@ public class DateTextField extends JTextField implements FocusListener {
         super(text, columns);
         this.df = new SimpleDateFormat(pattern);
         this.addFocusListener(this);
-        this.setForeground(Color.GRAY);
+        this.setForeground(Color.BLACK);
         this.setText(this.df.toPattern());
         this.setToolTipText("Pattern: " + this.df.toPattern());
     }
@@ -65,9 +65,9 @@ public class DateTextField extends JTextField implements FocusListener {
         
         try {
             this.df.parse(input);
-            this.setBackground(Color.WHITE);
+            this.setBackground(Color.BLACK);
         } catch (Exception e) {
-            this.setBackground(Color.RED);
+            this.setForeground(Color.RED);
         }
     }
 
