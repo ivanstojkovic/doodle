@@ -341,7 +341,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 refresh();
             } else {
                 JOptionPane.showMessageDialog(this,
-                        "To delete a comment please select one Event a one Comment from the list");
+                        "To delete a comment please select one Event and one Comment from the list");
             }
         } else if (cmd.equals(Constants.CMD_EVENT_COMBO_CHANGED)) {
             refresh();
@@ -441,6 +441,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                             nSchedule = new DoodleSchedule(peer.getId(), event.getId());
                             nSchedule.setHour(schedule.getHour());
                             nSchedule.setDay(schedule.getDay());
+                            ControllerReference.getInstance().getGigaSpace().write(nSchedule);
                         }
                     }
                 }

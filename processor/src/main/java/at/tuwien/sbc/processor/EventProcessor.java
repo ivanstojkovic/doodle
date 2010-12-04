@@ -86,7 +86,7 @@ public class EventProcessor {
 
     private void updateSchedules(DoodleEvent event) {
         DoodleSchedule template;
-        for (String sId : event.getSchedules()) {
+        for (String sId : event.retrieveSchedules()) {
             template = new DoodleSchedule();
             template.setId(sId);
             DoodleSchedule schedule = this.space.readIfExists(template);

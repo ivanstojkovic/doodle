@@ -13,9 +13,10 @@ public class DoodleSchedule implements DoodleSpaceObject {
 	private String hour;
 
 	private String participant;
-	
+
 	private String event;
 
+	private boolean selected;
 
 	public DoodleSchedule(String participant, String event) {
 		this.participant = participant;
@@ -73,12 +74,12 @@ public class DoodleSchedule implements DoodleSpaceObject {
 	}
 
 	public void setEvent(String event) {
-	    this.event = event;
-    }
+		this.event = event;
+	}
 
 	public String getEvent() {
-	    return event;
-    }
+		return event;
+	}
 
 	@Override
 	public int hashCode() {
@@ -104,6 +105,13 @@ public class DoodleSchedule implements DoodleSpaceObject {
 			return false;
 		return true;
 	}
-	
-	
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
 }

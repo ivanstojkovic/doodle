@@ -214,6 +214,11 @@ public class ControllerReference {
             Peer temp = new Peer(o.getId(), null, null);
             return gigaSpace.readIfExists(temp);
         }
+        if (o instanceof DoodleSchedule) {
+        	DoodleSchedule gotObject = (DoodleSchedule)o;
+        	DoodleSchedule temp = new DoodleSchedule(gotObject.getParticipant(), gotObject.getEvent());
+        	return gigaSpace.readIfExists(temp);
+        }
         return null;
     }
     

@@ -10,11 +10,11 @@
        http://www.openspaces.org/schema/events http://www.openspaces.org/schema/events/openspaces-events.xsd
        http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd
          http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-2.1.xsd
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
            http://www.springframework.org/schema/tx 
 		http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
 
-	<context:component-scan base-package="at.tuwien.sbc" />
+	<context:component-scan base-package="at.tuwien.sbc"/>
 
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 	<!--
