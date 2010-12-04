@@ -69,8 +69,6 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
     public MainFrame() {
         super();
         initGUI();
-        this.notify = new NotificationsThread(ControllerReference.getInstance().getGigaSpace(), this);
-        this.notify.start();
     }
     
     protected void processWindowEvent(WindowEvent evt) {
@@ -283,14 +281,17 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
                 this.lblGreet.setText("Welcome");
             } else {
                 this.lblGreet.setText("Welcome " + user.getName());
+                this.startNotificationThread();
             }
             
         } else {
+            this.stopNotificationThread();
             ControllerReference.getInstance().logout();
             this.itmLogout.setEnabled(false);
             this.itmLogReg.setEnabled(true);
             this.tabs.enableTab(-1, false);
             this.lblGreet.setText("You are currently not logged in!");
+            this.mnNotifications.setText("Notifications");
         }
         
         EventOrganizationPanel eop = (EventOrganizationPanel) this.tabs.getTabs().getComponentAt(0);
@@ -302,8 +303,16 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
     
     public void setNotificationsCount(int count) {
         this.mnNotifications.setText("Notifications (" + count + ")");
-        // this.mnNotifications.updateUI();
         
+    }
+    
+    public void stopNotificationThread() {
+        this.notify.setRunning(false);
+    }
+    
+    public void startNotificationThread() {
+        this.notify = new NotificationsThread(ControllerReference.getInstance().getGigaSpace(), this);
+        this.notify.start();
     }
     
 }
