@@ -62,6 +62,7 @@ public class ControllerReference {
             p.setEvents(null);
             p.setOrganized(null);
             Peer result = gigaSpace.read(p, 5000);
+            this.setUser(result);
             return result;
         }
         return null;

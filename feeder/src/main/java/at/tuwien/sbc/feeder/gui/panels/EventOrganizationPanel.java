@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.ParseException;
@@ -52,7 +54,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 /**
  * TODO add refresh button for participants.
  */
-public class EventOrganizationPanel extends javax.swing.JPanel implements ActionListener, MouseListener, ComponentListener {
+public class EventOrganizationPanel extends javax.swing.JPanel implements ActionListener, MouseListener, ComponentListener, ItemListener {
 
     private static final Logger logger = Logger.getLogger(EventOrganizationPanel.class);
     private JPanel pnlNorth;
@@ -129,7 +131,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     pnlNorth.add(cmbEvent, new CellConstraints("2, 2, 1, 1, default, default"));
                     cmbEvent.setBounds(9, 6, 181, 27);
                     cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
-                    cmbEvent.addActionListener(this);
+                    //cmbEvent.addActionListener(this);
+                    cmbEvent.addItemListener(this);
                     cmbEvent.setActionCommand(Constants.CMD_EVENT_COMBO_CHANGED);
                 }
                 {
@@ -175,7 +178,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                         btnEdit = new JButton();
                         jPanel1.add(btnEdit);
                         btnEdit.setText("Update");
-                        btnEdit.setBounds(130, 87, 110, 23);
+                        btnEdit.setBounds(131, 87, 110, 23);
                         btnEdit.setActionCommand(Constants.CMD_BTN_UPDATE);
                         btnEdit.addActionListener(this);
                         btnEdit.setEnabled(this.isUpdateAllowed());
@@ -248,7 +251,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     }
                 }
             }
-
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -266,7 +269,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     private boolean isEventEditPossible(String name) {
         DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(name);
 
-        if (event.retrieveParticipants().isEmpty()) {
+        if (event != null  && event.retrieveParticipants().isEmpty()) {
             return true;
         }
 
@@ -343,9 +346,10 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 JOptionPane.showMessageDialog(this,
                         "To delete a comment please select one Event and one Comment from the list");
             }
-        } else if (cmd.equals(Constants.CMD_EVENT_COMBO_CHANGED)) {
-            refresh();
         }
+//        else if (cmd.equals(Constants.CMD_EVENT_COMBO_CHANGED)) {
+//            refresh();
+//        }
     }
 
     private void removeEvent() {
@@ -588,16 +592,15 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     }
 
                     ControllerReference.getInstance().getGigaSpace().write(event);
-                    // TODO wenn ein neues Event erzeugt wird soll man
-                    // cmbEvent.setSelectedItem(event.getId) aufrufen
-                    this.refresh();
+                    cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
+                    cmbEvent.setSelectedItem(event.getName());
 
                 } else {
                     logger.warn("event name cannot be empty");
                 }
 
             } else {
-                JOptionPane.showMessageDialog(this, "Idiot!");
+                JOptionPane.showMessageDialog(this, "Something is wrong with the dates!");
             }
 
         } catch (ParseException e) {
@@ -645,13 +648,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     public void refresh() {
         logger.info("in refresh()");
 
-//        // update ComboBox
-//        cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
-
-        String selectedEvent = (String) cmbEvent.getSelectedItem();
-
         // Refresh Event - meanwhile couuld one Peer participate to this event
-        if (cmbEvent.getSelectedItem() != null) {
+        if (cmbEvent.getItemCount() > 0) {
             DoodleEvent refreshedEvent = ControllerReference.getInstance().findEventByNameAndOwner(
                     cmbEvent.getSelectedItem().toString());
             // refresh Participant List
@@ -668,17 +666,11 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             // empty
             logger.info("clearing Participation Box");
             lstParicipants.setModel(new DefaultComboBoxModel(new Object[] {}));
+            cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
         }
 
         // update Registered Peers
         lstInvites.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getAllPeers()));
-
-        // update ComboBox
-        cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
-
-        if (selectedEvent != null) {
-            cmbEvent.setSelectedItem(selectedEvent);
-        }
 
         btnEdit.setEnabled(this.isUpdateAllowed());
     }
@@ -732,7 +724,14 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 	}
 
 	public void componentShown(ComponentEvent e) {
+	    cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
 		refresh();
 	}
+
+    public void itemStateChanged(ItemEvent ie) {
+        if(ie.getStateChange() == ItemEvent.SELECTED) {
+            this.refresh();
+        }
+    }
 
 }
