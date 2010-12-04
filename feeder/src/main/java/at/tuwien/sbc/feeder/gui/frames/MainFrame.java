@@ -296,6 +296,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
         
         EventOrganizationPanel eop = (EventOrganizationPanel) this.tabs.getTabs().getComponentAt(0);
         PeerEventsPanel pep = (PeerEventsPanel) this.tabs.getTabs().getComponentAt(1);
+        eop.refreshModel();
         eop.refresh();
         pep.refresh();
         

@@ -376,16 +376,23 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
     private void notifyEventRemoval(DoodleEvent event) {
         Notification n;
-        for (String s : event.getInvitations()) {
+        for (String s : event.retrieveInvitations()) {
             n = new Notification(s, "The event '" + event.getName() + "' was deleted!");
             ControllerReference.getInstance().getGigaSpace().write(n);
         }
 
-        for (String s : event.getParticipants()) {
+        for (String s : event.retrieveParticipants()) {
             n = new Notification(s, "The event '" + event.getName() + "' was deleted!");
             ControllerReference.getInstance().getGigaSpace().write(n);
         }
+    }
 
+    private void notifyEventUpdate(DoodleEvent event) {
+        Notification n;
+        for (String s : event.retrieveInvitations()) {
+            n = new Notification(s, "The event '" + event.getName() + "' was updated");
+            ControllerReference.getInstance().getGigaSpace().write(n);
+        }
     }
 
     private void removeInvite() {
@@ -495,17 +502,14 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                                     DoodleSchedule day = new DoodleSchedule(current.getName(), event.getId());
                                     day.setDay(d + "");
                                     day.setHour(h + "");
-                                    ControllerReference.getInstance().getGigaSpace().write(day);
                                     schedules.add(day);
-                                    for (int i = 0; i < lstInvites.getSelectedValues().length; i++) {
-                                        if (lstInvites.getSelectedValues()[i].equals(current)) {
-                                            continue;
+
+                                    for (String p : event.retrieveInvitations()) {
+                                        if (!p.equals(ControllerReference.getInstance().getUser().getName())) {
+                                            DoodleSchedule forPeer = new DoodleSchedule(d + "", h + "", p, event
+                                                    .getId());
+                                            schedules.add(forPeer);
                                         }
-                                        Peer p = (Peer) lstInvites.getSelectedValues()[i];
-                                        DoodleSchedule forPeer = new DoodleSchedule(d + "", h + "", p.getName(), event
-                                                .getId());
-                                        ControllerReference.getInstance().getGigaSpace().write(forPeer);
-                                        schedules.add(forPeer);
                                     }
                                 }
                             }
@@ -522,12 +526,13 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                                 }
                                 event.retrieveSchedules().clear();
                                 event.retrieveSchedules().addAll(sIds);
-                                event.setAction("processIt");
+                                event.setName(name);
                                 ControllerReference.getInstance().getGigaSpace().write(event);
+                                this.notifyEventUpdate(event);
                             }
 
-                            ControllerReference.getInstance().getGigaSpace().write(event);
-                            this.refresh();
+                            this.refreshModel();
+                            this.cmbEvent.setSelectedItem(name);
                         } else {
                             logger.warn("event name cannot be empty");
                         }
@@ -595,7 +600,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
                     ControllerReference.getInstance().getGigaSpace().write(event);
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                     }
                     cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
@@ -679,6 +684,10 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         lstInvites.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getAllPeers()));
 
         btnEdit.setEnabled(this.isUpdateAllowed());
+    }
+    
+    public void refreshModel() {
+        cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
     }
 
     private void refreshSchedules(String id) {
