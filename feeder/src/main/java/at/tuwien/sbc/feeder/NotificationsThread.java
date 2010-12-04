@@ -23,21 +23,16 @@ public class NotificationsThread extends Thread {
     }
 
     public void run() {
-        System.out.println("Starting notification Thread");
         while (isRunning()) {
-            
             this.count = this.retrieveCount();
             this.main.setNotificationsCount(this.count);
             
             try {
-                System.out.println("sleep");
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
             
             }
         }
-        
-        System.out.println("Exiting notification Thread");
     }
 
     public void setRunning(boolean run) {
