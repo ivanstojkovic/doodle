@@ -4,7 +4,7 @@ import com.gigaspaces.annotation.pojo.SpaceClass;
 import com.gigaspaces.annotation.pojo.SpaceId;
 
 @SpaceClass
-public class DoodleSchedule implements DoodleSpaceObject {
+public class DoodleSchedule implements DoodleSpaceObject, Comparable<DoodleSchedule> {
 
 	private String id;
 
@@ -113,5 +113,30 @@ public class DoodleSchedule implements DoodleSpaceObject {
 	public boolean isSelected() {
 		return selected;
 	}
+
+    public int compareTo(DoodleSchedule ds) {
+
+        if (this.day.equals(ds.getDay())) {
+            if (this.hour.equals(ds.getHour())) {
+                return 0;
+            }
+            
+            if (Integer.parseInt(this.hour) < Integer.parseInt(ds.getHour())) {
+                return -1;
+            }
+            
+            return 1;
+        }
+        
+        if (Integer.parseInt(this.day) < Integer.parseInt(ds.getDay())) {
+            return -1;
+        }
+        
+        if (Integer.parseInt(this.day) > Integer.parseInt(ds.getDay())) {
+            return 1;
+        }
+        
+        return 0;
+    }
 
 }

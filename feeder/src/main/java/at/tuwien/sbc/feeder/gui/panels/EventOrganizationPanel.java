@@ -739,8 +739,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     }
 
     public void componentShown(ComponentEvent e) {
-        cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
-        refresh();
+        this.refreshModel();
+        this.refresh();
     }
 
     public void itemStateChanged(ItemEvent ie) {

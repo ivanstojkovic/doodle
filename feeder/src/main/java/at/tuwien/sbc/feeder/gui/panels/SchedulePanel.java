@@ -32,23 +32,37 @@ public class SchedulePanel extends javax.swing.JPanel {
 
 	private void initGUI() {
 		try {
-			this.setPreferredSize(new java.awt.Dimension(100, 30));
+			this.setPreferredSize(new java.awt.Dimension(174, 33));
 			{
-				scheduleCheckBox = new JCheckBox();
-				this.add(scheduleCheckBox);
+			    scheduleLabel = new JLabel(ds.getHour() + ":00 - " + this.getPostFixLbl(ds.getDay()));
+                this.add(scheduleLabel);
+			    scheduleLabel.setPreferredSize(new java.awt.Dimension(98, 20));
+			    //scheduleLabel.setSize(new java.awt.Dimension(70, 20));
 			}
 			{
-				scheduleLabel = new JLabel(ds.getDay() + "." + ds.getHour());
-				this.add(scheduleLabel);
-				scheduleLabel.setPreferredSize(new java.awt.Dimension(70, 20));
-				scheduleLabel.setSize(new java.awt.Dimension(70, 20));
+			    scheduleCheckBox = new JCheckBox();
+			    this.scheduleCheckBox.setSelected(ds.isSelected());
+                this.add(scheduleCheckBox);
+                //scheduleCheckBox.setPreferredSize(new java.awt.Dimension(20, 20));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public DoodleSchedule getDs() {
+	private String getPostFixLbl(String day) {
+        if (day.equals("1") || day.equals("01")) {
+            return day + "st";
+        } else if (day.equals("2") || day.equals("02")) {
+            return day + "nd";
+        } else if (day.equals("3") || day.equals("03")) {
+            return day + "rd";
+        } else {
+            return day + "th";
+        }
+    }
+
+    public DoodleSchedule getDs() {
 		return ds;
 	}
 
