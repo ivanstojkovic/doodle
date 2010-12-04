@@ -594,6 +594,10 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     }
 
                     ControllerReference.getInstance().getGigaSpace().write(event);
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                    }
                     cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
                     cmbEvent.setSelectedItem(event.getName());
 
