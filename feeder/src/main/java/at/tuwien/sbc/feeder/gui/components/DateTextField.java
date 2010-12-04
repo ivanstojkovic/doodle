@@ -65,7 +65,7 @@ public class DateTextField extends JTextField implements FocusListener {
         
         try {
             this.df.parse(input);
-            this.setBackground(Color.BLACK);
+            this.setForeground(Color.BLACK);
         } catch (Exception e) {
             this.setForeground(Color.RED);
         }
