@@ -54,7 +54,8 @@ import com.jgoodies.forms.layout.CellConstraints;
 /**
  * TODO add refresh button for participants.
  */
-public class EventOrganizationPanel extends javax.swing.JPanel implements ActionListener, MouseListener, ComponentListener, ItemListener {
+public class EventOrganizationPanel extends javax.swing.JPanel implements ActionListener, MouseListener,
+        ComponentListener, ItemListener {
 
     private static final Logger logger = Logger.getLogger(EventOrganizationPanel.class);
     private JPanel pnlNorth;
@@ -131,7 +132,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     pnlNorth.add(cmbEvent, new CellConstraints("2, 2, 1, 1, default, default"));
                     cmbEvent.setBounds(9, 6, 181, 27);
                     cmbEvent.setModel(this.getEventsModel(ControllerReference.getInstance().getUser()));
-                    //cmbEvent.addActionListener(this);
+                    // cmbEvent.addActionListener(this);
                     cmbEvent.addItemListener(this);
                     cmbEvent.setActionCommand(Constants.CMD_EVENT_COMBO_CHANGED);
                 }
@@ -251,7 +252,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     }
                 }
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -269,7 +270,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     private boolean isEventEditPossible(String name) {
         DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(name);
 
-        if (event != null  && event.retrieveParticipants().isEmpty()) {
+        if (event != null && event.retrieveParticipants().isEmpty()) {
             return true;
         }
 
@@ -347,9 +348,9 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                         "To delete a comment please select one Event and one Comment from the list");
             }
         }
-//        else if (cmd.equals(Constants.CMD_EVENT_COMBO_CHANGED)) {
-//            refresh();
-//        }
+        // else if (cmd.equals(Constants.CMD_EVENT_COMBO_CHANGED)) {
+        // refresh();
+        // }
     }
 
     private void removeEvent() {
@@ -365,6 +366,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 DoodleEvent template = new DoodleEvent(event.getId());
                 event = ControllerReference.getInstance().getGigaSpace().take(template);
                 this.notifyEventRemoval(event);
+                cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
                 this.refresh();
                 JOptionPane.showMessageDialog(this, "The event was removed successfully");
             }
@@ -378,12 +380,12 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             n = new Notification(s, "The event '" + event.getName() + "' was deleted!");
             ControllerReference.getInstance().getGigaSpace().write(n);
         }
-        
+
         for (String s : event.getParticipants()) {
             n = new Notification(s, "The event '" + event.getName() + "' was deleted!");
             ControllerReference.getInstance().getGigaSpace().write(n);
         }
-        
+
     }
 
     private void removeInvite() {
@@ -658,8 +660,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 // update CommentList
                 commentList.setModel(new DefaultComboBoxModel(getCommentsForSelectedEvent().toArray()));
                 this.refreshSchedules(refreshedEvent.getId());
-            }else{
-            	commentList.setModel(new DefaultComboBoxModel());
+            } else {
+                commentList.setModel(new DefaultComboBoxModel());
             }
         } else {
             // if no event ist in ComboBox the list of Participants must be
@@ -708,30 +710,28 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
     }
 
-	public void componentHidden(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+    public void componentHidden(ComponentEvent e) {
+        // TODO Auto-generated method stub
 
-	public void componentMoved(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-	public void componentResized(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+    public void componentMoved(ComponentEvent e) {
+        // TODO Auto-generated method stub
 
-	public void componentShown(ComponentEvent e) {
-	    cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
-		refresh();
-	}
+    }
+
+    public void componentResized(ComponentEvent e) {
+        // TODO Auto-generated method stub
+
+    }
+
+    public void componentShown(ComponentEvent e) {
+        cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
+        refresh();
+    }
 
     public void itemStateChanged(ItemEvent ie) {
-        if(ie.getStateChange() == ItemEvent.SELECTED) {
-            this.refresh();
-        }
+        this.refresh();
     }
 
 }
