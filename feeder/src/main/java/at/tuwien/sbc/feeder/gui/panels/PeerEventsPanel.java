@@ -8,8 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -19,9 +22,11 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -54,6 +59,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
     private JButton subscribeBtn;
     private JComboBox invitationsCmb;
     private JComboBox cmbType;
+    private JList commentsList;
 
     public PeerEventsPanel() {
         super();
@@ -67,6 +73,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
             setPreferredSize(new Dimension(400, 300));
             {
                 pnlSelection = new JPanel();
+                this.add(getcommentsList());
                 this.add(getSchedulePanel(), BorderLayout.CENTER);
                 this.add(pnlSelection, BorderLayout.NORTH);
                 pnlSelection.setPreferredSize(new java.awt.Dimension(400, 74));
@@ -113,6 +120,8 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
                     eventComboBox.setModel(eventComboBoxModel);
                     eventComboBox.setBounds(13, 41, 140, 19);
                     eventComboBox.setVisible(false);
+                    eventComboBox.addActionListener(this);
+                    eventComboBox.setActionCommand("eventCmb");
                 }
                 {
                     addCommentButton = new JButton();
@@ -191,6 +200,9 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
                 this.schedulePanel.getViewport().removeAll();
                 this.scheduleIntialisieren();
             }
+        } else if (evt.getActionCommand().equals("eventCmb")) {
+        	commentsList.setModel(new DefaultComboBoxModel(getCommentsForParticipation().toArray()));
+            commentsList.setVisible(true);
         }
     }
 
@@ -198,11 +210,24 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
         eventComboBox.setVisible(true);
         addCommentButton.setVisible(true);
         eventComboBox.setModel(getParticipationEventsModel());
+        commentsList.setModel(new DefaultComboBoxModel(getCommentsForParticipation().toArray()));
+        commentsList.setVisible(true);
+        
     }
 
-    private void hideParticipationComponents() {
+    private List<String> getCommentsForParticipation() {
+		DoodleEvent e = (DoodleEvent) ControllerReference.getInstance().findEventByName((String)eventComboBox.getSelectedItem());
+		if(e != null) {
+			return e.retrieveComments();
+		}
+		return new ArrayList<String>();
+	}
+
+	private void hideParticipationComponents() {
         eventComboBox.setVisible(false);
         addCommentButton.setVisible(false);
+        commentsList.setModel(new DefaultComboBoxModel(new String[]{}));
+        commentsList.setVisible(false);
     }
 
     private void showInvitationComponents() {
@@ -309,5 +334,15 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
             schedulePanel.setPreferredSize(new java.awt.Dimension(88, 202));
         }
         return schedulePanel;
+    }
+    
+    private JList getcommentsList() {
+    	if(commentsList == null) {
+    		commentsList = new JList();
+    		commentsList.setPreferredSize(new java.awt.Dimension(189, 86));
+    		commentsList.setBounds(50, 80, 300, 200);
+    		commentsList.setVisible(false);
+    	}
+    	return commentsList;
     }
 }
