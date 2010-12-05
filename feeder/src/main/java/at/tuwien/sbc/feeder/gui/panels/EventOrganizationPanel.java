@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -71,6 +72,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     private JPanel jPanel1;
     private SingleSchedulePanel pnlSchedule;
     private JList lstInvites;
+    private JButton btnFixate;
+    private JComboBox cmbFix;
     private JList lstParicipants;
     private JScrollPane scrlParticipants;
     private JLabel lblParticipants;
@@ -184,6 +187,21 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                         btnEdit.addActionListener(this);
                         btnEdit.setEnabled(this.isUpdateAllowed());
 
+                    }
+                    {
+                        ComboBoxModel cmbFixModel = 
+                            new DefaultComboBoxModel(
+                                    new String[] { "Item One", "Item Two" });
+                        cmbFix = new JComboBox();
+                        jPanel1.add(cmbFix);
+                        cmbFix.setModel(cmbFixModel);
+                        cmbFix.setBounds(9, 140, 110, 22);
+                    }
+                    {
+                        btnFixate = new JButton();
+                        jPanel1.add(btnFixate);
+                        btnFixate.setText("Fixate");
+                        btnFixate.setBounds(131, 141, 110, 22);
                     }
                 }
                 {
