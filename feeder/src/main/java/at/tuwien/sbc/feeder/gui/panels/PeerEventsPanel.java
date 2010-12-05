@@ -219,7 +219,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
                 (DoodleEvent) invitationsCmb.getSelectedItem());
         System.out.println(event);
         if (event != null) {
-            DoodleSchedule[] s = ControllerReference.getInstance().readSchedules(event.getId());
+            DoodleSchedule[] s = ControllerReference.getInstance().readSchedulesForCurrentUser(event.getId());
             List<DoodleSchedule> schedules = Arrays.asList(s);
             Collections.sort(schedules);
             JPanel pnl = new JPanel();

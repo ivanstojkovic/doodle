@@ -189,19 +189,18 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
                     }
                     {
-                        ComboBoxModel cmbFixModel = 
-                            new DefaultComboBoxModel(
-                                    new String[] { "Item One", "Item Two" });
                         cmbFix = new JComboBox();
                         jPanel1.add(cmbFix);
-                        cmbFix.setModel(cmbFixModel);
-                        cmbFix.setBounds(9, 140, 110, 22);
+                        cmbFix.setBounds(9, 120, 110, 22);
+                        cmbFix.setEnabled(isFixationPossible((String) cmbEvent.getSelectedItem()));
+                        //cmbFix.setModel(this.getFixationModel(cmbFix.isEnabled(), (String) cmbEvent.getSelectedItem()));
                     }
                     {
                         btnFixate = new JButton();
                         jPanel1.add(btnFixate);
                         btnFixate.setText("Fixate");
-                        btnFixate.setBounds(131, 141, 110, 22);
+                        btnFixate.setBounds(131, 121, 110, 22);
+                        btnFixate.setEnabled(cmbFix.isEnabled());
                     }
                 }
                 {
@@ -292,6 +291,15 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             return true;
         }
 
+        return false;
+    }
+    
+    private boolean isFixationPossible(String name) {
+        DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(name);
+        if (event != null && event.retrieveInvitations().isEmpty() && !event.retrieveParticipants().isEmpty()) {
+            return true;
+        }
+        
         return false;
     }
 
@@ -466,7 +474,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     if (added) {
                         atLeastOne = true;
                         // add all schedules for this one..
-                        DoodleSchedule[] schedules = ControllerReference.getInstance().readSchedules(event.getId());
+                        DoodleSchedule[] schedules = ControllerReference.getInstance().readSchedulesForCurrentUser(event.getId());
                         DoodleSchedule nSchedule;
                         for (DoodleSchedule schedule : schedules) {
                             nSchedule = new DoodleSchedule(peer.getId(), event.getId());
@@ -623,6 +631,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     }
                     cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
                     cmbEvent.setSelectedItem(event.getName());
+                    btnEdit.setEnabled(isUpdateAllowed());
 
                 } else {
                     logger.warn("event name cannot be empty");
@@ -687,6 +696,9 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 // update CommentList
                 commentList.setModel(new DefaultComboBoxModel(getCommentsForSelectedEvent().toArray()));
                 this.refreshSchedules(refreshedEvent.getId());
+                cmbFix.setEnabled(this.isFixationPossible(refreshedEvent.getName()));
+                cmbFix.setModel(this.getFixationModel(cmbFix.isEnabled(), refreshedEvent));
+                btnFixate.setEnabled(cmbFix.isEnabled());
             } else {
                 commentList.setModel(new DefaultComboBoxModel());
             }
@@ -696,20 +708,35 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             logger.info("clearing Participation Box");
             lstParicipants.setModel(new DefaultComboBoxModel(new Object[] {}));
             cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
+            cmbFix.setEnabled(false);
+            cmbFix.setModel(new DefaultComboBoxModel(new String[] {}));
+            btnFixate.setEnabled(false);
         }
 
         // update Registered Peers
         lstInvites.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getAllPeers()));
 
         btnEdit.setEnabled(this.isUpdateAllowed());
+       
     }
     
+    private ComboBoxModel getFixationModel(boolean enabled, DoodleEvent event) {
+        if (enabled) {
+            //TODO get best schedules
+            DoodleSchedule[] schedules = ControllerReference.getInstance().readSchedulesForEvent(event.getId());
+            
+            
+        }
+        
+        return new DefaultComboBoxModel(new String[] {});
+    }
+
     public void refreshModel() {
         cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
     }
 
     private void refreshSchedules(String id) {
-        DoodleSchedule[] schedules = ControllerReference.getInstance().readSchedules(id);
+        DoodleSchedule[] schedules = ControllerReference.getInstance().readSchedulesForCurrentUser(id);
 
         int minday = Integer.MAX_VALUE;
         int minhour = Integer.MAX_VALUE;

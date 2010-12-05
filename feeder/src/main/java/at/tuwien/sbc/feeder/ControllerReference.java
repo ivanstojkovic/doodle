@@ -246,8 +246,12 @@ public class ControllerReference {
         
     }
     
-    public DoodleSchedule[] readSchedules(String id) {
+    public DoodleSchedule[] readSchedulesForCurrentUser(String id) {
         return this.getGigaSpace().readMultiple(new DoodleSchedule(this.user.getId(), id), Integer.MAX_VALUE);
+    }
+    
+    public DoodleSchedule[] readSchedulesForEvent(String id) {
+        return this.getGigaSpace().readMultiple(new DoodleSchedule(null, id), Integer.MAX_VALUE);
     }
     
     public Notification[] takeNotifications() {
