@@ -241,9 +241,6 @@ public class ControllerReference {
     
     public void deleteOldSchedules(String userId, String eventId) {
         DoodleSchedule template = new DoodleSchedule(userId, eventId);
-        template.setSelected(true);
-        this.getGigaSpace().takeMultiple(template, Integer.MAX_VALUE);
-        template.setSelected(false);
         this.getGigaSpace().takeMultiple(template, Integer.MAX_VALUE);
         
     }
@@ -251,11 +248,7 @@ public class ControllerReference {
     public List<DoodleSchedule> readSchedulesForCurrentUser(String id) {
         List<DoodleSchedule> schedules = new ArrayList<DoodleSchedule>();
         DoodleSchedule template = new DoodleSchedule(this.user.getId(), id);
-        template.setSelected(true);
         DoodleSchedule[] read = this.getGigaSpace().readMultiple(template, Integer.MAX_VALUE);
-        schedules.addAll(Arrays.asList(read));
-        template.setSelected(false);
-        read = this.getGigaSpace().readMultiple(template, Integer.MAX_VALUE);
         schedules.addAll(Arrays.asList(read));
         return schedules;
     }
@@ -263,11 +256,7 @@ public class ControllerReference {
     public List<DoodleSchedule> readSchedulesForEvent(String id) {
         List<DoodleSchedule> schedules = new ArrayList<DoodleSchedule>();
         DoodleSchedule template = new DoodleSchedule(null, id);
-        template.setSelected(true);
         DoodleSchedule[] read = this.getGigaSpace().readMultiple(template, Integer.MAX_VALUE);
-        schedules.addAll(Arrays.asList(read));
-        template.setSelected(false);
-        read = this.getGigaSpace().readMultiple(template, Integer.MAX_VALUE);
         schedules.addAll(Arrays.asList(read));
         return schedules;
     }
