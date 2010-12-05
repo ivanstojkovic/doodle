@@ -217,6 +217,8 @@ public class ControllerReference {
         if (o instanceof DoodleSchedule) {
         	DoodleSchedule gotObject = (DoodleSchedule)o;
         	DoodleSchedule temp = new DoodleSchedule(gotObject.getParticipant(), gotObject.getEvent());
+        	temp.setDay(gotObject.getDay());
+        	temp.setHour(gotObject.getHour());
         	return gigaSpace.readIfExists(temp);
         }
         return null;
@@ -236,7 +238,22 @@ public class ControllerReference {
             }
         }
         return result;
-        
+    }
+
+    public List<DoodleEvent> getEventNamesFromIdsAsDoodleEvent(List<String> retrieveOrganized) {
+    	List<DoodleEvent> result = new ArrayList<DoodleEvent>();
+    	
+    	for (String id : retrieveOrganized) {
+    		DoodleEvent template = new DoodleEvent();
+    		template.setId(id);
+    		DoodleEvent event = this.gigaSpace.readIfExists(template);
+    		if (event != null) {
+    			result.add(event);
+    		} else {
+    			logger.warn("An event was not found.. Please inspect!");
+    		}
+    	}
+    	return result;
     }
     
     public void deleteOldSchedules(String userId, String eventId) {

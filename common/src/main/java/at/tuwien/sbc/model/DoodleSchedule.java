@@ -81,12 +81,14 @@ public class DoodleSchedule implements DoodleSpaceObject, Comparable<DoodleSched
 		return event;
 	}
 
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((day == null) ? 0 : day.hashCode());
+		result = prime * result + ((event == null) ? 0 : event.hashCode());
+		result = prime * result + ((hour == null) ? 0 : hour.hashCode());
+		result = prime * result + ((participant == null) ? 0 : participant.hashCode());
 		return result;
 	}
 
@@ -99,10 +101,25 @@ public class DoodleSchedule implements DoodleSpaceObject, Comparable<DoodleSched
 		if (getClass() != obj.getClass())
 			return false;
 		DoodleSchedule other = (DoodleSchedule) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (day == null) {
+			if (other.day != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!day.equals(other.day))
+			return false;
+		if (event == null) {
+			if (other.event != null)
+				return false;
+		} else if (!event.equals(other.event))
+			return false;
+		if (hour == null) {
+			if (other.hour != null)
+				return false;
+		} else if (!hour.equals(other.hour))
+			return false;
+		if (participant == null) {
+			if (other.participant != null)
+				return false;
+		} else if (!participant.equals(other.participant))
 			return false;
 		return true;
 	}
@@ -142,7 +159,7 @@ public class DoodleSchedule implements DoodleSpaceObject, Comparable<DoodleSched
         return 0;
     }
 
-	public boolean retriveSelected() {
+	public boolean retrieveSelected() {
 		if(selected == null) {
 			return false;
 		}

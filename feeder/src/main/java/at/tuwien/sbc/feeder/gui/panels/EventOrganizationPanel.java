@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
@@ -730,17 +732,21 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             Map<DoodleSchedule, Integer> aggregate = new HashMap<DoodleSchedule, Integer>();
             List<DoodleSchedule> schedules = ControllerReference.getInstance().readSchedulesForEvent(event.getId());
             for (DoodleSchedule s : schedules) {
-                System.out.println(s.toString() + " - " + s.isSelected());
+                System.out.println(s.toString() + " - " + s.retrieveSelected());
             }
             // count selected
+            DoodleSchedule temp;
             for (DoodleSchedule s : schedules) {
-                if (s.isSelected()) {
-                    Integer count = aggregate.get(s);
+                if (s.retrieveSelected()) {
+                    temp = new DoodleSchedule(null, null);
+                    temp.setDay(s.getDay());
+                    temp.setHour(s.getHour());
+                    Integer count = aggregate.get(temp);
                     if (count == null) {
                         count = new Integer(1);
-                        aggregate.put(s, count);
+                        aggregate.put(temp, count);
                     } else {
-                        aggregate.put(s, ++count);
+                        aggregate.put(temp, ++count);
                     }
                 }
             }
@@ -750,7 +756,10 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             // find max
             int max = -1;
             for (DoodleSchedule s : schedules) {
-                Integer count = aggregate.get(s);
+                temp = new DoodleSchedule(null, null);
+                temp.setDay(s.getDay());
+                temp.setHour(s.getHour());
+                Integer count = aggregate.get(temp);
                 if (count != null && count > max) {
                     max = count;
                 }
@@ -758,10 +767,15 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             System.out.println("Max: " + max);
             // find best
             List<DoodleSchedule> best = new ArrayList<DoodleSchedule>();
+            Set<DoodleSchedule> set = new HashSet<DoodleSchedule>();
             for (DoodleSchedule s : schedules) {
-                Integer count = aggregate.get(s);
-                if (count != null && count == max) {
+                temp = new DoodleSchedule(null, null);
+                temp.setDay(s.getDay());
+                temp.setHour(s.getHour());
+                Integer count = aggregate.get(temp);
+                if (count != null && count == max && !set.contains(temp)) {
                     best.add(s);
+                    set.add(temp);
                 }
             }
 
