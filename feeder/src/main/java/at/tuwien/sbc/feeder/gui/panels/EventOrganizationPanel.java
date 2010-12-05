@@ -77,6 +77,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     private JPanel jPanel1;
     private SingleSchedulePanel pnlSchedule;
     private JList lstInvites;
+    private JLabel lblFixated;
     private JButton btnFixate;
     private JComboBox cmbFix;
     private JList lstParicipants;
@@ -151,6 +152,11 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     rmEvent.setBounds(196, 7, 43, 26);
                     rmEvent.setActionCommand(Constants.CMD_BTN_REMOVE_EVENT);
                     rmEvent.addActionListener(this);
+                }
+                {
+                    lblFixated = new JLabel();
+                    pnlNorth.add(lblFixated);
+                    lblFixated.setBounds(250, 7, 295, 23);
                 }
             }
             {
@@ -720,6 +726,11 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 cmbFix.setEnabled(this.isFixationPossible(refreshedEvent.getName()));
                 cmbFix.setModel(this.getFixationModel(cmbFix.isEnabled(), refreshedEvent));
                 btnFixate.setEnabled(cmbFix.isEnabled());
+                if (refreshedEvent.getFixSchedule() != null) {
+                    lblFixated.setText("Fixated at: " + refreshedEvent.getFixSchedule());
+                } else {
+                    lblFixated.setText("");
+                }
             } else {
                 commentList.setModel(new DefaultComboBoxModel());
             }
@@ -732,6 +743,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             cmbFix.setEnabled(false);
             cmbFix.setModel(new DefaultComboBoxModel(new String[] {}));
             btnFixate.setEnabled(false);
+            lblFixated.setText("");
         }
 
         // update Registered Peers

@@ -22,6 +22,7 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -54,6 +55,7 @@ import com.j_spaces.core.EventIdFactory;
 public class PeerEventsPanel extends javax.swing.JPanel implements ActionListener, ComponentListener {
     private JPanel pnlSelection;
     private JButton updateScheduleBtn;
+    private JLabel lblFix;
     private JScrollPane scheduleEditPanel;
     private JScrollPane schedulePanel;
     private JButton addCommentButton;
@@ -130,6 +132,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
                     addCommentButton = new JButton();
                     pnlSelection.add(addCommentButton);
                     pnlSelection.add(getUpdateScheduleBtn());
+                    pnlSelection.add(getLblFix());
                     addCommentButton.setText("add new comment");
                     addCommentButton.setBounds(183, 40, 174, 22);
                     addCommentButton.setVisible(false);
@@ -209,6 +212,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
             if (this.eventComboBox.getSelectedItem() != null) {
                 //this.remove(schedulePanel);
                 initSchedule(eventComboBox);
+                this.updateFixateLabel();
             }
 
         } else if (evt.getActionCommand().equals(Constants.CMD_BTN_UPDATE)) {
@@ -248,7 +252,20 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
         commentsList.setModel(new DefaultComboBoxModel(getCommentsForParticipation().toArray()));
         commentsList.setVisible(true);
         updateScheduleBtn.setVisible(true);
+        this.updateFixateLabel();
 
+    }
+
+    private void updateFixateLabel() {
+        DoodleEvent event = (DoodleEvent) eventComboBox.getSelectedItem();
+        if (event != null) {
+            if (event.getFixSchedule() != null) {
+                lblFix.setText("Fixated at: " + event.getFixSchedule());
+            } else {
+                lblFix.setText("");
+            }
+        }
+        
     }
 
     private void hideParticipationComponents() {
@@ -257,6 +274,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
         commentsList.setModel(new DefaultComboBoxModel(new String[] {}));
         commentsList.setVisible(false);
         updateScheduleBtn.setVisible(false);
+        lblFix.setText("");
     }
 
     private List<String> getCommentsForParticipation() {
@@ -399,6 +417,14 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
             updateScheduleBtn.addActionListener(this);
         }
         return updateScheduleBtn;
+    }
+    
+    private JLabel getLblFix() {
+        if(lblFix == null) {
+            lblFix = new JLabel();
+            lblFix.setBounds(166, 7, 206, 20);
+        }
+        return lblFix;
     }
 
 }
