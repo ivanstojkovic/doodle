@@ -148,17 +148,14 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
                 e.removeInvitation(user);
                 e.addParticipant(user);
                 e.setAction("processIt");
-                ControllerReference.getInstance().getGigaSpace().write(e);
                 // Because of the Model of Combo Box
                 showInvitationComponents();
                 updateScheduleInfo();
+                ControllerReference.getInstance().getGigaSpace().write(e);
                 Notification n = new Notification(e.getOwner(), "Peer " + user.getName() + " subscribed to event "
                         + e.getName());
                 ControllerReference.getInstance().getGigaSpace().write(n);
-                this.remove(schedulePanel);
-                schedulePanel = null;
-                schedulePanel = getSchedulePanel();
-                this.add(schedulePanel, BorderLayout.CENTER);
+                schedulePanel.getViewport().removeAll();
                 refresh();
             }
         } else if (evt.getActionCommand().equals(Constants.CMD_BTN_INVITATION_REJECT)) {
@@ -166,9 +163,12 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
             if (e != null) {
                 Peer user = ControllerReference.getInstance().getUser();
                 e.removeInvitation(user);
-                ControllerReference.getInstance().getGigaSpace().write(e);
+                List<DoodleSchedule> schedules = ControllerReference.getInstance().readSchedulesForEvent(e.getId());
+                e.removeSchedules(user, schedules);
                 // Because of the Model of Combo Box
                 showInvitationComponents();
+                ControllerReference.getInstance().deleteOldSchedules(user.getId(), e.getId());
+                ControllerReference.getInstance().getGigaSpace().write(e);
                 Notification n = new Notification(e.getOwner(), "Peer " + user.getName() + " rejected the event "
                         + e.getName());
                 ControllerReference.getInstance().getGigaSpace().write(n);
@@ -219,8 +219,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
                 (DoodleEvent) invitationsCmb.getSelectedItem());
         System.out.println(event);
         if (event != null) {
-            DoodleSchedule[] s = ControllerReference.getInstance().readSchedulesForCurrentUser(event.getId());
-            List<DoodleSchedule> schedules = Arrays.asList(s);
+            List<DoodleSchedule> schedules = ControllerReference.getInstance().readSchedulesForCurrentUser(event.getId());
             Collections.sort(schedules);
             JPanel pnl = new JPanel();
             pnl.setLayout(this.getLayout(schedules));
@@ -251,8 +250,9 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
     }
 
     private void updateScheduleInfo() {
-        JPanel userSchedulePanel = (JPanel) schedulePanel.getComponent(0).getComponentAt(0, 0);
+        JPanel userSchedulePanel = (JPanel) schedulePanel.getViewport().getComponentAt(0, 0);
         for (Component c : userSchedulePanel.getComponents()) {
+            System.out.println("Changing");
             SchedulePanel sp = (SchedulePanel) c;
             DoodleSchedule ds = sp.getDs();
             ds = (DoodleSchedule) ControllerReference.getInstance().refresh(ds);
@@ -265,6 +265,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
         rejectBtn.setVisible(false);
         subscribeBtn.setVisible(false);
         invitationsCmb.setVisible(false);
+        invitationsCmb.setSelectedIndex(-1);
     }
 
     public void refresh() {

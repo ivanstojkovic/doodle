@@ -1,6 +1,7 @@
 package at.tuwien.sbc.feeder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.jini.core.lease.Lease;
@@ -242,16 +243,35 @@ public class ControllerReference {
     
     public void deleteOldSchedules(String userId, String eventId) {
         DoodleSchedule template = new DoodleSchedule(userId, eventId);
+        template.setSelected(true);
+        this.getGigaSpace().takeMultiple(template, Integer.MAX_VALUE);
+        template.setSelected(false);
         this.getGigaSpace().takeMultiple(template, Integer.MAX_VALUE);
         
     }
     
-    public DoodleSchedule[] readSchedulesForCurrentUser(String id) {
-        return this.getGigaSpace().readMultiple(new DoodleSchedule(this.user.getId(), id), Integer.MAX_VALUE);
+    public List<DoodleSchedule> readSchedulesForCurrentUser(String id) {
+        List<DoodleSchedule> schedules = new ArrayList<DoodleSchedule>();
+        DoodleSchedule template = new DoodleSchedule(this.user.getId(), id);
+        template.setSelected(true);
+        DoodleSchedule[] read = this.getGigaSpace().readMultiple(template, Integer.MAX_VALUE);
+        schedules.addAll(Arrays.asList(read));
+        template.setSelected(false);
+        read = this.getGigaSpace().readMultiple(template, Integer.MAX_VALUE);
+        schedules.addAll(Arrays.asList(read));
+        return schedules;
     }
     
-    public DoodleSchedule[] readSchedulesForEvent(String id) {
-        return this.getGigaSpace().readMultiple(new DoodleSchedule(null, id), Integer.MAX_VALUE);
+    public List<DoodleSchedule> readSchedulesForEvent(String id) {
+        List<DoodleSchedule> schedules = new ArrayList<DoodleSchedule>();
+        DoodleSchedule template = new DoodleSchedule(null, id);
+        template.setSelected(true);
+        DoodleSchedule[] read = this.getGigaSpace().readMultiple(template, Integer.MAX_VALUE);
+        schedules.addAll(Arrays.asList(read));
+        template.setSelected(false);
+        read = this.getGigaSpace().readMultiple(template, Integer.MAX_VALUE);
+        schedules.addAll(Arrays.asList(read));
+        return schedules;
     }
     
     public Notification[] takeNotifications() {

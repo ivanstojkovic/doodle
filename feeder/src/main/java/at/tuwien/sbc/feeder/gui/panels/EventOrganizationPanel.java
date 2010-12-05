@@ -14,7 +14,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
@@ -38,6 +40,7 @@ import at.tuwien.sbc.model.DoodleSchedule;
 import at.tuwien.sbc.model.Notification;
 import at.tuwien.sbc.model.Peer;
 
+import com.gigaspaces.internal.backport.java.util.Arrays;
 import com.jgoodies.forms.layout.CellConstraints;
 
 /**
@@ -193,7 +196,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                         jPanel1.add(cmbFix);
                         cmbFix.setBounds(9, 120, 110, 22);
                         cmbFix.setEnabled(isFixationPossible((String) cmbEvent.getSelectedItem()));
-                        //cmbFix.setModel(this.getFixationModel(cmbFix.isEnabled(), (String) cmbEvent.getSelectedItem()));
+                        // cmbFix.setModel(this.getFixationModel(cmbFix.isEnabled(),
+                        // (String) cmbEvent.getSelectedItem()));
                     }
                     {
                         btnFixate = new JButton();
@@ -293,13 +297,13 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
         return false;
     }
-    
+
     private boolean isFixationPossible(String name) {
         DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(name);
         if (event != null && event.retrieveInvitations().isEmpty() && !event.retrieveParticipants().isEmpty()) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -474,7 +478,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     if (added) {
                         atLeastOne = true;
                         // add all schedules for this one..
-                        DoodleSchedule[] schedules = ControllerReference.getInstance().readSchedulesForCurrentUser(event.getId());
+                        List<DoodleSchedule> schedules= ControllerReference.getInstance().readSchedulesForCurrentUser(
+                                event.getId());
                         DoodleSchedule nSchedule;
                         for (DoodleSchedule schedule : schedules) {
                             nSchedule = new DoodleSchedule(peer.getId(), event.getId());
@@ -717,17 +722,58 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         lstInvites.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getAllPeers()));
 
         btnEdit.setEnabled(this.isUpdateAllowed());
-       
+
     }
-    
+
     private ComboBoxModel getFixationModel(boolean enabled, DoodleEvent event) {
         if (enabled) {
-            //TODO get best schedules
-            DoodleSchedule[] schedules = ControllerReference.getInstance().readSchedulesForEvent(event.getId());
+            Map<DoodleSchedule, Integer> aggregate = new HashMap<DoodleSchedule, Integer>();
+            List<DoodleSchedule> schedules = ControllerReference.getInstance().readSchedulesForEvent(event.getId());
+            for (DoodleSchedule s : schedules) {
+                System.out.println(s.toString() + " - " + s.isSelected());
+            }
+            // count selected
+            for (DoodleSchedule s : schedules) {
+                if (s.isSelected()) {
+                    Integer count = aggregate.get(s);
+                    if (count == null) {
+                        count = new Integer(1);
+                        aggregate.put(s, count);
+                    } else {
+                        aggregate.put(s, ++count);
+                    }
+                }
+            }
+
+            System.out.println("Aggregate: " + aggregate.toString());
             
-            
+            // find max
+            int max = -1;
+            for (DoodleSchedule s : schedules) {
+                Integer count = aggregate.get(s);
+                if (count != null && count > max) {
+                    max = count;
+                }
+            }
+            System.out.println("Max: " + max);
+            // find best
+            List<DoodleSchedule> best = new ArrayList<DoodleSchedule>();
+            for (DoodleSchedule s : schedules) {
+                Integer count = aggregate.get(s);
+                if (count != null && count == max) {
+                    best.add(s);
+                }
+            }
+
+            System.out.println(Arrays.deepToString(best.toArray()));
+            if (best.isEmpty()) {
+                cmbFix.setEnabled(false);
+                return new DefaultComboBoxModel(new String[] {Constants.MSG_NO_MATCH});
+            } else {
+                return new DefaultComboBoxModel(best.toArray());
+            }
         }
-        
+
         return new DefaultComboBoxModel(new String[] {});
     }
 
@@ -736,7 +782,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
     }
 
     private void refreshSchedules(String id) {
-        DoodleSchedule[] schedules = ControllerReference.getInstance().readSchedulesForCurrentUser(id);
+        List<DoodleSchedule> schedules = ControllerReference.getInstance().readSchedulesForCurrentUser(id);
 
         int minday = Integer.MAX_VALUE;
         int minhour = Integer.MAX_VALUE;

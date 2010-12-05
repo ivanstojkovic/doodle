@@ -215,4 +215,19 @@ public class DoodleEvent implements DoodleSpaceObject {
 		}
 	}
 
+    public void removeSchedules(Peer user, List<DoodleSchedule> schedules) {
+        if (retrieveSchedules().size() > 0) {
+            Iterator<String> iter = retrieveSchedules().iterator();
+            while(iter.hasNext()) {
+                String schedule = iter.next();
+                for (DoodleSchedule s : schedules) {
+                    if (s.getId().equals(s) && s.getParticipant().equals(user.getName())) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
+        
+    }
+
 }

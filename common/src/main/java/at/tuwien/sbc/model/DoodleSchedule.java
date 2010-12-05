@@ -62,7 +62,7 @@ public class DoodleSchedule implements DoodleSpaceObject, Comparable<DoodleSched
 
 	@Override
 	public String toString() {
-		return "DS[day=" + day + ", hour=" + hour + "]";
+		return this.hour + ":00 on " + this.day;
 	}
 
 	public void setHour(String hour) {
