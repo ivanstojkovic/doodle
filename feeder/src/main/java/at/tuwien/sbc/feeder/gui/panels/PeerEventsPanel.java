@@ -32,6 +32,8 @@ import javax.swing.ScrollPaneLayout;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.log4j.Logger;
+
 import at.tuwien.sbc.feeder.ControllerReference;
 import at.tuwien.sbc.feeder.common.Constants;
 import at.tuwien.sbc.model.DoodleEvent;
@@ -53,6 +55,9 @@ import com.j_spaces.core.EventIdFactory;
  * ANY CORPORATE OR COMMERCIAL PURPOSE.
  */
 public class PeerEventsPanel extends javax.swing.JPanel implements ActionListener, ComponentListener {
+	
+	private static Logger logger = Logger.getLogger(PeerEventsPanel.class);
+	
     private JPanel pnlSelection;
     private JButton updateScheduleBtn;
     private JLabel lblFix;
@@ -220,7 +225,6 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
             if (e != null) {
                 ControllerReference.getInstance().refresh(e);
                 if (e.getFixSchedule() == null) {
-                    System.out.println(e.toString() + " " + e.getFixSchedule());
                     Peer user = ControllerReference.getInstance().getUser();
                     updateScheduleInfo();
                     Notification n = new Notification(e.getOwner(), "Peer " + user.getName()
@@ -291,12 +295,15 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
         invitationsCmb.setVisible(true);
         invitationsCmb.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getInvitations().toArray()));
         invitationsCmb.setSelectedIndex(-1);
+        //	remove Schedule Panel
+        this.remove(schedulePanel);
+        schedulePanel = null;
+        schedulePanel = getSchedulePanel();
+        this.add(schedulePanel, BorderLayout.CENTER);
     }
 
     private void scheduleIntialisieren(JComboBox eventBox) {
-        System.out.println("INIT");
         DoodleEvent event = (DoodleEvent) eventBox.getSelectedItem();
-        System.out.println(event);
         if (event != null) {
             List<DoodleSchedule> schedules = ControllerReference.getInstance().readSchedulesForCurrentUser(
                     event.getId());
@@ -304,7 +311,6 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
             JPanel pnl = new JPanel();
             pnl.setLayout(this.getLayout(schedules));
             for (DoodleSchedule ds : schedules) {
-                System.out.println(ds.toString());
                 SchedulePanel sp = new SchedulePanel(ds);
                 sp.setVisible(true);
                 pnl.add(sp);
@@ -336,12 +342,10 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
     private void updateScheduleInfo() {
         JPanel userSchedulePanel = (JPanel) schedulePanel.getViewport().getComponentAt(0, 0);
         for (Component c : userSchedulePanel.getComponents()) {
-            System.out.println("Changing");
             SchedulePanel sp = (SchedulePanel) c;
             DoodleSchedule ds = sp.getDs();
             ds = (DoodleSchedule) ControllerReference.getInstance().refresh(ds);
             ds.setSelected(sp.getScheduleCheckBox().isSelected());
-            System.out.println(ds.getHour() + "." + ds.getDay() + " :" + sp.getScheduleCheckBox().isSelected());
             ControllerReference.getInstance().getGigaSpace().write(ds);
         }
     }

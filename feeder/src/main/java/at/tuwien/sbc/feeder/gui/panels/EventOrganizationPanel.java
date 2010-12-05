@@ -64,6 +64,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         ComponentListener, ItemListener {
 
     private static final Logger logger = Logger.getLogger(EventOrganizationPanel.class);
+    
     private JPanel pnlNorth;
     private JScrollPane scrlInvites;
     private JButton rmEvent;
@@ -464,7 +465,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         if (event != null) {
 
             Object[] peers = lstInvites.getSelectedValues();
-            System.out.println(event.retrieveInvitations().size());
+            logger.info(event.retrieveInvitations().size());
             if (peers.length > 0 && (event.retrieveInvitations().size() + event.retrieveParticipants().size() > 1)) {
                 boolean atLeastOne = false;
                 for (Object p : peers) {
@@ -758,7 +759,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             Map<DoodleSchedule, Integer> aggregate = new HashMap<DoodleSchedule, Integer>();
             List<DoodleSchedule> schedules = ControllerReference.getInstance().readSchedulesForEvent(event.getId());
             for (DoodleSchedule s : schedules) {
-                System.out.println(s.toString() + " - " + s.retrieveSelected());
+                logger.info(s.toString() + " - " + s.retrieveSelected());
             }
             // count selected
             DoodleSchedule temp;
@@ -777,7 +778,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 }
             }
 
-            System.out.println("Aggregate: " + aggregate.toString());
+            logger.info("Aggregate: " + aggregate.toString());
 
             // find max
             int max = -1;
@@ -790,7 +791,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     max = count;
                 }
             }
-            System.out.println("Max: " + max);
+            logger.info("Max: " + max);
             // find best
             List<DoodleSchedule> best = new ArrayList<DoodleSchedule>();
             Set<DoodleSchedule> set = new HashSet<DoodleSchedule>();
@@ -805,7 +806,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                 }
             }
 
-            System.out.println(Arrays.deepToString(best.toArray()));
+            logger.info(Arrays.deepToString(best.toArray()));
             if (best.isEmpty()) {
                 cmbFix.setEnabled(false);
                 return new DefaultComboBoxModel(new String[] { Constants.MSG_NO_MATCH });

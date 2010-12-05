@@ -26,7 +26,6 @@ public class Feeder implements InitializingBean, DisposableBean {
     }
     
     public void afterPropertiesSet() throws Exception {
-        System.out.println("afterPropertiesSet");
         ControllerReference.getInstance().setGigaSpace(this.gigaSpace);
     }
     
