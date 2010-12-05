@@ -16,7 +16,7 @@ public class DoodleSchedule implements DoodleSpaceObject, Comparable<DoodleSched
 
 	private String event;
 
-	private boolean selected;
+	private Boolean selected;
 
 	public DoodleSchedule(String participant, String event) {
 		this.participant = participant;
@@ -81,6 +81,7 @@ public class DoodleSchedule implements DoodleSpaceObject, Comparable<DoodleSched
 		return event;
 	}
 
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -106,13 +107,15 @@ public class DoodleSchedule implements DoodleSpaceObject, Comparable<DoodleSched
 		return true;
 	}
 
-	public void setSelected(boolean selected) {
+	public void setSelected(Boolean selected) {
 		this.selected = selected;
 	}
 
-	public boolean isSelected() {
+	public Boolean isSelected() {
 		return selected;
 	}
+	
+	
 
     public int compareTo(DoodleSchedule ds) {
 
@@ -138,5 +141,12 @@ public class DoodleSchedule implements DoodleSpaceObject, Comparable<DoodleSched
         
         return 0;
     }
+
+	public boolean retriveSelected() {
+		if(selected == null) {
+			return false;
+		}
+		return selected;
+	}
 
 }

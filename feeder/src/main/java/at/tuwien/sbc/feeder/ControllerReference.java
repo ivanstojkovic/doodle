@@ -152,8 +152,6 @@ public class ControllerReference {
     }
     
     public DoodleEvent findEventByName(String name) {
-        logger.info("findEventByNameAndUser(" + name + ")");
-        logger.info("user = " + user);
         if (name == null || this.user == null) {
             return null;
         }
