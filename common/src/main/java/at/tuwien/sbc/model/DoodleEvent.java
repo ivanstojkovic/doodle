@@ -136,7 +136,7 @@ public class DoodleEvent implements DoodleSpaceObject {
 	}
 	
 	public boolean addInvite(Peer peer) {
-		if (!retrieveInvitations().contains(peer.getName())) {
+		if (!retrieveInvitations().contains(peer.getName()) && !retrieveParticipants().contains(peer.getName())) {
 			return retrieveInvitations().add(peer.getName());
 		}
 		return false;
@@ -221,7 +221,7 @@ public class DoodleEvent implements DoodleSpaceObject {
             while(iter.hasNext()) {
                 String schedule = iter.next();
                 for (DoodleSchedule s : schedules) {
-                    if (s.getId().equals(s) && s.getParticipant().equals(user.getName())) {
+                    if (s.getId().equals(schedule) && s.getParticipant().equals(user.getName())) {
                         iter.remove();
                     }
                 }

@@ -207,6 +207,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                         btnFixate.setText("Fixate");
                         btnFixate.setBounds(131, 121, 110, 22);
                         btnFixate.setEnabled(cmbFix.isEnabled());
+                        btnFixate.addActionListener(this);
+                        btnFixate.setActionCommand(Constants.CMD_BTN_FIXATE);
                     }
                 }
                 {
@@ -302,7 +304,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
     private boolean isFixationPossible(String name) {
         DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(name);
-        if (event != null && event.retrieveInvitations().isEmpty() && !event.retrieveParticipants().isEmpty()) {
+        if (event != null && event.getFixSchedule() == null && event.retrieveInvitations().isEmpty() && !event.retrieveParticipants().isEmpty()) {
             return true;
         }
 
@@ -352,6 +354,9 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
 
         } else if (cmd.equals(Constants.CMD_BTN_REMOVE_EVENT)) {
             this.removeEvent();
+            
+        } else if (cmd.equals(Constants.CMD_BTN_FIXATE)) {
+            this.fixateEvent();
 
         } else if (cmd.equals(Constants.CMD_BTN_ADD_COMMENT)) {
             DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(
@@ -383,6 +388,25 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         // else if (cmd.equals(Constants.CMD_EVENT_COMBO_CHANGED)) {
         // refresh();
         // }
+    }
+
+    private void fixateEvent() {
+        String name = (String) cmbEvent.getSelectedItem();
+        if (name != null) {
+            DoodleEvent event = ControllerReference.getInstance().findEventByNameAndOwner(name);
+            if (event != null) {
+                event.setFixSchedule(((DoodleSchedule) cmbFix.getSelectedItem()).toString());
+                ControllerReference.getInstance().getGigaSpace().write(event);
+                Notification n;
+                for (String p : event.getParticipants()) {
+                    n = new Notification(p, "The event '" + event.getName() + "' was fixated at " + event.getFixSchedule());
+                    ControllerReference.getInstance().getGigaSpace().write(n);
+                }
+                this.refresh();
+            }
+            
+        }
+        
     }
 
     private void removeEvent() {
@@ -434,7 +458,8 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
         if (event != null) {
 
             Object[] peers = lstInvites.getSelectedValues();
-            if (peers.length > 0) {
+            System.out.println(event.retrieveInvitations().size());
+            if (peers.length > 0 && (event.retrieveInvitations().size() + event.retrieveParticipants().size() > 1)) {
                 boolean atLeastOne = false;
                 for (Object p : peers) {
                     Peer peer = (Peer) p;
@@ -452,11 +477,11 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     event.setAction("processIt");
                     ControllerReference.getInstance().getGigaSpace().write(event);
                 } else {
-                    JOptionPane.showMessageDialog(this, "All selected peers were not invited");
+                    JOptionPane.showMessageDialog(this, "All selected peers were not invited or have already subscribed");
                 }
 
             } else {
-                JOptionPane.showMessageDialog(this, "Please select at least one peer");
+                JOptionPane.showMessageDialog(this, "Please select at least one invited peer. \nPlease note that an event cannot be left with no invitations or participants");
             }
 
         } else {
@@ -480,7 +505,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     if (added) {
                         atLeastOne = true;
                         // add all schedules for this one..
-                        List<DoodleSchedule> schedules= ControllerReference.getInstance().readSchedulesForCurrentUser(
+                        List<DoodleSchedule> schedules = ControllerReference.getInstance().readSchedulesForCurrentUser(
                                 event.getId());
                         DoodleSchedule nSchedule;
                         for (DoodleSchedule schedule : schedules) {
@@ -532,17 +557,9 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                             List<DoodleSchedule> schedules = new ArrayList<DoodleSchedule>();
                             for (int d = startCal.get(Calendar.DAY_OF_YEAR); d <= endCal.get(Calendar.DAY_OF_YEAR); d++) {
                                 for (int h = startCal.get(Calendar.HOUR_OF_DAY); h < endCal.get(Calendar.HOUR_OF_DAY); h++) {
-                                    DoodleSchedule day = new DoodleSchedule(current.getName(), event.getId());
-                                    day.setDay(d + "");
-                                    day.setHour(h + "");
-                                    schedules.add(day);
-
                                     for (String p : event.retrieveInvitations()) {
-                                        if (!p.equals(ControllerReference.getInstance().getUser().getName())) {
-                                            DoodleSchedule forPeer = new DoodleSchedule(d + "", h + "", p, event
-                                                    .getId());
-                                            schedules.add(forPeer);
-                                        }
+                                        DoodleSchedule forPeer = new DoodleSchedule(d + "", h + "", p, event.getId());
+                                        schedules.add(forPeer);
                                     }
                                 }
                             }
@@ -606,39 +623,36 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
                     event.setAction("processIt");
 
                     Object[] peers = lstInvites.getSelectedValues();
+                    if (peers.length == 0) {
+                        JOptionPane.showMessageDialog(this, "Please select at least one invite");
+                    } else {
 
-                    for (Object p : peers) {
-                        Peer peer = (Peer) p;
-                        event.addInvite(peer);
-                    }
+                        for (Object p : peers) {
+                            Peer peer = (Peer) p;
+                            event.addInvite(peer);
+                        }
 
-                    for (int d = startCal.get(Calendar.DAY_OF_YEAR); d <= endCal.get(Calendar.DAY_OF_YEAR); d++) {
-                        for (int h = startCal.get(Calendar.HOUR_OF_DAY); h < endCal.get(Calendar.HOUR_OF_DAY); h++) {
-                            DoodleSchedule day = new DoodleSchedule(current.getName(), event.getId());
-                            day.setDay(d + "");
-                            day.setHour(h + "");
-                            ControllerReference.getInstance().getGigaSpace().write(day);
-                            event.retrieveSchedules().add(day.getId());
-                            for (int i = 0; i < lstInvites.getSelectedValues().length; i++) {
-                                if (lstInvites.getSelectedValues()[i].equals(current)) {
-                                    continue;
+                        for (int d = startCal.get(Calendar.DAY_OF_YEAR); d <= endCal.get(Calendar.DAY_OF_YEAR); d++) {
+                            for (int h = startCal.get(Calendar.HOUR_OF_DAY); h < endCal.get(Calendar.HOUR_OF_DAY); h++) {
+                                for (int i = 0; i < lstInvites.getSelectedValues().length; i++) {
+                                    Peer p = (Peer) lstInvites.getSelectedValues()[i];
+                                    DoodleSchedule forPeer = new DoodleSchedule(d + "", h + "", p.getName(), event
+                                            .getId());
+                                    ControllerReference.getInstance().getGigaSpace().write(forPeer);
+                                    event.retrieveSchedules().add(forPeer.getId());
                                 }
-                                Peer p = (Peer) lstInvites.getSelectedValues()[i];
-                                DoodleSchedule forPeer = new DoodleSchedule(d + "", h + "", p.getName(), event.getId());
-                                ControllerReference.getInstance().getGigaSpace().write(forPeer);
-                                event.retrieveSchedules().add(forPeer.getId());
                             }
                         }
-                    }
 
-                    ControllerReference.getInstance().getGigaSpace().write(event);
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
+                        ControllerReference.getInstance().getGigaSpace().write(event);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                        }
+                        cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
+                        cmbEvent.setSelectedItem(event.getName());
+                        btnEdit.setEnabled(isUpdateAllowed());
                     }
-                    cmbEvent.setModel(getEventsModel(ControllerReference.getInstance().getUser()));
-                    cmbEvent.setSelectedItem(event.getName());
-                    btnEdit.setEnabled(isUpdateAllowed());
 
                 } else {
                     logger.warn("event name cannot be empty");
@@ -752,7 +766,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             }
 
             System.out.println("Aggregate: " + aggregate.toString());
-            
+
             // find max
             int max = -1;
             for (DoodleSchedule s : schedules) {
@@ -782,7 +796,7 @@ public class EventOrganizationPanel extends javax.swing.JPanel implements Action
             System.out.println(Arrays.deepToString(best.toArray()));
             if (best.isEmpty()) {
                 cmbFix.setEnabled(false);
-                return new DefaultComboBoxModel(new String[] {Constants.MSG_NO_MATCH});
+                return new DefaultComboBoxModel(new String[] { Constants.MSG_NO_MATCH });
             } else {
                 return new DefaultComboBoxModel(best.toArray());
             }

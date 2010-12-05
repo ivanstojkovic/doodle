@@ -200,70 +200,72 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
             }
         } else if (evt.getSource() == this.invitationsCmb) {
             if (this.invitationsCmb.getSelectedItem() != null) {
-            	this.remove(schedulePanel);
-            	initSchedule(invitationsCmb);
+                this.remove(schedulePanel);
+                initSchedule(invitationsCmb);
             }
         } else if (evt.getActionCommand().equals("eventCmb")) {
-        	commentsList.setModel(new DefaultComboBoxModel(getCommentsForParticipation().toArray()));
+            commentsList.setModel(new DefaultComboBoxModel(getCommentsForParticipation().toArray()));
             commentsList.setVisible(true);
             if (this.eventComboBox.getSelectedItem() != null) {
-            	this.remove(schedulePanel);
+                this.remove(schedulePanel);
                 initSchedule(eventComboBox);
             }
-            
-        } else if(evt.getActionCommand().equals(Constants.CMD_BTN_UPDATE)) {
-        	DoodleEvent e = (DoodleEvent) eventComboBox.getSelectedItem();
-			if (e != null) {
-				if(e.getFixSchedule()!=null) {
-					Peer user = ControllerReference.getInstance().getUser();
-					updateScheduleInfo();
-					Notification n = new Notification(e.getOwner(), "Peer " + user.getName() + " changed his schedule for " + e.getName());
-					ControllerReference.getInstance().getGigaSpace().write(n);		
-				}else{
-					JOptionPane.showMessageDialog(this, "The Event has fix schedule!");
-				}
-				this.remove(schedulePanel);
-				schedulePanel = null;
-				schedulePanel = getSchedulePanel();
-				this.add(schedulePanel, BorderLayout.CENTER);			
-			}
+
+        } else if (evt.getActionCommand().equals(Constants.CMD_BTN_UPDATE)) {
+            DoodleEvent e = (DoodleEvent) eventComboBox.getSelectedItem();
+            if (e != null) {
+                ControllerReference.getInstance().refresh(e);
+                if (e.getFixSchedule() == null) {
+                    System.out.println(e.toString() + " " + e.getFixSchedule());
+                    Peer user = ControllerReference.getInstance().getUser();
+                    updateScheduleInfo();
+                    Notification n = new Notification(e.getOwner(), "Peer " + user.getName()
+                            + " changed his schedule for " + e.getName());
+                    ControllerReference.getInstance().getGigaSpace().write(n);
+                } else {
+                    JOptionPane.showMessageDialog(this, "The Event has fix schedule: " + e.getFixSchedule());
+                }
+                this.remove(schedulePanel);
+                schedulePanel = null;
+                schedulePanel = getSchedulePanel();
+                this.add(schedulePanel, BorderLayout.CENTER);
+            }
         }
     }
 
     private void initSchedule(JComboBox eventComboBox2) {
-    	schedulePanel = null;
+        schedulePanel = null;
         schedulePanel = getSchedulePanel();
         this.add(schedulePanel, BorderLayout.CENTER);
         this.schedulePanel.getViewport().removeAll();
         this.scheduleIntialisieren(eventComboBox2);
-	}
+    }
 
-	private void showParticipationComponents() {
+    private void showParticipationComponents() {
         eventComboBox.setVisible(true);
         addCommentButton.setVisible(true);
         eventComboBox.setModel(getParticipationEventsModel());
         commentsList.setModel(new DefaultComboBoxModel(getCommentsForParticipation().toArray()));
         commentsList.setVisible(true);
         updateScheduleBtn.setVisible(true);
-        
+
     }
 
     private void hideParticipationComponents() {
-    	eventComboBox.setVisible(false);
-    	addCommentButton.setVisible(false);
-    	commentsList.setModel(new DefaultComboBoxModel(new String[]{}));
-    	commentsList.setVisible(false);
-    	updateScheduleBtn.setVisible(false);
+        eventComboBox.setVisible(false);
+        addCommentButton.setVisible(false);
+        commentsList.setModel(new DefaultComboBoxModel(new String[] {}));
+        commentsList.setVisible(false);
+        updateScheduleBtn.setVisible(false);
     }
 
     private List<String> getCommentsForParticipation() {
-		DoodleEvent e = (DoodleEvent) eventComboBox.getSelectedItem();
-		if(e != null) {
-			return e.retrieveComments();
-		}
-		return new ArrayList<String>();
-	}
-
+        DoodleEvent e = (DoodleEvent) eventComboBox.getSelectedItem();
+        if (e != null) {
+            return e.retrieveComments();
+        }
+        return new ArrayList<String>();
+    }
 
     private void showInvitationComponents() {
         rejectBtn.setVisible(true);
@@ -273,34 +275,35 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
         invitationsCmb.setSelectedIndex(-1);
     }
 
-	private void scheduleIntialisieren(JComboBox eventBox) {
-		System.out.println("INIT");
-		DoodleEvent event = (DoodleEvent) eventBox.getSelectedItem();
-		System.out.println(event);
-		if (event != null) {
-		    List<DoodleSchedule> schedules = ControllerReference.getInstance().readSchedulesForCurrentUser(event.getId());
-			Collections.sort(schedules);
-			JPanel pnl = new JPanel();
-			pnl.setLayout(this.getLayout(schedules));
-			for (DoodleSchedule ds : schedules) {
-				System.out.println(ds.toString());
-				SchedulePanel sp = new SchedulePanel(ds);
-				sp.setVisible(true);
-				pnl.add(sp);
-			}
-			schedulePanel.setBounds(50, 160, 300, 60);
-			schedulePanel.getViewport().add(pnl);
-			// pnl.setPreferredSize(new java.awt.Dimension(66, 223));
-			schedulePanel.repaint();
-			schedulePanel.updateUI();
+    private void scheduleIntialisieren(JComboBox eventBox) {
+        System.out.println("INIT");
+        DoodleEvent event = (DoodleEvent) eventBox.getSelectedItem();
+        System.out.println(event);
+        if (event != null) {
+            List<DoodleSchedule> schedules = ControllerReference.getInstance().readSchedulesForCurrentUser(
+                    event.getId());
+            Collections.sort(schedules);
+            JPanel pnl = new JPanel();
+            pnl.setLayout(this.getLayout(schedules));
+            for (DoodleSchedule ds : schedules) {
+                System.out.println(ds.toString());
+                SchedulePanel sp = new SchedulePanel(ds);
+                sp.setVisible(true);
+                pnl.add(sp);
+            }
+            schedulePanel.setBounds(50, 160, 300, 60);
+            schedulePanel.getViewport().add(pnl);
+            // pnl.setPreferredSize(new java.awt.Dimension(66, 223));
+            schedulePanel.repaint();
+            schedulePanel.updateUI();
 
-		}
-	}
+        }
+    }
 
     private GridLayout getLayout(List<DoodleSchedule> schedules) {
-    	if(schedules == null || schedules.size()==0) {
-    		return new GridLayout(1,1);
-    	}
+        if (schedules == null || schedules.size() == 0) {
+            return new GridLayout(1, 1);
+        }
         Set<String> days = new HashSet<String>();
         Set<String> hours = new HashSet<String>();
 
@@ -320,7 +323,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
             DoodleSchedule ds = sp.getDs();
             ds = (DoodleSchedule) ControllerReference.getInstance().refresh(ds);
             ds.setSelected(sp.getScheduleCheckBox().isSelected());
-            System.out.println(ds.getHour() + "." + ds.getDay() +" :" + sp.getScheduleCheckBox().isSelected());
+            System.out.println(ds.getHour() + "." + ds.getDay() + " :" + sp.getScheduleCheckBox().isSelected());
             ControllerReference.getInstance().getGigaSpace().write(ds);
         }
     }
@@ -375,27 +378,27 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
         }
         return schedulePanel;
     }
-    
+
     private JList getcommentsList() {
-    	if(commentsList == null) {
-    		commentsList = new JList();
-    		commentsList.setLayout(null);
-    		commentsList.setPreferredSize(new java.awt.Dimension(300, 60));
-    		commentsList.setBounds(0, 500, 200, 50);
-    		commentsList.setVisible(false);
-    	}
-    	return commentsList;
+        if (commentsList == null) {
+            commentsList = new JList();
+            commentsList.setLayout(null);
+            commentsList.setPreferredSize(new java.awt.Dimension(300, 60));
+            commentsList.setBounds(0, 500, 200, 50);
+            commentsList.setVisible(false);
+        }
+        return commentsList;
     }
-    
+
     private JButton getUpdateScheduleBtn() {
-    	if(updateScheduleBtn == null) {
-    		updateScheduleBtn = new JButton();
-    		updateScheduleBtn.setText("update");
-    		updateScheduleBtn.setBounds(370, 40, 55, 22);
-    		updateScheduleBtn.setActionCommand(Constants.CMD_BTN_UPDATE);
-    		updateScheduleBtn.addActionListener(this);
-    	}
-    	return updateScheduleBtn;
+        if (updateScheduleBtn == null) {
+            updateScheduleBtn = new JButton();
+            updateScheduleBtn.setText("update");
+            updateScheduleBtn.setBounds(372, 40, 98, 22);
+            updateScheduleBtn.setActionCommand(Constants.CMD_BTN_UPDATE);
+            updateScheduleBtn.addActionListener(this);
+        }
+        return updateScheduleBtn;
     }
 
 }
