@@ -73,7 +73,9 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
 
     protected void processWindowEvent(WindowEvent evt) {
         if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
-            this.notify.setRunning(false);
+            if (this.notify != null) {
+                this.notify.setRunning(false);
+            }
             this.callback(false);
             this.dispose();
             System.exit(0);
