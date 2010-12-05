@@ -40,7 +40,7 @@ import at.tuwien.sbc.model.Peer;
  * ANY CORPORATE OR COMMERCIAL PURPOSE.
  */
 public class MainFrame extends javax.swing.JFrame implements ActionListener, LoginCallback {
-    
+
     private JTabbedPane tbPnl;
     private JPanel pnlOverview;
     private JMenuItem itmRemoveNotifications;
@@ -62,15 +62,15 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
     private JLabel lbl2;
     private JLabel lbl;
     private JPanel pnlOrg;
-    
+
     private TabbedPanel tabs;
     private NotificationsThread notify;
-    
+
     public MainFrame() {
         super();
         initGUI();
     }
-    
+
     protected void processWindowEvent(WindowEvent evt) {
         if (evt.getID() == WindowEvent.WINDOW_CLOSING) {
             this.notify.setRunning(false);
@@ -79,7 +79,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
             System.exit(0);
         }
     }
-    
+
     private void initGUI() {
         try {
             BorderLayout thisLayout = new BorderLayout();
@@ -189,7 +189,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
                 getContentPane().add(this.tabs, BorderLayout.CENTER);
                 tabs.setPreferredSize(new java.awt.Dimension(725, 357));
             }
-            
+
             pack();
             this.setSize(643, 560);
         } catch (Exception e) {
@@ -197,10 +197,10 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
             e.printStackTrace();
         }
     }
-    
+
     public void actionPerformed(ActionEvent evt) {
         String cmd = evt.getActionCommand();
-        
+
         if (cmd.equals(Constants.CMD_BTN_LOGIN)) {
             this.itmLogReg.setEnabled(false);
             LoginFrame frame = new LoginFrame();
@@ -208,36 +208,36 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
             frame.setLocationRelativeTo(this);
             frame.setCall(this);
         }
-        
+
         if (cmd.equals(Constants.CMD_MENU_LOGOUT)) {
             this.callback(false);
         }
-        
+
         if (cmd.equals(Constants.CMD_MENU_QUIT)) {
             this.notify.setRunning(false);
             this.callback(false);
             this.dispose();
             System.exit(0);
         }
-        
+
         if (cmd.equals(Constants.CMD_MENU_ABOUT)) {
             JOptionPane.showMessageDialog(this, "Doodle - by Ivan Stojkovic and Petar Petrov");
         }
-        
+
         if (cmd.equals(Constants.CMD_MENU_HELP)) {
             JOptionPane.showMessageDialog(this, "No help! Abandon ship...");
         }
-        
+
         if (cmd.equals(Constants.CMD_MENU_CLEAR)) {
             int response = JOptionPane.showConfirmDialog(this,
-                "Are you sure, you want to clear the whole space? All data will be lost!");
-            
+                    "Are you sure, you want to clear the whole space? All data will be lost!");
+
             if (response == JOptionPane.YES_OPTION) {
                 this.callback(false);
                 ControllerReference.getInstance().clearAll();
             }
         }
-        
+
         if (cmd.equals(Constants.CMD_MENU_READ_NOTIFICATIONS)) {
             Peer user = ControllerReference.getInstance().getUser();
             if (user != null) {
@@ -255,7 +255,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
                 JOptionPane.showMessageDialog(this, "Please log in first");
             }
         }
-        
+
         if (cmd.equals(Constants.CMD_MENU_REMOVE_NOTIFICATIONS)) {
             Peer user = ControllerReference.getInstance().getUser();
             if (user != null) {
@@ -268,13 +268,13 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
             }
         }
     }
-    
+
     public void callback(boolean loggedIn) {
         if (loggedIn) {
             this.itmLogout.setEnabled(true);
             this.itmLogReg.setEnabled(false);
             this.tabs.enableTab(-1, true);
-            
+
             Peer user = ControllerReference.getInstance().getUser();
             if (user == null) {
                 System.err.println("MainFrame: An error must have occurred");
@@ -283,7 +283,7 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
                 this.lblGreet.setText("Welcome " + user.getName());
                 this.startNotificationThread();
             }
-            
+
         } else {
             this.stopNotificationThread();
             ControllerReference.getInstance().logout();
@@ -293,27 +293,29 @@ public class MainFrame extends javax.swing.JFrame implements ActionListener, Log
             this.lblGreet.setText("You are currently not logged in!");
             this.mnNotifications.setText("Notifications");
         }
-        
+
         EventOrganizationPanel eop = (EventOrganizationPanel) this.tabs.getTabs().getComponentAt(0);
         PeerEventsPanel pep = (PeerEventsPanel) this.tabs.getTabs().getComponentAt(1);
         eop.refreshModel();
         eop.refresh();
         pep.refresh();
-        
+
     }
-    
+
     public void setNotificationsCount(int count) {
         this.mnNotifications.setText("Notifications (" + count + ")");
-        
+
     }
-    
+
     public void stopNotificationThread() {
-        this.notify.setRunning(false);
+        if (this.notify != null) {
+            this.notify.setRunning(false);
+        }
     }
-    
+
     public void startNotificationThread() {
         this.notify = new NotificationsThread(ControllerReference.getInstance().getGigaSpace(), this);
         this.notify.start();
     }
-    
+
 }
