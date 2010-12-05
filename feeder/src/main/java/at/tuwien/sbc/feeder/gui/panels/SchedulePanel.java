@@ -41,7 +41,7 @@ public class SchedulePanel extends javax.swing.JPanel {
 			}
 			{
 			    scheduleCheckBox = new JCheckBox();
-			    this.scheduleCheckBox.setSelected(ds.isSelected());
+			    this.scheduleCheckBox.setSelected(ds.retriveSelected());
                 this.add(scheduleCheckBox);
                 //scheduleCheckBox.setPreferredSize(new java.awt.Dimension(20, 20));
 			}
