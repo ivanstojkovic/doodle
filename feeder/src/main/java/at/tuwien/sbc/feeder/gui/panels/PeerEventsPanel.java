@@ -200,14 +200,14 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
             }
         } else if (evt.getSource() == this.invitationsCmb) {
             if (this.invitationsCmb.getSelectedItem() != null) {
-                this.remove(schedulePanel);
+                //this.remove(schedulePanel);
                 initSchedule(invitationsCmb);
             }
         } else if (evt.getActionCommand().equals("eventCmb")) {
             commentsList.setModel(new DefaultComboBoxModel(getCommentsForParticipation().toArray()));
             commentsList.setVisible(true);
             if (this.eventComboBox.getSelectedItem() != null) {
-                this.remove(schedulePanel);
+                //this.remove(schedulePanel);
                 initSchedule(eventComboBox);
             }
 
@@ -225,18 +225,18 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
                 } else {
                     JOptionPane.showMessageDialog(this, "The Event has fix schedule: " + e.getFixSchedule());
                 }
-                this.remove(schedulePanel);
-                schedulePanel = null;
-                schedulePanel = getSchedulePanel();
-                this.add(schedulePanel, BorderLayout.CENTER);
+//                this.remove(schedulePanel);
+//                schedulePanel = null;
+//                schedulePanel = getSchedulePanel();
+//                this.add(schedulePanel, BorderLayout.CENTER);
             }
         }
     }
 
     private void initSchedule(JComboBox eventComboBox2) {
-        schedulePanel = null;
+        //schedulePanel = null;
         schedulePanel = getSchedulePanel();
-        this.add(schedulePanel, BorderLayout.CENTER);
+        //this.add(schedulePanel, BorderLayout.CENTER);
         this.schedulePanel.getViewport().removeAll();
         this.scheduleIntialisieren(eventComboBox2);
     }
@@ -291,7 +291,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
                 sp.setVisible(true);
                 pnl.add(sp);
             }
-            schedulePanel.setBounds(50, 160, 300, 60);
+            //schedulePanel.setBounds(50, 160, 300, 60);
             schedulePanel.getViewport().add(pnl);
             // pnl.setPreferredSize(new java.awt.Dimension(66, 223));
             schedulePanel.repaint();
