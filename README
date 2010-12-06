@@ -1,3 +1,15 @@
 This is a project for task1 in the course Distributed Computing with Spaced Based Middleware at UT Vienna.
 It will aim to produce a calendar coordination service similar to doodle (without any persistence) using
 java spaces as the underlying communication protocol.
+
+#####################################
+INSTALLATION
+#####################################
+Zuerst muss man GigaSpace Maven Plugin. Mehr infos: http://www.gigaspaces.com/wiki/display/XAP71/Maven+Plugin#MavenPlugin-Installation
+Optional kann man den Maven Plugin für Eclipse verwenden um die Projekte leichter zu importieren und zu builden.
+In Eclipse muss man GS_HOME Variable einstellen.
+Mit "mvn install package" Projekt builden.
+Run Configuration muss man für Feeder und Processor Projekt anpassen. Dabei ist es wichtig für die Main Klasse 
+folgende zu verweden: org.openspaces.pu.container.integrated.IntegratedProcessingUnitContainer
+
+Zuerst muss man den Processor starten und dann beliebig viele Feeder starten.

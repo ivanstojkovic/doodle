@@ -1,17 +1,9 @@
 package at.tuwien.sbc.feeder.gui.panels;
 
-import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
-import javax.swing.BorderFactory;
-import javax.swing.JFormattedTextField;
-
-import javax.swing.WindowConstants;
-import javax.swing.border.LineBorder;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.border.LineBorder;
 
 import at.tuwien.sbc.feeder.gui.components.DateTextField;
 

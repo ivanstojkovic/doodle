@@ -5,8 +5,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import javax.swing.BorderFactory;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,9 +20,6 @@ import at.tuwien.sbc.feeder.ControllerReference;
 import at.tuwien.sbc.feeder.common.Constants;
 import at.tuwien.sbc.feeder.interfaces.LoginCallback;
 import at.tuwien.sbc.model.Peer;
-
-import com.j_spaces.core.LeaseContext;
-import com.j_spaces.core.client.UpdateModifiers;
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI

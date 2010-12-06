@@ -1,10 +1,6 @@
 package at.tuwien.sbc.feeder.gui.panels;
 
-import java.awt.Dimension;
 import javax.swing.JCheckBox;
-
-import javax.swing.WindowConstants;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import at.tuwien.sbc.model.DoodleSchedule;

@@ -8,10 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,10 +23,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneLayout;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
 
@@ -40,9 +32,6 @@ import at.tuwien.sbc.model.DoodleEvent;
 import at.tuwien.sbc.model.DoodleSchedule;
 import at.tuwien.sbc.model.Notification;
 import at.tuwien.sbc.model.Peer;
-
-import com.gigaspaces.internal.backport.java.util.Arrays;
-import com.j_spaces.core.EventIdFactory;
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
@@ -153,6 +142,15 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
         }
     }
 
+    /**
+     * Man kann in ComboBox Invitations oder Participation auswaehlen.
+     * Beim Auswahl von Invitations werden den Benutzer die Events in einem eigenen Combo angezeigt.
+     * Der Benutzer waehlt einen Event und kann sich subscreiben oder kann den Event rejecten.
+     * Beim Subscriben kann der Benutzer die Schedules auswahlen.
+     * 
+     * Beim Auswahl von Participations sieht der Benutzer die Events zu welchem er subscribed ist.
+     * Er kann die Schedules fuer ein bestimmtes Event editieren.
+     */
     public void actionPerformed(ActionEvent evt) {
         if (evt.getActionCommand().equals("cmbType")) {
             hideInvitationComponents();
@@ -295,11 +293,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
         invitationsCmb.setVisible(true);
         invitationsCmb.setModel(new DefaultComboBoxModel(ControllerReference.getInstance().getInvitations().toArray()));
         invitationsCmb.setSelectedIndex(-1);
-        //	remove Schedule Panel
-        this.remove(schedulePanel);
-        schedulePanel = null;
-        schedulePanel = getSchedulePanel();
-        this.add(schedulePanel, BorderLayout.CENTER);
+//        this.schedulePanel.getViewport().removeAll();
     }
 
     private void scheduleIntialisieren(JComboBox eventBox) {
@@ -355,6 +349,7 @@ public class PeerEventsPanel extends javax.swing.JPanel implements ActionListene
         subscribeBtn.setVisible(false);
         invitationsCmb.setVisible(false);
         invitationsCmb.setSelectedIndex(-1);
+        this.schedulePanel.getViewport().removeAll();
     }
 
     public void refresh() {
